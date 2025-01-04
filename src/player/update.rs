@@ -209,7 +209,7 @@ impl Player {
             let mut new_trans = player.camera_movement.original_trans;
             new_trans.z += player.camera_movement.backdrift;
             new_trans.x += player.camera_movement.cam_rot_current / 2.0;
-            new_trans.y += player.camera_movement.bob_current / 100.0;
+            new_trans.y += player.camera_movement.bob_current / 50.0;
             new_trans.y += player.camera_movement.switch_offset;
 
             trans.translation = new_trans;
@@ -319,8 +319,7 @@ impl Player {
                         .abs()
                         .length()
                         - player.velocity.y.abs())
-                    .max(0.0)
-                    * 2.0;
+                    * 120.0;
                 if player.camera_movement.bob_goal > std::f32::consts::PI * 2.0 {
                     player.camera_movement.bob_goal -= std::f32::consts::PI * 2.0;
                 }
