@@ -4237,6 +4237,7 @@ dependencies = [
  "map_parser",
  "qwak",
  "qwak_helper_types",
+ "qwak_shared",
  "renet_steam",
  "resources",
  "serde",
