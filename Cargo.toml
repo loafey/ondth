@@ -33,25 +33,25 @@ qwak                   = { workspace = true }
 members = [ "crates/*", "qwaks/*" ]
 
 [workspace.dependencies]
-serde                  = { version = "1.0.217" }
-serde_json             = { version = "1.0.134" }
-bincode                = { version = "1.3.3" }
-steamworks             = { version = "0.11.0" }
-sha256                 = { version = "1.5.0", default-features = false }
-image                  = { version = "0.25.5", default-features = false }
-proc-macro2            = { version = "1.0.92" }
-quote                  = { version = "1.0.38" }
-syn                    = { version = "2.0.94" }
-rand                   = { version = "0.8.5" }
-extism                 = { version = "1.9.1", default-features = false, features = ["register-filesystem"] }
-extism-pdk             = { version = "1.3.0", default-features = false, features = ["msgpack", "extism-manifest"] }
+serde                  = { version = "1.0.*" }
+serde_json             = { version = "1.0.*" }
+bincode                = { version = "1.3.*" }
+steamworks             = { version = "0.11.*" }
+sha256                 = { version = "1.5.*", default-features = false }
+image                  = { version = "0.25.*", default-features = false }
+proc-macro2            = { version = "1.0.*" }
+quote                  = { version = "1.0.*" }
+syn                    = { version = "2.0.*" }
+rand                   = { version = "0.8.*" }
+extism                 = { version = "1.9.*", default-features = false, features = ["register-filesystem"] }
+extism-pdk             = { version = "1.3.*", default-features = false, features = ["msgpack", "extism-manifest"] }
 
 # Bevy dependencies
-bevy                   = { version = "0.15.0", features = ["bevy_gltf", "dynamic_linking"] }
-bevy_rapier3d          = { version = "0.28.0", features = ["parallel","debug-render-3d","simd-stable"] }
-bevy_obj               = { version = "0.15.0" }
-bevy-inspector-egui    = { version = "0.28.0" }
-bevy_simple_text_input = { version = "0.10.1" }
+bevy                   = { version = "0.15.*", features = ["bevy_gltf", "dynamic_linking"] }
+bevy_rapier3d          = { version = "0.28.*", features = ["parallel","debug-render-3d","simd-stable"] }
+bevy_obj               = { version = "0.15.*" }
+bevy-inspector-egui    = { version = "0.28.*" }
+bevy_simple_text_input = { version = "0.10.*" }
 bevy-scene-hook        = { git = "https://github.com/AlephCubed/bevy-scene-hook.git" }
 bevy_hanabi            = { git = "https://github.com/djeedai/bevy_hanabi.git", default-features = false, features = ["3d"] }
 bevy_renet             = { git = "https://github.com/lucaspoffo/renet.git", features = ["steam"] }
