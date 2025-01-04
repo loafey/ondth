@@ -1,15 +1,32 @@
 {
     "cSpell.words": [
+        "alsa",
         "bincode",
+        "clippy",
+        "dont",
         "egui",
         "extism",
         "faststr",
+        "fenix",
         "gltf",
+        "graphviz",
         "hanabi",
+        "libxkbcommon",
         "msgpack",
+        "naersk",
+        "nixos",
+        "nixpkgs",
+        "numtide",
         "ondth",
+        "pkgs",
         "qwak",
         "qwaks",
-        "renet"
+        "renet",
+        "rustc",
+        "trenchbroom",
+        "udeps",
+        "Xcursor",
+        "xorg",
+        "Xrandr"
     ]
 }

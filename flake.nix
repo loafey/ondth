@@ -50,6 +50,8 @@
           vulkan-loader
           vulkan-validation-layers
           cargo-udeps
+          cargo-modules
+          graphviz
 
           trenchbroom-working
           libxkbcommon
