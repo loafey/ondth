@@ -289,20 +289,20 @@ impl Player {
 
             let hort_speed = player.hort_speed;
             if keys.walk_forward_pressed {
-                player.velocity += forward * hort_speed * time.delta_secs();
+                player.velocity += forward * hort_speed;
                 player.camera_movement.backdrift_goal = player.camera_movement.backdrift_max;
             } else if keys.walk_backward_pressed {
-                player.velocity -= forward * hort_speed * time.delta_secs();
+                player.velocity -= forward * hort_speed;
                 player.camera_movement.backdrift_goal = -player.camera_movement.backdrift_max;
             } else {
                 player.camera_movement.backdrift_goal = 0.0;
             }
 
             if keys.walk_left_pressed {
-                player.velocity -= right * hort_speed * time.delta_secs();
+                player.velocity -= right * hort_speed;
                 player.camera_movement.cam_rot_goal = player.camera_movement.cam_rot_max_goal;
             } else if keys.walk_right_pressed {
-                player.velocity += right * hort_speed * time.delta_secs();
+                player.velocity += right * hort_speed;
                 player.camera_movement.cam_rot_goal = -player.camera_movement.cam_rot_max_goal;
             } else {
                 player.camera_movement.cam_rot_goal = 0.0;
@@ -337,7 +337,7 @@ impl Player {
                     player.air_time = Some(std::time::Instant::now())
                 }
             } else {
-                player.velocity.y += time.delta_secs() * player.jump_timer * player.gravity;
+                player.velocity.y += player.jump_timer * player.gravity;
                 player.jump_timer -= time.delta_secs() * 50.0;
                 player.jump_timer = player.jump_timer.clamp(-0.1, 1.0);
             }
