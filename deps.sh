@@ -1,1 +1,2 @@
-cargo-modules dependencies -p ondth | dot -Tsvg > deps.svg
+cargo-modules dependencies -p ondth > deps.dot
+

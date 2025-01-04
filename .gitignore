@@ -3,3 +3,4 @@ target/
 assets/maps/autosave
 assets/qwaks/
 deps.svg
+deps.dot
