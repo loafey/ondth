@@ -285,8 +285,8 @@ pub fn handle_client_message(
 
             let (int, _) =
                 option_return!(player.interact(player_entity, rapier_context, cam_trans, &trans));
-            let (_, int) = option_return!(nw.interactables.get(int).ok());
-
+            let (_e, int) = option_return!(nw.interactables.get(int).ok());
+            println!("{_e}");
             unsafe {
                 NW_PTR = Some(std::mem::transmute::<
                     (&NetWorld, &RenetServer),

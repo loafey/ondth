@@ -36,6 +36,9 @@ fn vec_fix(mut v: Vec3) -> Vec3 {
     v
 }
 
+#[derive(Debug, Component, Clone, Copy)]
+pub struct BrushEntity;
+
 #[allow(clippy::too_many_arguments)]
 pub fn load_map(
     client: Option<Res<RenetClient>>,
@@ -72,6 +75,7 @@ pub fn load_map(
             // Calculate the verticies for the mesh
             let polys = sort_verticies_cw(get_polys_brush(brush));
 
+            let mut spawner = commands.spawn((BrushEntity, Transform::default()));
             let mut brush_poly = Vec::new();
             for mut poly in polys {
                 let mut plane_center = Vec3::ZERO;
@@ -136,27 +140,21 @@ pub fn load_map(
                     new_mesh.duplicate_vertices();
                     new_mesh.compute_flat_normals();
 
-                    commands.spawn((
-                        Mesh3d(meshes.add(new_mesh)),
-                        MeshMaterial3d(materials.add(mat)),
-                        Transform::default(),
-                    ));
+                    spawner.with_children(|f| {
+                        f.spawn((
+                            Mesh3d(meshes.add(new_mesh)),
+                            MeshMaterial3d(materials.add(mat)),
+                            Transform::default(),
+                        ));
+                    });
                 }
             }
 
             if !brush_poly.is_empty() {
-                // TODO This crashes in rust 1.81, and not being able to dedup leads to complicated collision meshes
-                // brush_poly.sort_by(|a, b| {
-                // a.x.total_cmp(&b.x)
-                // .cmp(&a.y.total_cmp(&b.y))
-                // .cmp(&a.z.total_cmp(&b.z))
-                // });
-                // brush_poly.dedup();
-
                 if let Some(col) = Collider::convex_hull(&brush_poly) {
-                    let mut com = commands.spawn(col);
+                    spawner.insert(col);
                     if let Some(interactable) = &interactable {
-                        com.insert((*interactable).clone());
+                        spawner.insert((*interactable).clone());
                     }
                 } else {
                     error!("failed to create collider!!");
