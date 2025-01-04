@@ -1,13 +1,7 @@
 use qwak_helper_types::MapInteraction;
 use qwak_shared::QwakPlugin;
 qwak_shared::plugin_gen!(Plugin);
-
-#[extism_pdk::host_fn]
-unsafe extern "ExtismHost" {
-    unsafe fn debug_log(val: String);
-    unsafe fn broadcast_message(val: String);
-    unsafe fn get_player_name(id: u64) -> String;
-}
+qwak_shared::host_calls!();
 
 // Simple QWAK plugin that contains the required functions.
 // This is compiled to WASM.
@@ -24,18 +18,16 @@ impl QwakPlugin for Plugin {
     }
 
     fn map_interact(MapInteraction(arg, id): MapInteraction) {
-        unsafe {
-            match &*arg {
-                "debug_log" => {
-                    let name = get_player_name(id).unwrap();
-                    let prefix = match &*name {
-                        "Felony" => "cooler",
-                        _ => "cool",
-                    };
-                    broadcast_message(format!("{name} is a {prefix} duck!")).unwrap()
-                }
-                _ => panic!("unknown interaction: {arg}"),
+        match &*arg {
+            "debug_log" => {
+                let name = host::get_player_name(id);
+                let prefix = match &*name {
+                    "Felony" => "cooler",
+                    _ => "cool",
+                };
+                host::broadcast_message(format!("{name} is a {prefix} duck!"))
             }
+            _ => panic!("unknown interaction: {arg}"),
         }
     }
 }
