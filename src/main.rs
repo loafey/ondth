@@ -1,3 +1,4 @@
+#![doc = include_str!("../readme.md")]
 #![feature(let_chains)]
 extern crate macros;
 use crate::net::{
