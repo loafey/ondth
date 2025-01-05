@@ -183,7 +183,7 @@ pub enum SimulationEvent {
     },
 }
 
-#[derive(Debug, Serialize, Deserialize, Event)]
+#[derive(Debug, Serialize, Deserialize, Event, Clone)]
 pub enum ServerMessage {
     SetMap(PathBuf),
     TranslateBrush {

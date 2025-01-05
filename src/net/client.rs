@@ -19,7 +19,7 @@ use bevy::{
     },
     hierarchy::DespawnRecursiveExt,
     log::{error, info},
-    prelude::NextState,
+    prelude::{EventWriter, NextState},
 };
 use bevy_renet::{
     netcode::{ClientAuthentication, NetcodeClientTransport, NetcodeTransportError},
@@ -32,16 +32,26 @@ use resources::{CurrentMap, CurrentStage};
 use std::{net::UdpSocket, time::SystemTime};
 use steamworks::SteamId;
 
+pub fn get_events(mut client: ResMut<RenetClient>, mut server_events: EventWriter<ServerMessage>) {
+    while let Some(message) = client.receive_message(ServerChannel::ServerMessages as u8) {
+        let message = error_continue!(ServerMessage::from_bytes(&message));
+        server_events.send(message);
+    }
+    while let Some(message) = client.receive_message(ServerChannel::NetworkedEntities as u8) {
+        let message = error_continue!(ServerMessage::from_bytes(&message));
+        server_events.send(message);
+    }
+}
+
 pub fn handle_messages(
     pickups: Query<(Entity, &PickupEntity)>,
-    mut client: ResMut<RenetClient>,
     mut current_stage: ResMut<CurrentMap>,
     mut state: ResMut<NextState<CurrentStage>>,
     mut nw: NetWorld,
+    mut server_events: EventReader<ServerMessage>,
 ) {
-    while let Some(message) = client.receive_message(ServerChannel::ServerMessages as u8) {
-        let message = error_continue!(ServerMessage::from_bytes(&message));
-        match message {
+    for message in server_events.read() {
+        match message.clone() {
             ServerMessage::SetMap(map) => {
                 info!("setting map to: {map:?}");
                 current_stage.0 = map;
@@ -101,16 +111,6 @@ pub fn handle_messages(
                     info.kills += 1;
                 }
             }
-            x => {
-                error!("unhandled ServerMessages message: {x:?}")
-            }
-        }
-    }
-
-    while let Some(message) = client.receive_message(ServerChannel::NetworkedEntities as u8) {
-        let message = error_continue!(ServerMessage::from_bytes(&message));
-        #[allow(clippy::single_match)]
-        match message {
             ServerMessage::PlayerUpdate { id, message } => {
                 update_world(id, &message, &mut nw);
             }
@@ -139,7 +139,7 @@ pub fn handle_messages(
                 player.health -= amount;
             }
             x => {
-                error!("unhandled NetworkedEntities message: {x:?}")
+                error!("unhandled server message: {x:?}")
             }
         }
     }
@@ -195,7 +195,7 @@ pub fn init_client(
 }
 
 pub fn systems() -> SystemConfigs {
-    (handle_messages,).into_configs()
+    (handle_messages, get_events).into_configs()
 }
 
 pub fn errors() -> SystemConfigs {

@@ -21,7 +21,7 @@ use bevy_renet::{
 };
 use bevy_scene_hook::reload::Plugin as HookPlugin;
 use bevy_simple_text_input::TextInputPlugin;
-use net::ClientMessage;
+use net::{ClientMessage, ServerMessage};
 use plugins::{ClientPlugin, GameStage, MainMenuStage, Resources, ServerPlugin, StartupStage};
 use steamworks::{AppId, SingleClient};
 
@@ -71,7 +71,8 @@ fn main() {
     // app.add_plugins(bevy_inspector_egui::quick::WorldInspectorPlugin::new());
 
     app.add_event::<ClientMessage>()
-        .add_event::<SimulationEvent>();
+        .add_event::<SimulationEvent>()
+        .add_event::<ServerMessage>();
 
     app.add_plugins(Resources);
     app.add_plugins(RapierPhysicsPlugin::<NoUserData>::default());
