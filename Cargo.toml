@@ -42,7 +42,7 @@ unsafe_code  = "deny"
 [workspace.lints.clippy]
 print_stdout                  = "warn"
 print_stderr                  = "warn"
-missing_docs_in_private_items = "warn"
+# missing_docs_in_private_items = "warn"
 missing_errors_doc            = "warn"
 missing_panic_doc             = "warn"
 missing_unsafe_doc            = "warn"

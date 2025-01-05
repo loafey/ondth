@@ -1,16 +1,22 @@
+//! This crate exports a macro for easily working with a pre-defined
+//! set of inputs. Abstracts away the specific keys being pressed into actions.
+//!
+//! The following comment was left couple of months ago at the time of writing, but I am
+//! sure it still applies:
+//!
+//! For the sanity of the reader!
+//! Know that this macro is quite bad :)
+//! Beware 💩💩💩
+
 use proc_macro::TokenStream;
 use proc_macro2::Span;
 use quote::quote;
 use syn::{
-    parse_macro_input,
-    token::{Bracket, Colon, Paren, Pound, Pub},
     AttrStyle, Attribute, Data, DeriveInput, Field, FieldMutability, Fields, Ident, MetaList, Path,
-    PathArguments, PathSegment, Type, TypePath, Visibility,
+    PathArguments, PathSegment, Type, TypePath, Visibility, parse_macro_input,
+    token::{Bracket, Colon, Paren, Pound, Pub},
 };
 
-// For the sanity of the reader!
-// Know that this macro is quite bad :)
-// Beware 💩💩💩
 fn create_field(ident: Ident) -> Field {
     let bool = Ident::new("bool", Span::call_site());
     let serde = Ident::new("serde", Span::call_site());
@@ -56,6 +62,27 @@ fn create_field(ident: Ident) -> Field {
     }
 }
 
+/// Macro for creating a struct with keys.
+/// For every key it creates bools representing
+/// if the key is pressed, just got pressed and
+/// just stopped being pressed. Also creates an update
+/// method which you call every frame, to make sure that
+/// the created bools are updated.
+///
+/// # Example
+/// ```
+/// #[derive_input]
+/// #[derive(bevy::prelude::Resource)]
+/// pub struct PlayerInput {
+///     a: bevy::input::keyboard::Key,
+///     b: bevy::input::keyboard::Key,
+/// }
+/// fn test(input: bevy::prelude::Res<PlayerInput>) {
+///     if input.a_pressed {
+///         println!("a is being pressed!");
+///     }
+/// }
+/// ```
 #[proc_macro_attribute]
 pub fn derive_input(_attr: TokenStream, input: TokenStream) -> TokenStream {
     // Parse the input tokens into a syntax tree
