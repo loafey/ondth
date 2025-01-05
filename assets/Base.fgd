@@ -131,8 +131,15 @@
 ]
 
 // Scriptable
-@baseclass base(Appearflags, Target, Killarget, Targetname) = Scriptable
+@baseclass base(Appearflags, Target, Killtarget, Targetname) = Scriptable
 [
 	script(string) : "Script" : ""
 ]
 @SolidClass base(Scriptable) = scriptable : "Scriptable" []
+
+// Interactable
+@baseclass base(Appearflags, Target, Killtarget, Targetname) = Interactable
+[
+	script(string) : "Script" : ""
+]
+@SolidClass base(Scriptable) = interactable : "Interactable" []

@@ -56,7 +56,7 @@ pub fn spawn_entity(
         .as_ref()
         .map(|s| &s[..])
     {
-        Some("scriptable") => {
+        Some("interactable") => {
             if let Some(script) = attributes.get(&FastStr::from("script")).as_ref() {
                 return Some(Interactable {
                     script: (*script).clone(),
