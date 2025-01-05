@@ -1,3 +1,5 @@
+//! Includes macros for generating the two-way interface between the plugins and game.
+
 use proc_macro::TokenStream as TS;
 use proc_macro2::TokenStream;
 use quote::quote;
@@ -5,6 +7,7 @@ use quote::quote;
 mod host;
 mod plugin;
 
+/// Generates helper macros for the game interacting with the plugin.
 #[proc_macro_attribute]
 pub fn plugin(_attr: TS, item: TS) -> TS {
     let res = TokenStream::from(plugin::get_export_functions(item.clone()));
@@ -18,7 +21,7 @@ pub fn plugin(_attr: TS, item: TS) -> TS {
 
     res.into()
 }
-
+/// Generates helper macros for a plugin interacting with the game.
 #[proc_macro_attribute]
 pub fn host(_attr: TS, item: TS) -> TS {
     let res = TokenStream::from(host::get_export_functions(item.clone()));
