@@ -23,29 +23,51 @@ mod macros {
     }
 }
 
+/// Helper struct for when trying the parser can return multiple things.
 pub enum Either<L, R> {
+    /// The left value
     Left(L),
+    /// The right value
     Right(R),
 }
 
+/// Alias for a collection of [Planes][Plane] which define a brush.
 pub type Brush = Vec<Plane>;
 
+/// The definition of a plane.
+/// Planes are defined using the [parametric equation](https://mathworld.wolfram.com/Plane.html).
+/// Also contains a texture x and y offset, rotation, x and y scale, and its path.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Plane {
+    /// The first vector defining a plane
     pub p1: Vector,
+    /// The second vector defining a plane
     pub p2: Vector,
+    /// The third vector defining a plane
     pub p3: Vector,
+    /// The path to the planes texture
     pub texture: FastStr,
+    /// The x offset of the planes texture
     pub x_offset: TextureOffset,
+    /// The y offset of the planes texture
     pub y_offset: TextureOffset,
+    /// The radian rotation of the planes texture
     pub rotation: f32,
+    /// The x scale of the planes texture
     pub x_scale: f32,
+    /// The y scale of the planes texture
     pub y_scale: f32,
 }
 
+/// The texture offset.
+/// Can either be in the original format ([TextureOffset::Simple]), or Valve's
+/// V220 format.
 #[derive(Clone, Copy, PartialEq)]
 pub enum TextureOffset {
+    /// A simple texture offset
     Simple(f32),
+    /// A texture offset in the V220 format.
+    /// The first three floats is the texture vector.
     V220(f32, f32, f32, f32),
 }
 impl std::fmt::Debug for TextureOffset {
@@ -57,6 +79,7 @@ impl std::fmt::Debug for TextureOffset {
     }
 }
 
+/// A simple 3D vector.
 #[derive(Clone, Copy, PartialEq)]
 pub struct Vector(pub f32, pub f32, pub f32);
 impl Div<f32> for Vector {
