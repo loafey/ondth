@@ -1,4 +1,4 @@
-use bevy::prelude::{Component, Entity};
+use bevy::prelude::Component;
 use faststr::FastStr;
 
 #[derive(Debug, Component, Clone)]
