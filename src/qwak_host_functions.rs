@@ -2,7 +2,7 @@
 use crate::{
     get_nw,
     net::{
-        ServerChannel, ServerMessage, SimulationEvent,
+        ServerChannel, ServerMessage,
         server::{NW_PTR, transmit_message},
     },
 };

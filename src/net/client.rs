@@ -18,7 +18,7 @@ use bevy::{
         world::World,
     },
     hierarchy::DespawnRecursiveExt,
-    log::{error, info},
+    log::info,
     prelude::{EventWriter, NextState},
 };
 use bevy_renet::{
@@ -138,9 +138,6 @@ pub fn handle_messages(
                 let player = option_continue!(nw.lobby.get(&nw.current_id.0)).entity;
                 let (_, mut player, _) = error_continue!(nw.players.get_mut(player));
                 player.health -= amount;
-            }
-            x => {
-                error!("unhandled server message: {x:?}")
             }
         }
     }

@@ -1,7 +1,7 @@
 use crate::{
     entities::pickup::PickupEntity,
     map_gen::{BrushEntity, Interactable},
-    net::{CurrentClientId, Lobby, SimulationEvent},
+    net::{CurrentClientId, Lobby},
     particles::ParticleMap,
     player::Player,
     plugins::Qwaks,

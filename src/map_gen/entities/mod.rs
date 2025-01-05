@@ -6,7 +6,7 @@ use bevy::{
     log::error,
     math::{EulerRot, Quat, Vec3},
     pbr::{DirectionalLight, MeshMaterial3d, PointLight, StandardMaterial},
-    prelude::{Entity, Mesh3d},
+    prelude::Mesh3d,
     transform::components::Transform,
 };
 use bevy_rapier3d::{
