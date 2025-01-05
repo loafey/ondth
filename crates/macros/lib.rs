@@ -1,3 +1,13 @@
+//! A collection of nice macros for handling non fatal errors and
+//! [None] values.
+
+/// Shorthand for returning in a unit function and printing the error.
+/// ```
+/// fn test() {
+///     error_return!(failable_method());
+///     // If `failable_method` failed this wont run, and its error has been printed
+/// }
+/// ```
 #[macro_export]
 macro_rules! error_return {
     ($context:literal) => {{
@@ -20,6 +30,15 @@ macro_rules! error_return {
     }};
 }
 
+/// Shorthand for continuing in a loop and printing the error.
+/// ```
+/// fn test() {
+///     loop {
+///         error_continue!(failable_method());
+///         // If `failable_method` failed this wont run, and its error has been printed
+///     }
+/// }
+/// ```
 #[macro_export]
 macro_rules! error_continue {
     ($context:literal) => {{
@@ -42,6 +61,13 @@ macro_rules! error_continue {
     }};
 }
 
+/// Shorthand for returning in a unit function if a function returns None.
+/// ```
+/// fn test() {
+///     option_return!(nullable_method());
+///     // If `nullable_method` returned `None` this wont run.
+/// }
+/// ```
 #[macro_export]
 macro_rules! option_return {
     ($context:literal) => {{
@@ -62,6 +88,15 @@ macro_rules! option_return {
     }};
 }
 
+/// Shorthand for continuing in a loop function if a function returns None.
+/// ```
+/// fn test() {
+///     loop {
+///         option_return!(nullable_method());
+///         // If `nullable_method` returned `None` this wont run.
+///     }
+/// }
+/// ```
 #[macro_export]
 macro_rules! option_continue {
     ($context:literal) => {{
@@ -80,29 +115,4 @@ macro_rules! option_continue {
             }
         }
     }};
-}
-
-#[macro_export]
-macro_rules! npdbg {
-    // NOTE: We cannot use `concat!` to make a static string as a format argument
-    // of `eprintln!` because `file!` could contain a `{` or
-    // `$val` expression could be a block (`{ .. }`), in which case the `eprintln!`
-    // will be malformed.
-    () => {
-        eprintln!("[{}:{}:{}]", file!(), line!(), column!())
-    };
-    ($val:expr $(,)?) => {
-        // Use of `match` here is intentional because it affects the lifetimes
-        // of temporaries - https://stackoverflow.com/a/48732525/1063961
-        match $val {
-            tmp => {
-                eprintln!("[{}:{}:{}] {} = {:?}",
-                    file!(), line!(), column!(), stringify!($val), &tmp);
-                tmp
-            }
-        }
-    };
-    ($($val:expr),+ $(,)?) => {
-        ($(dbg!($val)),+,)
-    };
 }
