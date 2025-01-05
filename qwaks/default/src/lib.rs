@@ -17,17 +17,19 @@ impl QwakPlugin for Plugin {
         [0, 0, 1]
     }
 
-    fn map_interact(MapInteraction(arg, id): MapInteraction) {
-        match &*arg {
+    fn map_interact(
+        MapInteraction {
+            script,
+            target,
+            player_id,
+        }: MapInteraction,
+    ) {
+        match &*script {
             "debug_log" => {
-                let name = host::get_player_name(id);
-                let prefix = match &*name {
-                    "Felony" => "cooler",
-                    _ => "cool",
-                };
-                host::broadcast_message(format!("{name} is a {prefix} duck!"))
+                let name = host::get_player_name(player_id);
+                host::broadcast_message(format!("{name}: script: {script:?}, target: {target:?}"))
             }
-            _ => panic!("unknown interaction: {arg}"),
+            _ => panic!("unknown interaction: {script}"),
         }
     }
 }

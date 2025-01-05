@@ -286,18 +286,17 @@ pub fn handle_client_message(
             let (int, _) =
                 option_return!(player.interact(player_entity, rapier_context, cam_trans, &trans));
             let (_e, int) = option_return!(nw.interactables.get(int).ok());
-            println!("{int:?}");
             unsafe {
                 NW_PTR = Some(std::mem::transmute::<
                     (&NetWorld, &RenetServer),
                     (&'static mut NetWorld, &'static mut RenetServer),
                 >((&*nw, &*server)))
             };
-            error_return!(
-                nw.plugins
-                    .default
-                    .map_interact(MapInteraction(int.script.to_string(), client_id))
-            );
+            error_return!(nw.plugins.default.map_interact(MapInteraction {
+                script: int.script.to_string(),
+                target: int.target.as_ref().map(|s| s.to_string()),
+                player_id: client_id
+            }));
         }
         ClientMessage::Fire { attack } => {
             let mut hit_pos = Vec::new();
