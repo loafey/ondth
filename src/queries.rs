@@ -9,7 +9,7 @@ use crate::{
 use bevy::{ecs::system::SystemParam, prelude::*};
 use bevy_rapier3d::plugin::RapierContext;
 use resources::{
-    PlayerSpawnpoint, WeaponMap,
+    PlayerSpawnpoint, TargetMap, WeaponMap,
     data::Projectiles,
     entropy::{EGame, Entropy},
 };
@@ -42,4 +42,5 @@ pub struct NetWorld<'w, 's> {
     pub lobby: ResMut<'w, Lobby>,
     pub particles: Res<'w, ParticleMap>,
     pub plugins: Res<'w, Qwaks>,
+    pub targets: Res<'w, TargetMap>,
 }

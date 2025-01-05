@@ -12,4 +12,5 @@ pub trait QwakHostFunctions {
     fn debug_log(val: String);
     fn broadcast_message(val: String);
     fn get_player_name(id: u64) -> String;
+    fn target_translate(target: String, x: f32, y: f32, z: f32);
 }

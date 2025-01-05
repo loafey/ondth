@@ -27,4 +27,12 @@ impl QwakHostFunctions for Host {
         let (nw, server) = get_nw!();
         transmit_message(server, nw, value);
     }
+
+    fn target_translate(target: String, x: f32, y: f32, z: f32) {
+        let (nw, server) = get_nw!();
+        let Some(target) = nw.targets.get(&(target.into())) else {
+            return;
+        };
+        println!("{target} move {x} {y} {z}");
+    }
 }

@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::path::PathBuf;
 
 use crate::entities::message::Message;
@@ -65,6 +66,7 @@ impl Plugin for Resources {
             .insert_resource(entropy_game())
             .insert_resource(entropy_misc())
             .insert_resource(Projectiles::default())
+            .insert_resource(TargetMap(HashMap::default()))
             .insert_resource(Qwaks::new(qwak_functions()));
     }
 }

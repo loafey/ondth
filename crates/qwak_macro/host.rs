@@ -33,6 +33,7 @@ fn get_type(ty: &Type) -> Type {
     let id = match &*ty {
         "String" => quote!(qwak::PTR),
         "u64" => quote!(qwak::ValType::I64),
+        "f32" => quote!(qwak::ValType::I64), // this is most likely a bug in extism?
         _ => panic!("undefined type conversion for \"{ty}\""),
     };
     syn::parse(id.into()).unwrap()
@@ -61,7 +62,7 @@ pub fn get_export_functions(item: TS) -> TS {
             let Pat::Ident(id) = &*pt.pat else {
                 panic!("only idents are allowed")
             };
-            ins.push(get_type(&pt.ty));
+            ins.insert(0, get_type(&pt.ty));
             args.push(id.ident.clone());
         });
         match sig.output {

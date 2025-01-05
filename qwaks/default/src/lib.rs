@@ -30,7 +30,9 @@ impl QwakPlugin for Plugin {
                 host::broadcast_message(format!("{name}: script: {script:?}, target: {target:?}"))
             }
             "debug_brush_jump_up" => {
+                let Some(target) = target else { return };
                 host::broadcast_message("jump_up".to_string());
+                host::target_translate(target, 0.0, 0.1, 0.0);
             }
             _ => panic!("unknown interaction: {script}"),
         }
