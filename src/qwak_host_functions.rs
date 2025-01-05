@@ -42,8 +42,8 @@ impl QwakHostFunctions for Host {
             target: target_name,
             translation: Vec3::new(x, y, z),
         };
-        sw.send(translate.clone());
         let bytes = error_return!(translate.bytes());
+        sw.send(translate);
         server.broadcast_message(ServerChannel::NetworkedEntities as u8, bytes);
     }
 }
