@@ -1,3 +1,9 @@
+//! Crate for generating randomness for the game.
+//! Tries to generate with a good distribution of values.
+//! Run with one or two arguments (or zero arguments for default values), to select
+//! the amount of random values to generate and the amount of tries
+//! to generate a nice distribution respectively.
+
 #![allow(clippy::print_stderr)]
 use std::{
     collections::BTreeMap as Map,
