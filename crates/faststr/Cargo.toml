@@ -12,3 +12,6 @@ path = "lib.rs"
 [[bin]]
 name = "mem_test"
 path = "bin.rs"
+
+[lints]
+workspace = true

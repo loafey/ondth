@@ -1,3 +1,4 @@
+#![allow(clippy::print_stderr)]
 use std::{
     collections::BTreeMap as Map,
     env::args,

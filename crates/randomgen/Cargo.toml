@@ -9,3 +9,6 @@ rand = { workspace = true }
 [[bin]]
 name = "randomgen"
 path = "main.rs"
+
+[lints]
+workspace = true

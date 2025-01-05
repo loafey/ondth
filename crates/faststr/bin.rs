@@ -1,6 +1,6 @@
-use std::time::Instant;
-
+#![allow(clippy::print_stdout)]
 use faststr::FastStr;
+use std::time::Instant;
 
 fn main() {
     let max = 10000;

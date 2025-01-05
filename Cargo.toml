@@ -29,8 +29,15 @@ qwak_helper_types      = { workspace = true }
 qwak_shared            = { workspace = true }
 qwak                   = { workspace = true }
 
+[lints]
+workspace = true
+
 [workspace]
 members = [ "crates/*", "qwaks/*" ]
+
+[workspace.lints.clippy]
+print_stdout = "warn"
+print_stderr = "warn"
 
 [workspace.dependencies]
 serde                  = { version = "1.0.*" }

@@ -43,7 +43,7 @@ fn steam_callbacks(client: NonSend<SingleClient>) {
 }
 
 fn main() {
-    println!("Running with asset hash: {}", integrity::get_asset_hash());
+    info!("running with asset hash: {}", integrity::get_asset_hash());
 
     let mut app = App::new();
     app.add_plugins(

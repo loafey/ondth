@@ -50,7 +50,6 @@ pub fn handle_messages(
     mut nw: NetWorld,
     mut server_events: EventReader<ServerMessage>,
 ) {
-    println!("client code");
     for message in server_events.read() {
         match message.clone() {
             ServerMessage::SetMap(map) => {

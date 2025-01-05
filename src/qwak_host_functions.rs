@@ -24,6 +24,7 @@ impl QwakHostFunctions for Host {
         name
     }
 
+    #[allow(clippy::print_stdout)]
     fn debug_log(value: String) {
         println!("{value}");
     }

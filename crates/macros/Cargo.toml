@@ -7,3 +7,6 @@ edition = "2024"
 
 [lib]
 path = "lib.rs"
+
+[lints]
+workspace = true

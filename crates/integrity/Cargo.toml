@@ -8,3 +8,6 @@ path = "lib.rs"
 
 [dependencies]
 sha256 = { workspace = true }
+
+[lints]
+workspace = true

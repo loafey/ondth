@@ -9,3 +9,6 @@ qwak_helper_types = { workspace = true }
 
 [lib]
 path = "lib.rs"
+
+[lints]
+workspace = true

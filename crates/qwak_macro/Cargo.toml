@@ -11,3 +11,6 @@ quote       = { workspace = true }
 [lib]
 path = "lib.rs"
 proc-macro = true
+
+[lints]
+workspace = true

@@ -11,3 +11,5 @@ extism-pdk        = { workspace = true}
 [lib]
 crate-type = ["cdylib"]
 
+[lints]
+workspace = true
