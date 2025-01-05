@@ -51,6 +51,7 @@
           vulkan-validation-layers
           cargo-udeps
           cargo-modules
+          cargo-watch
           graphviz
 
           trenchbroom-working

@@ -96,16 +96,26 @@ impl std::fmt::Debug for Vector {
 }
 
 #[derive(Debug, Clone)]
-pub struct Attribute(FastStr, FastStr);
+struct Attribute(FastStr, FastStr);
 
+/// A map entity. Consists of [brushes][Brush] and attributes for
+/// defining behavior. The attribute `classname` defines the
+/// type of entity.
 #[derive(Debug, Default)]
 pub struct Entity {
+    /// The set of entity attributes.
     pub attributes: HashMap<FastStr, FastStr>,
+    /// The planes which define the shape.
+    /// Might be empty, if it is for example an enemy.
     pub brushes: Vec<Brush>,
 }
 
 type TokenItr<'a> = &'a mut Peekable<IntoIter<Token>>;
 
+/// Parses a list of tokens into a usable [Vec] of [entities][Entity].
+///
+/// # Errors
+/// Fails if there are invalid tokens, i.e out of order etc.
 pub fn parser(tokens: Vec<Token>) -> Result<Vec<Entity>> {
     let mut token_itr = tokens.into_iter().peekable();
     map_items(&mut token_itr)
