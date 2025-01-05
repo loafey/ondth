@@ -269,14 +269,15 @@ pub static mut NW_PTR: Option<(
     &mut RenetServer,
     &mut EventWriter<SimulationEvent>,
 )> = None;
+/// Returns the content of [NW_PTR]
 #[macro_export]
 macro_rules! get_nw {
     () => {{
         #[allow(unsafe_code)]
-        let nw = unsafe { NW_PTR.as_ref() };
-        let r: *const _ = nw.unwrap();
-        #[allow(unsafe_code)]
         unsafe {
+            #[allow(unsafe_code)]
+            let nw = NW_PTR.as_ref();
+            let r: *const _ = nw.unwrap_unchecked();
             std::ptr::read(r)
         }
     }};

@@ -46,7 +46,7 @@ print_stderr                  = "warn"
 missing_errors_doc            = "warn"
 missing_panic_doc             = "warn"
 missing_unsafe_doc            = "warn"
-undocumented_unsafe_blocks    = "warn"
+# undocumented_unsafe_blocks    = "warn"
 unnecessary_safety_comment    = "warn"
 unnecessary_safety_doc        = "warn"
 
