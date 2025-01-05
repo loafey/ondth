@@ -1,3 +1,7 @@
+//! Benchmark suite for faststr.
+//! Simply works by cloning a `String` and a `FastStr` a bunch of times.
+//! Very naive.
+
 #![allow(clippy::print_stdout)]
 use faststr::FastStr;
 use std::time::Instant;

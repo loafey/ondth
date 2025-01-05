@@ -3,6 +3,7 @@
         "alsa",
         "bincode",
         "clippy",
+        "debuginfo",
         "dont",
         "egui",
         "extism",

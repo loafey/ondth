@@ -56,6 +56,7 @@ pub fn buttons(world: &mut World) {
         Option<Res<SteamClient>>,
     )> = SystemState::new(world);
     // yea this is cursed, but i am lazy, bypassing the borrow checker like a baus
+    #[allow(unsafe_code)]
     let world_copy = unsafe { &mut *(world as *mut World) };
 
     let (query, text_inputs, mut next_state, mut next_net_state, steam_client) =

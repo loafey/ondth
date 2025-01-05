@@ -1,4 +1,4 @@
-use super::{plane::Plane, vertex::Vertex, SCALE_FIX};
+use super::{SCALE_FIX, plane::Plane, vertex::Vertex};
 use bevy::{
     asset::Assets,
     ecs::system::Res,
@@ -9,7 +9,7 @@ use faststr::FastStr;
 use macros::error_return;
 use map_parser::parser::TextureOffset;
 use resources::TextureMap;
-use std::{hint::unreachable_unchecked, ops::Div};
+use std::ops::Div;
 
 const UP_VECTOR: Vec3 = Vec3::Z;
 const FORWARD_VECTOR: Vec3 = Vec3::X;
@@ -112,7 +112,7 @@ impl Poly {
         let (TextureOffset::Simple(x_offset), TextureOffset::Simple(y_offset)) =
             (self.x_offset, self.y_offset)
         else {
-            unsafe { unreachable_unchecked() };
+            unreachable!();
         };
 
         let n = self.plane.n;

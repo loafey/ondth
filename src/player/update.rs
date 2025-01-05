@@ -431,6 +431,7 @@ impl Player {
                             // now we have the animation player
                             if let Some(clip) = player.fps_anims.get(&player.current_weapon_anim) {
                                 // println!("play animation");
+                                #[allow(unsafe_code)]
                                 let clip = unsafe { transmute(*clip) };
                                 // error!("broken animation!");
                                 // println!(
@@ -634,7 +635,15 @@ impl Player {
                     player.fps_anims = ["idle", "shoot1", "shoot2", "reload"]
                         .into_iter()
                         .zip(node_indices)
-                        .map(|(a, b)| (FastStr::from(a), unsafe { transmute(b) }))
+                        .map(|(a, b)| {
+                            (
+                                FastStr::from(a),
+                                #[allow(unsafe_code)]
+                                unsafe {
+                                    transmute(b)
+                                },
+                            )
+                        })
                         .collect();
 
                     player.fps_anim_graph = Some(graph);

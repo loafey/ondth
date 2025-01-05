@@ -1,3 +1,4 @@
+//! A crate for a "faster" String.
 use serde::{Deserialize, Serialize};
 use std::{
     fmt::{Debug, Display},
@@ -6,8 +7,13 @@ use std::{
     sync::Arc,
 };
 
+/// A faster immutable String type. Simply wraps a [String] in an [Arc][std::sync::Arc].
+/// to speed up cloning.
+/// Also implemenents [Deserialize][serde::Deserialize] and [Serialize][serde::Serialize]
+/// for any seralization needs.
 #[derive(Clone, Default)]
 pub struct FastStr {
+    /// The inner string.
     inner: Arc<String>,
 }
 

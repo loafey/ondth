@@ -272,9 +272,13 @@ pub static mut NW_PTR: Option<(
 #[macro_export]
 macro_rules! get_nw {
     () => {{
+        #[allow(unsafe_code)]
         let nw = unsafe { NW_PTR.as_ref() };
         let r: *const _ = nw.unwrap();
-        unsafe { std::ptr::read(r) }
+        #[allow(unsafe_code)]
+        unsafe {
+            std::ptr::read(r)
+        }
     }};
 }
 #[allow(mutable_transmutes)]
@@ -297,7 +301,7 @@ pub fn handle_client_message(
             let (int, _) =
                 option_return!(player.interact(player_entity, rapier_context, cam_trans, &trans));
             let (_e, int) = option_return!(nw.interactables.get(int).ok());
-            #[allow(clippy::missing_transmute_annotations)]
+            #[allow(clippy::missing_transmute_annotations, unsafe_code)]
             unsafe {
                 NW_PTR = Some(std::mem::transmute::<(&_, &_, &_), _>((
                     &*nw, &*server, &*sim,
