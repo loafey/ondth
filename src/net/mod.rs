@@ -107,6 +107,7 @@ pub fn send_messages(
     client: Option<ResMut<RenetClient>>,
     server: Option<ResMut<RenetServer>>,
     mut nw: NetWorld,
+    mut sim: EventWriter<SimulationEvent>,
 ) {
     let mut send: Box<dyn FnMut(ClientMessage)> = if let Some(mut client) = client {
         Box::new(move |message| {
@@ -114,7 +115,7 @@ pub fn send_messages(
         })
     } else if let Some(mut server) = server {
         Box::new(move |message| {
-            server::handle_client_message(&mut server, nw.current_id.0, message, &mut nw)
+            server::handle_client_message(&mut server, nw.current_id.0, message, &mut nw, &mut sim)
         })
     } else {
         error!("no way to handle messages");

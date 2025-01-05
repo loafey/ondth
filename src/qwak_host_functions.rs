@@ -12,7 +12,7 @@ qwak_shared::host_gen!(Host);
 struct Host;
 impl QwakHostFunctions for Host {
     fn get_player_name(id: u64) -> String {
-        let (nw, _) = get_nw!();
+        let (nw, _, _) = get_nw!();
         let name = nw
             .lobby
             .get(&id)
@@ -26,12 +26,12 @@ impl QwakHostFunctions for Host {
     }
 
     fn broadcast_message(value: String) {
-        let (nw, server) = get_nw!();
+        let (nw, server, _) = get_nw!();
         transmit_message(server, nw, value);
     }
 
     fn target_translate(target: String, x: f32, y: f32, z: f32) {
-        let (nw, server) = get_nw!();
+        let (nw, _, _) = get_nw!();
         let target = option_return!(nw.targets.get(&(target.into())));
         let (_, mut t) = option_return!(nw.target_brushes.get_mut(*target).ok());
         t.translation += Vec3::new(x, y, z);

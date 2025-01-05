@@ -17,7 +17,7 @@ use bevy::{
     },
     hierarchy::DespawnRecursiveExt,
     log::{error, info},
-    prelude::NextState,
+    prelude::{EventWriter, NextState},
 };
 use bevy_renet::{
     netcode::{NetcodeServerTransport, NetcodeTransportError, ServerAuthentication, ServerConfig},
@@ -241,16 +241,22 @@ pub fn server_events(
             }
         }
     }
+}
 
+pub fn client_events(
+    mut server: ResMut<RenetServer>,
+    mut nw: NetWorld,
+    mut sim: EventWriter<SimulationEvent>,
+) {
     for client_id in server.clients_id() {
         while let Some(message) = server.receive_message(client_id, ClientChannel::Input as u8) {
             let message = error_continue!(ClientMessage::from_bytes(&message));
-            handle_client_message(&mut server, client_id, message, &mut nw);
+            handle_client_message(&mut server, client_id, message, &mut nw, &mut sim);
         }
 
         while let Some(message) = server.receive_message(client_id, ClientChannel::Command as u8) {
             let message = error_continue!(ClientMessage::from_bytes(&message));
-            handle_client_message(&mut server, client_id, message, &mut nw);
+            handle_client_message(&mut server, client_id, message, &mut nw, &mut sim);
         }
     }
 }
@@ -258,7 +264,11 @@ pub fn server_events(
 // Yea this is cursed, I know, but somehow these references need to be passed to
 // host functions, and I don't feel like creating an EDSL, or passing them through
 // the WASM plugin. I promise that this should never segfault :)
-pub static mut NW_PTR: Option<(&mut NetWorld, &mut RenetServer)> = None;
+pub static mut NW_PTR: Option<(
+    &mut NetWorld,
+    &mut RenetServer,
+    &mut EventWriter<SimulationEvent>,
+)> = None;
 #[macro_export]
 macro_rules! get_nw {
     () => {{
@@ -273,6 +283,7 @@ pub fn handle_client_message(
     client_id: u64,
     message: ClientMessage,
     nw: &mut NetWorld,
+    sim: &mut EventWriter<SimulationEvent>,
 ) {
     let rapier_context = nw.rapier_context.single();
     match message {
@@ -286,11 +297,11 @@ pub fn handle_client_message(
             let (int, _) =
                 option_return!(player.interact(player_entity, rapier_context, cam_trans, &trans));
             let (_e, int) = option_return!(nw.interactables.get(int).ok());
+            #[allow(clippy::missing_transmute_annotations)]
             unsafe {
-                NW_PTR = Some(std::mem::transmute::<
-                    (&NetWorld, &RenetServer),
-                    (&'static mut NetWorld, &'static mut RenetServer),
-                >((&*nw, &*server)))
+                NW_PTR = Some(std::mem::transmute::<(&_, &_, &_), _>((
+                    &*nw, &*server, &*sim,
+                )))
             };
             error_return!(nw.plugins.default.map_interact(MapInteraction {
                 script: int.script.to_string(),
@@ -443,7 +454,7 @@ pub fn init_server(
 }
 
 pub fn systems() -> SystemConfigs {
-    (server_events,).into_configs()
+    (server_events, client_events).into_configs()
 }
 
 pub fn errors() -> SystemConfigs {
