@@ -247,16 +247,31 @@ pub fn client_events(
     mut server: ResMut<RenetServer>,
     mut nw: NetWorld,
     mut sim: EventWriter<SimulationEvent>,
+    mut server_events: EventWriter<ServerMessage>,
 ) {
     for client_id in server.clients_id() {
         while let Some(message) = server.receive_message(client_id, ClientChannel::Input as u8) {
             let message = error_continue!(ClientMessage::from_bytes(&message));
-            handle_client_message(&mut server, client_id, message, &mut nw, &mut sim);
+            handle_client_message(
+                &mut server,
+                client_id,
+                message,
+                &mut nw,
+                &mut sim,
+                &mut server_events,
+            );
         }
 
         while let Some(message) = server.receive_message(client_id, ClientChannel::Command as u8) {
             let message = error_continue!(ClientMessage::from_bytes(&message));
-            handle_client_message(&mut server, client_id, message, &mut nw, &mut sim);
+            handle_client_message(
+                &mut server,
+                client_id,
+                message,
+                &mut nw,
+                &mut sim,
+                &mut server_events,
+            );
         }
     }
 }
@@ -289,6 +304,7 @@ pub fn handle_client_message(
     message: ClientMessage,
     nw: &mut NetWorld,
     sim: &mut EventWriter<SimulationEvent>,
+    server_events: &mut EventWriter<ServerMessage>,
 ) {
     let rapier_context = nw.rapier_context.single();
     match message {
@@ -382,21 +398,16 @@ pub fn handle_client_message(
                             ServerChannel::NetworkedEntities as u8,
                             error_continue!(ServerMessage::Hit { amount: damage }.bytes()),
                         )
-                    } else {
-                        for (_, mut player, _) in &mut nw.players {
-                            if player.id == nw.current_id.0 {
-                                player.health -= damage;
-                                break;
-                            }
-                        }
                     }
                 }
             }
 
-            hitscan_hit_gfx(&nw.asset_server, &mut nw.commands, &hit_pos, &nw.particles);
+            let msg = ServerMessage::HitscanHits { hits: hit_pos };
+            server_events.send(msg.clone());
+            // hitscan_hit_gfx(&nw.asset_server, &mut nw.commands, &hit_pos, &nw.particles);
             server.broadcast_message(
                 ServerChannel::NetworkedEntities as u8,
-                error_return!(ServerMessage::HitscanHits { hits: hit_pos }.bytes()),
+                error_return!(msg.bytes()),
             );
         }
         message => {
