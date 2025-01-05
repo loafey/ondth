@@ -3,7 +3,6 @@ use super::{
     connection_config, update_world,
 };
 use crate::{
-    entities::hitscan_hit_gfx,
     net::{CurrentClientId, IsSteam, Lobby, PlayerInfo, ServerChannel, ServerMessage},
     player::Player,
     queries::NetWorld,
@@ -246,32 +245,17 @@ pub fn server_events(
 pub fn client_events(
     mut server: ResMut<RenetServer>,
     mut nw: NetWorld,
-    mut sim: EventWriter<SimulationEvent>,
     mut server_events: EventWriter<ServerMessage>,
 ) {
     for client_id in server.clients_id() {
         while let Some(message) = server.receive_message(client_id, ClientChannel::Input as u8) {
             let message = error_continue!(ClientMessage::from_bytes(&message));
-            handle_client_message(
-                &mut server,
-                client_id,
-                message,
-                &mut nw,
-                &mut sim,
-                &mut server_events,
-            );
+            handle_client_message(&mut server, client_id, message, &mut nw, &mut server_events);
         }
 
         while let Some(message) = server.receive_message(client_id, ClientChannel::Command as u8) {
             let message = error_continue!(ClientMessage::from_bytes(&message));
-            handle_client_message(
-                &mut server,
-                client_id,
-                message,
-                &mut nw,
-                &mut sim,
-                &mut server_events,
-            );
+            handle_client_message(&mut server, client_id, message, &mut nw, &mut server_events);
         }
     }
 }
@@ -282,7 +266,7 @@ pub fn client_events(
 pub static mut NW_PTR: Option<(
     &mut NetWorld,
     &mut RenetServer,
-    &mut EventWriter<SimulationEvent>,
+    &mut EventWriter<ServerMessage>,
 )> = None;
 /// Returns the content of [NW_PTR]
 #[macro_export]
@@ -303,7 +287,6 @@ pub fn handle_client_message(
     client_id: u64,
     message: ClientMessage,
     nw: &mut NetWorld,
-    sim: &mut EventWriter<SimulationEvent>,
     server_events: &mut EventWriter<ServerMessage>,
 ) {
     let rapier_context = nw.rapier_context.single();
@@ -321,7 +304,9 @@ pub fn handle_client_message(
             #[allow(clippy::missing_transmute_annotations, unsafe_code)]
             unsafe {
                 NW_PTR = Some(std::mem::transmute::<(&_, &_, &_), _>((
-                    &*nw, &*server, &*sim,
+                    &*nw,
+                    &*server,
+                    &*server_events,
                 )))
             };
             error_return!(nw.plugins.default.map_interact(MapInteraction {

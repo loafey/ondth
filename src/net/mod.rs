@@ -107,7 +107,6 @@ pub fn send_messages(
     client: Option<ResMut<RenetClient>>,
     server: Option<ResMut<RenetServer>>,
     mut nw: NetWorld,
-    mut sim: EventWriter<SimulationEvent>,
     mut server_events: EventWriter<ServerMessage>,
 ) {
     let mut send: Box<dyn FnMut(ClientMessage)> = if let Some(mut client) = client {
@@ -121,7 +120,6 @@ pub fn send_messages(
                 nw.current_id.0,
                 message,
                 &mut nw,
-                &mut sim,
                 &mut server_events,
             )
         })

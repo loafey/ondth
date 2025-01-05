@@ -8,7 +8,7 @@ use crate::{
 };
 use bevy::math::Vec3;
 pub use inner::functions as qwak_functions;
-use macros::{error_return, option_return};
+use macros::error_return;
 use qwak_shared::QwakHostFunctions;
 
 qwak_shared::host_gen!(Host);
@@ -35,17 +35,15 @@ impl QwakHostFunctions for Host {
     }
 
     fn target_translate(target_name: String, x: f32, y: f32, z: f32) {
-        let (nw, server, _) = get_nw!();
+        let (_, server, sw) = get_nw!();
         let target_name = target_name.into();
-        let target = option_return!(nw.targets.get(&target_name));
-        let (_, mut t) = option_return!(nw.target_brushes.get_mut(*target).ok());
-        t.translation += Vec3::new(x, y, z);
 
-        let pickup_message_wrapped = ServerMessage::TranslateBrush {
+        let translate = ServerMessage::TranslateBrush {
             target: target_name,
             translation: Vec3::new(x, y, z),
         };
-        let bytes = error_return!(pickup_message_wrapped.bytes());
+        sw.send(translate.clone());
+        let bytes = error_return!(translate.bytes());
         server.broadcast_message(ServerChannel::NetworkedEntities as u8, bytes);
     }
 }
