@@ -237,7 +237,7 @@ pub fn server_events(
 
                 let bytes = error_continue!(pickup_message_wrapped.bytes());
 
-                server.broadcast_message(ServerChannel::NetworkedEntities as u8, bytes.clone());
+                server.broadcast_message(ServerChannel::NetworkedEntities as u8, bytes);
             }
         }
     }

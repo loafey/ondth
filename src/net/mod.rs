@@ -186,6 +186,10 @@ pub enum SimulationEvent {
 #[derive(Debug, Serialize, Deserialize, Event)]
 pub enum ServerMessage {
     SetMap(PathBuf),
+    TranslateBrush {
+        target: FastStr,
+        translation: Vec3,
+    },
     SpawnPlayer {
         id: u64,
         name: FastStr,

@@ -1,6 +1,6 @@
 use super::{
-    connection_config, update_world, CurrentClientId, IsSteam, NetState, ServerChannel,
-    ServerMessage, SteamClient, PROTOCOL_ID,
+    CurrentClientId, IsSteam, NetState, PROTOCOL_ID, ServerChannel, ServerMessage, SteamClient,
+    connection_config, update_world,
 };
 use crate::{
     entities::{hitscan_hit_gfx, pickup::PickupEntity},
@@ -13,7 +13,7 @@ use bevy::{
     ecs::{
         entity::Entity,
         event::EventReader,
-        schedule::{common_conditions::resource_exists, IntoSystemConfigs, SystemConfigs},
+        schedule::{IntoSystemConfigs, SystemConfigs, common_conditions::resource_exists},
         system::{Query, Res, ResMut},
         world::World,
     },
@@ -113,6 +113,14 @@ pub fn handle_messages(
         match message {
             ServerMessage::PlayerUpdate { id, message } => {
                 update_world(id, &message, &mut nw);
+            }
+            ServerMessage::TranslateBrush {
+                target,
+                translation,
+            } => {
+                let target = option_continue!(nw.targets.get(&target));
+                let (_, mut t) = option_continue!(nw.target_brushes.get_mut(*target).ok());
+                t.translation += translation;
             }
             ServerMessage::DespawnPickup { id } => {
                 // TODO: Improve this
