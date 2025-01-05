@@ -29,6 +29,9 @@ impl QwakPlugin for Plugin {
                 let name = host::get_player_name(player_id);
                 host::broadcast_message(format!("{name}: script: {script:?}, target: {target:?}"))
             }
+            "debug_brush_jump_up" => {
+                host::broadcast_message("jump_up".to_string());
+            }
             _ => panic!("unknown interaction: {script}"),
         }
     }

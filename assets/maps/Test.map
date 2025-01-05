@@ -1085,7 +1085,7 @@
 // entity 136
 {
 "classname" "interactable"
-"script" "debug_log"
+"script" "debug_brush_jump_up"
 "target" "door"
 // brush 0
 {
