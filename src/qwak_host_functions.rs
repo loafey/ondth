@@ -3,7 +3,9 @@ use crate::{
     get_nw,
     net::server::{NW_PTR, transmit_message},
 };
+use bevy::math::Vec3;
 pub use inner::functions as qwak_functions;
+use macros::option_return;
 use qwak_shared::QwakHostFunctions;
 
 qwak_shared::host_gen!(Host);
@@ -30,9 +32,8 @@ impl QwakHostFunctions for Host {
 
     fn target_translate(target: String, x: f32, y: f32, z: f32) {
         let (nw, server) = get_nw!();
-        let Some(target) = nw.targets.get(&(target.into())) else {
-            return;
-        };
-        println!("{target} move {x} {y} {z}");
+        let target = option_return!(nw.targets.get(&(target.into())));
+        let (_, mut t) = option_return!(nw.target_brushes.get_mut(*target).ok());
+        t.translation += Vec3::new(x, y, z);
     }
 }

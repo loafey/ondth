@@ -17,6 +17,7 @@ impl QwakPlugin for Plugin {
         [0, 0, 1]
     }
 
+    // The functions scriptable entities can call
     fn map_interact(
         MapInteraction {
             script,
