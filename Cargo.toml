@@ -71,3 +71,6 @@ qwak_helper_types      = { path = "crates/qwak_helper_types" }
 
 [profile.dev.package."*"]
 opt-level = 3
+
+[profile.release.package.default]
+strip = "debuginfo"

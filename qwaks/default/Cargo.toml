@@ -11,5 +11,3 @@ extism-pdk        = { workspace = true}
 [lib]
 crate-type = ["cdylib"]
 
-[profile.release]
-strip = "debuginfo"
