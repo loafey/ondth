@@ -6,7 +6,7 @@ use bevy::{
     log::error,
     math::{EulerRot, Quat, Vec3},
     pbr::{DirectionalLight, MeshMaterial3d, PointLight, StandardMaterial},
-    prelude::Mesh3d,
+    prelude::{Entity, Mesh3d},
     transform::components::Transform,
 };
 use bevy_rapier3d::{
@@ -56,10 +56,15 @@ pub fn spawn_entity(
         .as_ref()
         .map(|s| &s[..])
     {
+        Some("scriptable") => {
+            bevy::log::warn!("unused scriptable brush: {attributes:?}")
+        }
         Some("interactable") => {
             if let Some(script) = attributes.get(&FastStr::from("script")).as_ref() {
+                let target = attributes.get(&FastStr::from("target")).cloned();
                 return Some(Interactable {
                     script: (*script).clone(),
+                    target,
                 });
             }
         }

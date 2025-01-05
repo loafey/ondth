@@ -4,12 +4,12 @@ use bevy::{
     image::Image,
     log::info,
     math::Vec3,
-    prelude::States,
+    prelude::{Entity, States},
 };
 use data::{PickupData, WeaponData};
 use faststr::FastStr;
 use macros::error_return;
-use std::{collections::HashMap, fs, path::PathBuf};
+use std::{collections::HashMap, fs, ops::Deref, path::PathBuf};
 
 pub mod data;
 pub mod entropy;
@@ -109,5 +109,15 @@ impl WeaponMap {
 
         info!("Done loading weapons...");
         Self(map)
+    }
+}
+
+#[derive(Debug, Resource, Default)]
+pub struct TargetMap(pub HashMap<FastStr, Entity>);
+impl Deref for TargetMap {
+    type Target = HashMap<FastStr, Entity>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }

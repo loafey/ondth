@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use self::{
     plane::{InPlane, Plane},
     poly::Poly,
@@ -14,9 +16,10 @@ use bevy::{
 use bevy_rapier3d::geometry::Collider;
 use bevy_renet::renet::RenetClient;
 use entities::spawn_entity;
+use faststr::FastStr;
 use macros::error_return;
 use map_parser::parser::Brush;
-use resources::{CurrentMap, MapDoneLoading, PickupMap, PlayerSpawnpoint, TextureMap};
+use resources::{CurrentMap, MapDoneLoading, PickupMap, PlayerSpawnpoint, TargetMap, TextureMap};
 
 pub mod entities;
 mod interactable;
@@ -58,8 +61,23 @@ pub fn load_map(
 
     let t = std::time::Instant::now();
     info!("Loading map...");
+    let mut targets = HashMap::new();
+    let tn = FastStr::from("targetname");
+    for entity in map.iter() {
+        if let Some(tn) = entity.attributes.get(&tn) {
+            targets.insert(
+                tn.clone(),
+                commands.spawn((BrushEntity, Transform::default())).id(),
+            );
+        }
+    }
 
     for (id, entity) in map.into_iter().enumerate() {
+        let predefined = entity
+            .attributes
+            .get(&tn)
+            .and_then(|e| targets.get(e))
+            .cloned();
         let interactable = spawn_entity(
             id as u64,
             client.is_some(),
@@ -75,7 +93,10 @@ pub fn load_map(
             // Calculate the verticies for the mesh
             let polys = sort_verticies_cw(get_polys_brush(brush));
 
-            let mut spawner = commands.spawn((BrushEntity, Transform::default()));
+            let mut spawner = match predefined {
+                Some(ent) => commands.get_entity(ent).unwrap(),
+                None => commands.spawn((BrushEntity, Transform::default())),
+            };
             let mut brush_poly = Vec::new();
             for mut poly in polys {
                 let mut plane_center = Vec3::ZERO;
@@ -164,6 +185,7 @@ pub fn load_map(
     }
 
     info!("Done loading map, took {}s", t.elapsed().as_secs_f32());
+    commands.insert_resource(TargetMap(targets));
     done_loading.0 = true;
 }
 
