@@ -7,9 +7,12 @@ use std::{
     path::Path,
 };
 
+/// Dummy type for game randomness.
 pub struct EGame;
+/// Dummy type for misc randomness.
 pub struct EMisc;
 
+/// The randomess for a specific type.
 #[derive(Resource)]
 pub struct Entropy<Type> {
     values: Vec<f32>,
@@ -22,9 +25,11 @@ impl<Type> Debug for Entropy<Type> {
         write!(f, "Entropy<{}>", std::any::type_name::<Type>())
     }
 }
+/// Load the entropy for game actions.
 pub fn entropy_game() -> Entropy<EGame> {
     Entropy::load("assets/game.entropy").unwrap()
 }
+/// Load the entropy for misc actions.
 pub fn entropy_misc() -> Entropy<EMisc> {
     Entropy::load("assets/game.entropy").unwrap()
 }
@@ -40,9 +45,11 @@ impl<Type> Entropy<Type> {
         value
     }
     /// Chooses a random element in a slice and copies it.
+    ///
+    /// # Safety
     /// Panics if slice is empty.
     #[must_use]
-    #[allow(dead_code)]
+    #[allow(dead_code, clippy::unnecessary_safety_doc)]
     pub fn choose_copy<T: Copy>(&mut self, slice: &[T]) -> T {
         let entropy = self.get_f32();
         let len = slice.len() as f32;
