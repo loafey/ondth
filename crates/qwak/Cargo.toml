@@ -12,9 +12,5 @@ qwak_helper_types = { workspace = true }
 [lib]
 path = "lib.rs"
 
-[[bin]]
-name = "qwak-test"
-path = "bin.rs"
-
 [lints]
 workspace = true
