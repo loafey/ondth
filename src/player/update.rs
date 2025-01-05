@@ -876,9 +876,9 @@ impl Player {
 
                     commands
                         .spawn((
-                            Mesh3d(asset_server.load(&proj.model_file)),
+                            Mesh3d(asset_server.load(&*proj.model_file)),
                             MeshMaterial3d(materials.add(StandardMaterial {
-                                base_color_texture: Some(asset_server.load(&proj.texture_file)),
+                                base_color_texture: Some(asset_server.load(&*proj.texture_file)),
                                 perceptual_roughness: 1.0,
                                 reflectance: 0.0,
                                 ..default()
