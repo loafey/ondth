@@ -1,6 +1,15 @@
+//! This crate exports a function that calculates the hash of the asset directory.
+//!
+//! ## Safety
+//! This crate has not been proven cryptographically secure.
+
 use sha256::digest;
 use std::{fs::File, io::Read, path::Path};
 
+/// Return the sha256 hash for the asset directory.
+/// ## Safety
+/// This crate has not been proven cryptographically secure.
+#[allow(clippy::unnecessary_safety_doc)]
 pub fn get_asset_hash() -> String {
     recurse("assets").unwrap()
 }
