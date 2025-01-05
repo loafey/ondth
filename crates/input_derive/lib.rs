@@ -151,6 +151,8 @@ pub fn derive_input(_attr: TokenStream, input: TokenStream) -> TokenStream {
 
     let impl_block = quote! {
         impl #name {
+            /// Updates all the bools in the struct. Should be ran
+            /// every frame.
             pub fn update(
                 mut input: bevy::ecs::prelude::ResMut<PlayerInput>,
                 mouse_buttons: bevy::ecs::prelude::Res<bevy::input::ButtonInput<bevy::input::mouse::MouseButton>>,

@@ -4,7 +4,7 @@ use serde::Deserialize;
 
 #[derive_input]
 #[derive(Debug, Deserialize, Resource)]
-#[allow(dead_code)]
+#[allow(dead_code, missing_docs)]
 pub struct PlayerInput {
     weapon_shoot1: Key,
     weapon_shoot2: Key,
@@ -40,14 +40,14 @@ impl Default for PlayerInput {
 
 #[derive(Debug, Deserialize, Clone, Copy)]
 #[serde(untagged)]
-pub enum Key {
+enum Key {
     Mouse(MouseKey),
     Wheel(MouseWheel),
     Keyboard(KeyCode),
 }
 
 #[derive(Debug, Deserialize, Clone, Copy)]
-pub enum MouseWheel {
+enum MouseWheel {
     Wheel1,
     Wheel2,
 }
@@ -62,7 +62,7 @@ impl MouseWheel {
 }
 #[derive(Debug, Deserialize, Copy, Clone)]
 #[allow(clippy::enum_variant_names)]
-pub enum MouseKey {
+enum MouseKey {
     MouseLeft,
     MouseRight,
     MouseMiddle,
@@ -74,7 +74,7 @@ pub enum MouseKey {
 
 #[derive(Debug, Deserialize, Copy, Clone)]
 #[repr(u32)]
-pub enum KeyCode {
+enum KeyCode {
     #[allow(unused)]
     Unidentified((u16, u32)),
     Backquote,
