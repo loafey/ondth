@@ -1,5 +1,7 @@
+#![allow(missing_docs)]
 use qwak_helper_types::MapInteraction;
 use qwak_shared::QwakPlugin;
+
 qwak_shared::plugin_gen!(Plugin);
 qwak_shared::host_calls!();
 

@@ -61,6 +61,7 @@ pub fn get_export_functions(item: TS) -> TS {
     }
 
     quote! {
+        /// Generates the interface for calling plugin functions.
         #[macro_export]
         macro_rules! plugin_gen {
             ($name:ident) => {
@@ -80,8 +81,9 @@ pub fn get_plugin_calls(item: TS) -> TS {
         _ => None,
     }) {
         let sig = &item.sig;
+
         let mut args: Punctuated<_, Comma> = Punctuated::new();
-        let (macro_sig, rt) = {
+        let (attrs, macro_sig, rt) = {
             let mut sig = sig.clone();
             sig.ident = Ident::new(&format!("{}", sig.ident), Span::call_site());
 
@@ -91,6 +93,14 @@ pub fn get_plugin_calls(item: TS) -> TS {
             let copy = *ty.clone();
             *ty = syn::parse(quote!(Result<#copy, extism::Error>).into()).unwrap();
             sig.output = ReturnType::Type(rl, ty);
+
+            let mut attrs = quote! {};
+            for attr in &item.attrs {
+                attrs = quote! {
+                    #attrs
+                    #attr
+                };
+            }
 
             let params = sig
                 .inputs
@@ -115,7 +125,7 @@ pub fn get_plugin_calls(item: TS) -> TS {
             sig.inputs = params;
             sig.inputs
                 .insert(0, syn::parse(quote! {&self}.into()).unwrap());
-            (sig, copy)
+            (attrs, sig, copy)
         };
         let args = if args.len() == 1 {
             quote! {#args}
@@ -126,6 +136,7 @@ pub fn get_plugin_calls(item: TS) -> TS {
         res = quote! {
             #res
 
+            #attrs
             pub #macro_sig {
                 let res: extism_pdk::Msgpack<#rt> = match self.inner.lock() {
                     Ok(mut o) => o.call(#call, #args)?,
@@ -137,17 +148,23 @@ pub fn get_plugin_calls(item: TS) -> TS {
     }
 
     quote! {
+        /// Generates the struct for calling plugin functions.
         #[macro_export]
         macro_rules! plugin_calls {
             () => {
                 mod calls {
                     use extism::{*, convert::*};
                     use std::sync::{Arc, Mutex};
+                    /// A WASM qwak plugin.
                     #[derive(Debug)]
                     pub struct QwakPlugin {
                         inner: std::sync::Arc<std::sync::Mutex<extism::Plugin>>
                     }
                     impl QwakPlugin {
+                        /// Returns a new [QwakPlugin].
+                        /// 
+                        /// # Errors
+                        /// Fails if the path does not exist or if the binary files is invalid.
                         pub fn new(path: impl AsRef<std::path::Path>, functions: impl IntoIterator<Item = extism::Function>) -> Result<Self, String> {
                             let wasm = extism::Wasm::file(path);
                             let manifest = extism::Manifest::new([wasm]);

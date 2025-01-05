@@ -88,6 +88,7 @@ pub fn get_export_functions(item: TS) -> TS {
         };
     }
     quote! {
+        /// Generates the interface for calling host functions.
         #[macro_export]
         macro_rules! host_gen {
             ($name:ident) => {
@@ -111,6 +112,13 @@ pub fn get_host_calls(item: TS) -> TS {
         let TraitItem::Fn(func) = func else {
             panic!("only functions are supported")
         };
+        let mut attrs = quote! {};
+        for attr in func.attrs {
+            attrs = quote! {
+                #attrs
+                #attr
+            };
+        }
         let sig = func.sig;
         let func_name = sig.ident.clone();
         let args = sig
@@ -128,6 +136,7 @@ pub fn get_host_calls(item: TS) -> TS {
             .collect::<Punctuated<_, Comma>>();
         exports = quote! {
             #exports
+            #[allow(missing_docs)]
             pub unsafe #sig;
         };
         let panic_handler = if func_name != "debug_log" {
@@ -139,6 +148,7 @@ pub fn get_host_calls(item: TS) -> TS {
         };
         pubs = quote! {
             #pubs
+            #attrs
             pub #sig {
                 unsafe {
                     match inner::#func_name(#args) {
@@ -154,6 +164,7 @@ pub fn get_host_calls(item: TS) -> TS {
     }
     // let d = format!("{:?}", format!("{tree:#?}"));
     quote! {
+        /// Generates the boilerplate for calling host functions.
         #[macro_export]
         macro_rules! host_calls {
             () => {
