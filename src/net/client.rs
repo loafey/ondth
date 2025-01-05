@@ -50,6 +50,7 @@ pub fn handle_messages(
     mut nw: NetWorld,
     mut server_events: EventReader<ServerMessage>,
 ) {
+    println!("client code");
     for message in server_events.read() {
         match message.clone() {
             ServerMessage::SetMap(map) => {
@@ -195,7 +196,10 @@ pub fn init_client(
 }
 
 pub fn systems() -> SystemConfigs {
-    (handle_messages, get_events).into_configs()
+    (get_events,).into_configs()
+}
+pub fn all_cons() -> SystemConfigs {
+    (handle_messages,).into_configs()
 }
 
 pub fn errors() -> SystemConfigs {

@@ -80,6 +80,7 @@ impl Plugin for ServerPlugin {
                 net::server::systems(),
                 net::server::errors(),
                 net::server::errors_steam(),
+                net::client::all_cons(),
             )
                 .run_if(in_state(NetState::Server)),
         );
@@ -95,6 +96,7 @@ impl Plugin for ClientPlugin {
                 net::client::systems(),
                 net::client::errors(),
                 net::client::errors_steam(),
+                net::client::all_cons(),
             )
                 .run_if(in_state(NetState::Client)),
         )
