@@ -38,13 +38,14 @@ impl QwakHostFunctions for Host {
         transmit_message(server, nw, value);
     }
 
-    fn target_translate(target_name: String, x: f32, y: f32, z: f32) {
+    fn target_translate(target_name: String, x: f32, y: f32, z: f32, delay: u32) {
         let (_, server, sw) = get_nw!();
         let target_name = target_name.into();
 
         let translate = ServerMessage::TranslateBrush {
             target: target_name,
             translation: Vec3::new(x, y, z),
+            delay,
         };
         let bytes = error_return!(translate.bytes());
         sw.send(translate);

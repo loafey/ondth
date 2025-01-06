@@ -28,5 +28,5 @@ pub trait QwakHostFunctions {
     #[doc = "Returns the player name of a specified id."]
     fn get_player_name(id: u64) -> String;
     #[doc = "Move a brush by the vector provided."]
-    fn target_translate(target: String, x: f32, y: f32, z: f32);
+    fn target_translate(target: String, x: f32, y: f32, z: f32, duration: u32);
 }

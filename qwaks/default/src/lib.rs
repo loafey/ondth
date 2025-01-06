@@ -35,7 +35,8 @@ impl QwakPlugin for Plugin {
             }
             "translate_brush" => {
                 let Some(target) = target else { return };
-                let [x, y, z] = if let Some(arg) = argument {
+                // Parse the argument, or return a default value
+                let ([x, y, z], delay) = if let Some(arg) = argument {
                     match serde_json::from_str(&arg) {
                         Ok(o) => o,
                         Err(e) => {
@@ -45,13 +46,13 @@ impl QwakPlugin for Plugin {
                                 line!(),
                                 column!()
                             ));
-                            [0.0, 0.1, 0.0]
+                            ([0.0, 0.1, 0.0], 100u32)
                         }
                     }
                 } else {
-                    [0.0, 0.1, 0.0]
+                    ([0.0, 0.1, 0.0], 100)
                 };
-                host::target_translate(target, x, y, z);
+                host::target_translate(target, x, y, z, delay);
             }
             _ => panic!("unknown interaction: {script}"),
         }

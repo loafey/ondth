@@ -195,6 +195,7 @@ pub enum ServerMessage {
     TranslateBrush {
         target: FastStr,
         translation: Vec3,
+        delay: u32,
     },
     SpawnPlayer {
         id: u64,

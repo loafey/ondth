@@ -1087,7 +1087,7 @@
 "classname" "interactable"
 "script" "translate_brush"
 "target" "door"
-"argument" "[0.01, 0.02, 0.03]"
+"argument" "[[0.0, 0.3, 1.0], 0]"
 // brush 0
 {
 ( 144 128 -112 ) ( 144 96 -112 ) ( 144 96 -144 ) maps/Button00 -64 -16 0 1 1

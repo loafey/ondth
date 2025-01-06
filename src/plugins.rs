@@ -3,7 +3,7 @@ use std::path::PathBuf;
 
 use crate::entities::message::Message;
 use crate::entities::{ProjectileEntity, pickup::PickupEntity};
-use crate::map_gen::{load_map, texture_systems::*};
+use crate::map_gen::{brush_interacts, load_map, texture_systems::*};
 use crate::net::{self, NetState};
 use crate::player::Player;
 use crate::qwak_host_functions::qwak_functions;
@@ -149,6 +149,10 @@ pub struct GameStage;
 impl Plugin for GameStage {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.add_systems(OnEnter(CurrentStage::InGame), register_textures)
+            .add_systems(
+                Update,
+                brush_interacts::systems().run_if(in_state(CurrentStage::InGame)),
+            )
             .add_systems(
                 Update,
                 texture_waiter
