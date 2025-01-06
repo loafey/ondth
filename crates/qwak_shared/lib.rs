@@ -5,8 +5,7 @@
 /// The functions a plugin needs to define.
 #[qwak_macro::plugin]
 pub trait QwakPlugin {
-    #[doc = "Called when a plugin is loaded. 
-Can be used to call functions which for example sets up your runtime etc."]
+    #[doc = "Called when a plugin is loaded. Can be used to call functions which for example sets up your runtime etc."]
     fn plugin_init() -> ();
     #[doc = "Returns the name of a plugin."]
     fn plugin_name() -> String;
@@ -28,5 +27,7 @@ pub trait QwakHostFunctions {
     #[doc = "Returns the player name of a specified id."]
     fn get_player_name(id: u64) -> String;
     #[doc = "Move a brush by the vector provided."]
-    fn target_translate(target: String, x: f32, y: f32, z: f32, duration: u32);
+    fn brush_translate(target: String, x: f32, y: f32, z: f32, duration: u32);
+    #[doc = "Rotate a brush by the vector provided."]
+    fn brush_rotate(target: String, x: f32, y: f32, z: f32, duration: u32);
 }

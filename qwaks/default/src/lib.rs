@@ -52,7 +52,8 @@ impl QwakPlugin for Plugin {
                 } else {
                     ([0.0, 0.1, 0.0], 100)
                 };
-                host::target_translate(target, x, y, z, delay);
+                host::brush_rotate(target, x, y, z, delay);
+                // host::brush_translate(target, x, y, z, delay);
             }
             _ => panic!("unknown interaction: {script}"),
         }

@@ -4,7 +4,10 @@ use super::{
 };
 use crate::{
     entities::{hitscan_hit_gfx, pickup::PickupEntity},
-    map_gen::{self, brush_interacts::TranslateBrush},
+    map_gen::{
+        self,
+        brush_interacts::{RotateBrush, TranslateBrush},
+    },
     net::{Lobby, PlayerInfo},
     player::Player,
     queries::NetWorld,
@@ -127,6 +130,20 @@ pub fn handle_messages(
                     _ => (delay as f32) / 1000.0,
                 };
                 command.insert(TranslateBrush::new(t.translation + translation, time));
+            }
+            ServerMessage::RotateBrush {
+                target,
+                translation,
+                delay,
+            } => {
+                let target = option_continue!(nw.targets.get(&target));
+                let (e, t) = option_continue!(nw.target_brushes.get(*target).ok());
+                let mut command = option_continue!(nw.commands.get_entity(e));
+                let time = match delay {
+                    0 => 0.0,
+                    _ => (delay as f32) / 1000.0,
+                };
+                command.insert(RotateBrush::new(t.translation + translation, time));
             }
             ServerMessage::DespawnPickup { id } => {
                 // TODO: Improve this
