@@ -61,10 +61,18 @@ pub fn spawn_entity(
         }
         Some("interactable") => {
             if let Some(script) = attributes.get(&FastStr::from("script")).as_ref() {
-                let target = attributes.get(&FastStr::from("target")).cloned();
+                let target = attributes
+                    .get(&FastStr::from("target"))
+                    .cloned()
+                    .take_if(|s| !s.is_empty());
+                let argument = attributes
+                    .get(&FastStr::from("argument"))
+                    .cloned()
+                    .take_if(|s| !s.is_empty());
                 return Some(Interactable {
                     script: (*script).clone(),
                     target,
+                    argument,
                 });
             }
         }

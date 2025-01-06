@@ -11,6 +11,8 @@ pub struct MapInteraction {
     pub script: String,
     /// The optional target entity
     pub target: Option<String>,
+    /// Argument to be passed to the function (in JSon).
+    pub argument: Option<String>,
     /// The id of the player activating the interaction
     pub player_id: u64,
 }

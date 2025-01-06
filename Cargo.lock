@@ -2198,6 +2198,7 @@ dependencies = [
  "extism-pdk",
  "qwak_helper_types",
  "qwak_shared",
+ "serde_json",
 ]
 
 [[package]]

@@ -131,7 +131,7 @@
 ]
 
 // Scriptable
-@baseclass base(Appearflags, Target, Killtarget, Targetname) = Scriptable
+@baseclass base(Appearflags, Target, Killtarget, Targetname, Argument) = Scriptable
 [
 	script(string) : "Script" : ""
 ]

@@ -25,6 +25,7 @@ impl QwakPlugin for Plugin {
             script,
             target,
             player_id,
+            argument,
         }: MapInteraction,
     ) {
         match &*script {
@@ -32,10 +33,25 @@ impl QwakPlugin for Plugin {
                 let name = host::get_player_name(player_id);
                 host::broadcast_message(format!("{name}: script: {script:?}, target: {target:?}"))
             }
-            "debug_brush_jump_up" => {
+            "translate_brush" => {
                 let Some(target) = target else { return };
-                host::broadcast_message("jump_up".to_string());
-                host::target_translate(target, 0.0, 0.1, 0.0);
+                let [x, y, z] = if let Some(arg) = argument {
+                    match serde_json::from_str(&arg) {
+                        Ok(o) => o,
+                        Err(e) => {
+                            host::print_error(format!(
+                                "{}:{}:{}: {e}",
+                                file!(),
+                                line!(),
+                                column!()
+                            ));
+                            [0.0, 0.1, 0.0]
+                        }
+                    }
+                } else {
+                    [0.0, 0.1, 0.0]
+                };
+                host::target_translate(target, x, y, z);
             }
             _ => panic!("unknown interaction: {script}"),
         }

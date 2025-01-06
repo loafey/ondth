@@ -5,4 +5,5 @@ use faststr::FastStr;
 pub struct Interactable {
     pub script: FastStr,
     pub target: Option<FastStr>,
+    pub argument: Option<FastStr>,
 }

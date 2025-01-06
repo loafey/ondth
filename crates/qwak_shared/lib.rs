@@ -19,6 +19,8 @@ Can be used to call functions which for example sets up your runtime etc."]
 #[qwak_macro::host]
 /// The functions a the game defines for plugin -> game interaction.
 pub trait QwakHostFunctions {
+    #[doc = "Log an error."]
+    fn print_error(message: String);
     #[doc = "Prints to `stdout`."]
     fn debug_log(val: String);
     #[doc = "Sends a message to all players."]

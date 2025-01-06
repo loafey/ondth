@@ -312,6 +312,7 @@ pub fn handle_client_message(
             error_return!(nw.plugins.default.map_interact(MapInteraction {
                 script: int.script.to_string(),
                 target: int.target.as_ref().map(|s| s.to_string()),
+                argument: int.argument.as_ref().map(|s| s.to_string()),
                 player_id: client_id
             }));
         }

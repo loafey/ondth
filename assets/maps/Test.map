@@ -1085,8 +1085,9 @@
 // entity 136
 {
 "classname" "interactable"
-"script" "debug_brush_jump_up"
+"script" "translate_brush"
 "target" "door"
+"argument" "[0.01, 0.02, 0.03]"
 // brush 0
 {
 ( 144 128 -112 ) ( 144 96 -112 ) ( 144 96 -144 ) maps/Button00 -64 -16 0 1 1
