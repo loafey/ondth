@@ -25,12 +25,12 @@ impl QwakHostFunctions for Host {
     }
 
     fn print_error(message: String) {
-        bevy::log::error!(target: "plugin_error", "{message}");
+        bevy::log::error!(target: "plugin", "{message}");
     }
 
     #[allow(clippy::print_stderr)]
     fn debug_log(value: String) {
-        eprintln!("{value}");
+        bevy::log::debug!(target: "plugin", "{value}");
     }
 
     fn broadcast_message(value: String) {
