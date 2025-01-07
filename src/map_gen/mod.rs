@@ -99,6 +99,18 @@ pub fn load_map(
                 None => commands.spawn((BrushEntity, Transform::default())),
             };
             let mut brush_poly = Vec::new();
+            let mut model_center = Vec3::ZERO;
+            for poly in &polys {
+                let mut plane_center = Vec3::ZERO;
+                for vert in &poly.verts {
+                    plane_center += vert.p;
+                }
+                plane_center /= poly.verts.len() as f32;
+                model_center += plane_center;
+            }
+            model_center /= polys.len() as f32;
+            spawner.insert(Transform::from_translation(model_center));
+
             for mut poly in polys {
                 let mut plane_center = Vec3::ZERO;
                 for vert in &poly.verts {
@@ -107,7 +119,11 @@ pub fn load_map(
                 plane_center /= poly.verts.len() as f32;
 
                 let indices = poly.calculate_indices();
-                let verts = poly.verts.iter().map(|p| p.p).collect::<Vec<_>>();
+                let verts = poly
+                    .verts
+                    .iter()
+                    .map(|p| p.p - model_center)
+                    .collect::<Vec<_>>();
                 brush_poly.append(&mut verts.clone());
                 let mut new_mesh = Mesh::new(
                     PrimitiveTopology::TriangleList,
