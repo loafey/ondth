@@ -1,10 +1,14 @@
 #![allow(missing_docs)]
-use extism_pdk::Msgpack;
-use qwak_helper_types::MapInteraction;
+#![feature(thread_local)]
+use std::cell::{LazyCell, RefCell};
+
+use qwak_helper_types::{MapInteraction, TypeMap, storage, storage_get, storage_put};
 use qwak_shared::QwakPlugin;
 
 qwak_shared::plugin_gen!(Plugin);
 qwak_shared::host_calls!();
+
+storage!();
 
 // Simple QWAK plugin that contains the required functions.
 // This is compiled to WASM.
@@ -57,18 +61,16 @@ impl QwakPlugin for Plugin {
                 // host::brush_translate(target, x, y, z, delay);
             }
             "open_big_doors" => {
-                let v = extism_pdk::var::get::<Msgpack<bool>>("bigDoorsOpened")
-                    .unwrap_or_default()
-                    .map(|b| b.0)
-                    .unwrap_or_default();
-                if v {
+                #[derive(Clone, Copy, Default)]
+                struct BoolDoor(bool);
+                if storage_get!(BoolDoor).unwrap_or_default().0 {
                     return;
                 }
                 host::brush_rotate("bigDoor1".to_string(), 0.0, 50.0, 0.0, 100000);
                 host::brush_translate("bigDoor1".to_string(), 0.5, 0.0, -0.5, 100000);
                 host::brush_rotate("bigDoor2".to_string(), 0.0, -50.0, 0.0, 100000);
                 host::brush_translate("bigDoor2".to_string(), 0.5, 0.0, 0.5, 100000);
-                extism_pdk::var::set("bigDoorsOpened", Msgpack(true)).unwrap();
+                storage_put!(BoolDoor(true));
             }
             _ => panic!("unknown interaction: {script}"),
         }
