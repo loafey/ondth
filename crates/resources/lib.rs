@@ -132,9 +132,9 @@ impl WeaponMap {
 
 /// A struct containing a [HashMap] containing ids and their respective [Entities](bevy::prelude::Entity).
 #[derive(Debug, Resource, Default)]
-pub struct TargetMap(pub HashMap<FastStr, Entity>);
+pub struct TargetMap(pub HashMap<FastStr, Vec<Entity>>);
 impl Deref for TargetMap {
-    type Target = HashMap<FastStr, Entity>;
+    type Target = HashMap<FastStr, Vec<Entity>>;
 
     fn deref(&self) -> &Self::Target {
         &self.0

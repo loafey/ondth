@@ -63,13 +63,12 @@ pub fn load_map(
     let t = std::time::Instant::now();
     info!("Loading map...");
     let mut targets = HashMap::new();
+    let mut target_index: HashMap<FastStr, usize> = HashMap::new();
     let tn = FastStr::from("targetname");
     for entity in map.iter() {
         if let Some(tn) = entity.attributes.get(&tn) {
-            targets.insert(
-                tn.clone(),
-                commands.spawn((BrushEntity, Transform::default())).id(),
-            );
+            let vec = targets.entry(tn.clone()).or_insert(Vec::new());
+            vec.push(commands.spawn((BrushEntity, Transform::default())).id());
         }
     }
 
@@ -77,8 +76,12 @@ pub fn load_map(
         let predefined = entity
             .attributes
             .get(&tn)
-            .and_then(|e| targets.get(e))
-            .cloned();
+            .map(|e| (e.clone(), target_index.entry(e.clone()).or_default()))
+            .and_then(|(en, entry)| {
+                let e: usize = *entry;
+                *entry += 1;
+                targets.get(&en).map(|v| v[e])
+            });
         let interactable = spawn_entity(
             id as u64,
             client.is_some(),
@@ -96,7 +99,7 @@ pub fn load_map(
 
             let mut spawner = match predefined {
                 Some(ent) => commands.get_entity(ent).unwrap(),
-                None => commands.spawn((BrushEntity, Transform::default())),
+                None => commands.spawn(BrushEntity),
             };
             let mut brush_poly = Vec::new();
             let mut model_center = Vec3::ZERO;

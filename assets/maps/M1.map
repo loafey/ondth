@@ -2497,10 +2497,11 @@
 }
 // entity 2
 {
-"classname" "trigger_multiple"
+"classname" "interactable"
 "invisible" "1"
 "triggerbox" "0"
 "target" "bigDoors"
+"script" "debug_log"
 // brush 0
 {
 ( 716 64 64 ) ( 716 48 48 ) ( 716 64 48 ) maps/Invisible 0 0 0 0.5 0.5
@@ -2689,6 +2690,7 @@
 "_tb_type" "_tb_group"
 "_tb_name" "Bridge"
 "_tb_id" "6"
+"_tb_linked_group_id" "{9c555c46-c17a-43c4-836d-065ca9a6076d}"
 // brush 0
 {
 ( 474 -480 15.714285714285722 ) ( 474 -480 31.71428571428714 ) ( 474 -560 31.714285714287143 ) maps/OldWood 0 0 90 0.5 0.5
