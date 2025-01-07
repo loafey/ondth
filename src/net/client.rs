@@ -22,6 +22,7 @@ use bevy::{
     },
     hierarchy::DespawnRecursiveExt,
     log::info,
+    math::{EulerRot, Vec3},
     prelude::{EventWriter, NextState},
 };
 use bevy_renet::{
@@ -143,7 +144,8 @@ pub fn handle_messages(
                     0 => 0.0,
                     _ => (delay as f32) / 1000.0,
                 };
-                command.insert(RotateBrush::new(t.translation + translation, time));
+                let (x, y, z) = t.rotation.to_euler(EulerRot::XYZ);
+                command.insert(RotateBrush::new(Vec3::new(x, y, z) + translation, time));
             }
             ServerMessage::DespawnPickup { id } => {
                 // TODO: Improve this

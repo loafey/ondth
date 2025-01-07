@@ -22,10 +22,22 @@ impl RotateBrush {
     ) {
         for (ent, mut tb, mut t) in &mut query {
             if tb.time == 0.0 {
-                t.translation = tb.goal;
+                let (x, y, z) = t.rotation.to_euler(EulerRot::XYZ);
+                t.rotation = Quat::from_euler(
+                    EulerRot::XYZ,
+                    x + tb.goal.x.to_radians(),
+                    y + tb.goal.y.to_radians(),
+                    z + tb.goal.z.to_radians(),
+                );
                 commands.entity(ent).remove::<RotateBrush>();
             } else {
-                t.translation = t.translation.lerp(tb.goal, tb.cur_time / tb.time);
+                let (x, y, z) = t.rotation.to_euler(EulerRot::XYZ);
+                t.rotation = Quat::from_euler(
+                    EulerRot::XYZ,
+                    x.lerp(tb.goal.x.to_radians(), tb.cur_time / tb.time),
+                    y.lerp(tb.goal.y.to_radians(), tb.cur_time / tb.time),
+                    z.lerp(tb.goal.z.to_radians(), tb.cur_time / tb.time),
+                );
                 tb.cur_time += time.delta_secs();
                 tb.cur_time = tb.cur_time.min(tb.time);
                 if tb.cur_time >= tb.time {
