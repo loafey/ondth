@@ -2,7 +2,9 @@
 #![feature(thread_local)]
 use std::cell::{LazyCell, RefCell};
 
-use qwak_helper_types::{MapInteraction, TypeMap, storage, storage_get, storage_put};
+use qwak_helper_types::{
+    MapInteraction, TypeMap, storage, storage_clear, storage_get, storage_put,
+};
 use qwak_shared::QwakPlugin;
 
 qwak_shared::plugin_gen!(Plugin);
@@ -74,5 +76,10 @@ impl QwakPlugin for Plugin {
             }
             _ => panic!("unknown interaction: {script}"),
         }
+    }
+
+    fn map_init() {
+        host::debug_log("clearing map storage...".to_string());
+        storage_clear!();
     }
 }

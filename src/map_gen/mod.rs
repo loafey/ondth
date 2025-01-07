@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use crate::plugins::Qwaks;
+
 use self::{
     plane::{InPlane, Plane},
     poly::Poly,
@@ -56,6 +58,7 @@ pub fn load_map(
     texture_map: Res<TextureMap>,
     mut done_loading: ResMut<MapDoneLoading>,
     mut player_spawn: ResMut<PlayerSpawnpoint>,
+    qwaks: Res<Qwaks>,
 ) {
     let map = error_return!(std::fs::read_to_string(&current_map.0));
     let map = error_return!(map_parser::parse(&map));
@@ -207,6 +210,7 @@ pub fn load_map(
     info!("Done loading map, took {}s", t.elapsed().as_secs_f32());
     commands.insert_resource(TargetMap(targets));
     done_loading.0 = true;
+    error_return!(qwaks.default.map_init());
 }
 
 fn sort_verticies_cw(polys: Vec<Poly>) -> Vec<Poly> {

@@ -74,7 +74,7 @@ macro_rules! storage_put {
 /// Clear the storage.
 #[macro_export]
 macro_rules! storage_clear {
-    ($ty:expr) => {
+    () => {
         STORAGE.borrow_mut().clear()
     };
 }

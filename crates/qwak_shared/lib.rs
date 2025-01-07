@@ -11,6 +11,8 @@ pub trait QwakPlugin {
     fn plugin_name() -> String;
     #[doc = "Returns the version of a plugin."]
     fn plugin_version() -> [i32; 3];
+    #[doc = "Map init."]
+    fn map_init() -> ();
     #[doc = "The function which defines the scripts `interactable` entities can call in a map."]
     fn map_interact(args: qwak_helper_types::MapInteraction) -> ();
 }
