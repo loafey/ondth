@@ -65,4 +65,16 @@ impl QwakHostFunctions for Host {
         sw.send(translate);
         server.broadcast_message(ServerChannel::NetworkedEntities as u8, bytes);
     }
+
+    #[doc = "Plays a sound effect globally."]
+    fn play_sound(path: String, volume: f32) {
+        let (_, server, sw) = get_nw!();
+        let translate = ServerMessage::PlaySoundGlobally {
+            sound: path.into(),
+            volume,
+        };
+        let bytes = error_return!(translate.bytes());
+        sw.send(translate);
+        server.broadcast_message(ServerChannel::NetworkedEntities as u8, bytes);
+    }
 }

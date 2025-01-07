@@ -13,6 +13,7 @@ use crate::{
     queries::NetWorld,
 };
 use bevy::{
+    audio::{AudioPlayer, PlaybackSettings, Volume},
     ecs::{
         entity::Entity,
         event::EventReader,
@@ -56,6 +57,12 @@ pub fn handle_messages(
 ) {
     for message in server_events.read() {
         match message.clone() {
+            ServerMessage::PlaySoundGlobally { sound, volume } => {
+                nw.commands.spawn((
+                    AudioPlayer::new(nw.asset_server.load(sound.to_string())),
+                    PlaybackSettings::DESPAWN.with_volume(Volume::new(volume)),
+                ));
+            }
             ServerMessage::SetMap(map) => {
                 info!("setting map to: {map:?}");
                 current_stage.0 = map;

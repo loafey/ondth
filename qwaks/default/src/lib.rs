@@ -73,6 +73,7 @@ impl QwakPlugin for Plugin {
                 host::brush_rotate("bigDoor2".to_string(), 0.0, -50.0, 0.0, 100000);
                 host::brush_translate("bigDoor2".to_string(), 0.5, 0.0, 0.5, 100000);
                 storage_put!(BoolDoor(true));
+                host::play_sound("sounds/World/Door/Slam.ogg".to_string(), 1.0);
             }
             _ => panic!("unknown interaction: {script}"),
         }

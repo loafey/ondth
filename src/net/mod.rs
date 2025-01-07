@@ -197,6 +197,10 @@ pub enum ServerMessage {
         translation: Vec3,
         delay: u32,
     },
+    PlaySoundGlobally {
+        sound: FastStr,
+        volume: f32,
+    },
     RotateBrush {
         target: FastStr,
         translation: Vec3,

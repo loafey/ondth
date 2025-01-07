@@ -32,4 +32,6 @@ pub trait QwakHostFunctions {
     fn brush_translate(target: String, x: f32, y: f32, z: f32, duration: u32);
     #[doc = "Rotate a brush by the vector provided."]
     fn brush_rotate(target: String, x: f32, y: f32, z: f32, duration: u32);
+    #[doc = "Plays a sound effect globaly."]
+    fn play_sound(path: String, volume: f32);
 }
