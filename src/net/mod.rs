@@ -3,6 +3,7 @@ use bevy::prelude::*;
 use bevy_renet::renet::*;
 use faststr::FastStr;
 use macros::{error_return, option_return};
+use qwak_helper_types::MapInteraction;
 use resources::data::PickupData;
 use serde::{Deserialize, Serialize};
 use std::{path::PathBuf, time::Duration};
@@ -196,6 +197,10 @@ pub enum ServerMessage {
         target: FastStr,
         translation: Vec3,
         delay: u32,
+    },
+    CreateTimer {
+        delay: u32,
+        map_interaction: MapInteraction,
     },
     PlaySoundGlobally {
         sound: FastStr,

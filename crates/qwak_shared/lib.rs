@@ -34,4 +34,6 @@ pub trait QwakHostFunctions {
     fn brush_rotate(target: String, x: f32, y: f32, z: f32, duration: u32);
     #[doc = "Plays a sound effect globaly."]
     fn play_sound(path: String, volume: f32);
+    #[doc = "Run a MapInteract after a set amount of time."]
+    fn timeout(map_int: qwak_helper_types::MapInteraction, delay: u32);
 }

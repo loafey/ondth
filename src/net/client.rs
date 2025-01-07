@@ -6,7 +6,7 @@ use crate::{
     entities::{hitscan_hit_gfx, pickup::PickupEntity},
     map_gen::{
         self,
-        brush_interacts::{RotateBrush, TranslateBrush},
+        world_entites::{RotateBrush, Timer, TranslateBrush},
     },
     net::{Lobby, PlayerInfo},
     player::Player,
@@ -182,6 +182,13 @@ pub fn handle_messages(
                 let player = option_continue!(nw.lobby.get(&nw.current_id.0)).entity;
                 let (_, mut player, _) = error_continue!(nw.players.get_mut(player));
                 player.health -= amount;
+            }
+            ServerMessage::CreateTimer {
+                delay,
+                map_interaction,
+            } => {
+                nw.commands
+                    .spawn(Timer::new(delay as f32 / 1000.0, map_interaction));
             }
         }
     }

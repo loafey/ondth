@@ -73,7 +73,30 @@ impl QwakPlugin for Plugin {
                 host::brush_rotate("bigDoor2".to_string(), 0.0, -50.0, 0.0, 100000);
                 host::brush_translate("bigDoor2".to_string(), 0.5, 0.0, 0.5, 100000);
                 storage_put!(BoolDoor(true));
-                host::play_sound("sounds/World/Door/Slam.ogg".to_string(), 1.0);
+                for i in 0..4 {
+                    host::timeout(
+                        MapInteraction {
+                            script: "play_sound".to_string(),
+                            target: None,
+                            argument: Some("[\"sounds/World/Door/scrape-1.ogg\", 0.5]".to_string()),
+                            player_id,
+                        },
+                        i * 750,
+                    );
+                }
+                host::timeout(
+                    MapInteraction {
+                        script: "play_sound".to_string(),
+                        target: None,
+                        argument: Some("[\"sounds/World/Door/Slam.ogg\", 1.5]".to_string()),
+                        player_id,
+                    },
+                    2750,
+                );
+            }
+            "play_sound" => {
+                let (sound, volume) = serde_json::from_str(&argument.unwrap()).unwrap();
+                host::play_sound(sound, volume);
             }
             _ => panic!("unknown interaction: {script}"),
         }

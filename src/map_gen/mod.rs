@@ -30,7 +30,7 @@ mod poly;
 pub mod texture_systems;
 mod vertex;
 pub use interactable::*;
-pub mod brush_interacts;
+pub mod world_entites;
 
 const EPSILON: f32 = 0.008;
 const ROTATION_FIX: f32 = -90.0;

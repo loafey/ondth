@@ -3,7 +3,7 @@ use std::path::PathBuf;
 
 use crate::entities::message::Message;
 use crate::entities::{ProjectileEntity, pickup::PickupEntity};
-use crate::map_gen::{brush_interacts, load_map, texture_systems::*};
+use crate::map_gen::{load_map, texture_systems::*, world_entites};
 use crate::net::{self, NetState};
 use crate::player::Player;
 use crate::qwak_host_functions::qwak_functions;
@@ -151,7 +151,7 @@ impl Plugin for GameStage {
         app.add_systems(OnEnter(CurrentStage::InGame), register_textures)
             .add_systems(
                 Update,
-                brush_interacts::systems().run_if(in_state(CurrentStage::InGame)),
+                world_entites::systems().run_if(in_state(CurrentStage::InGame)),
             )
             .add_systems(
                 Update,

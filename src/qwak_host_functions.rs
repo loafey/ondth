@@ -9,6 +9,7 @@ use crate::{
 use bevy::math::Vec3;
 pub use inner::functions as qwak_functions;
 use macros::error_return;
+use qwak_helper_types::MapInteraction;
 use qwak_shared::QwakHostFunctions;
 
 qwak_shared::host_gen!(Host);
@@ -66,12 +67,22 @@ impl QwakHostFunctions for Host {
         server.broadcast_message(ServerChannel::NetworkedEntities as u8, bytes);
     }
 
-    #[doc = "Plays a sound effect globally."]
     fn play_sound(path: String, volume: f32) {
         let (_, server, sw) = get_nw!();
         let translate = ServerMessage::PlaySoundGlobally {
             sound: path.into(),
             volume,
+        };
+        let bytes = error_return!(translate.bytes());
+        sw.send(translate);
+        server.broadcast_message(ServerChannel::NetworkedEntities as u8, bytes);
+    }
+
+    fn timeout(map_interaction: MapInteraction, delay: u32) {
+        let (_, server, sw) = get_nw!();
+        let translate = ServerMessage::CreateTimer {
+            delay,
+            map_interaction,
         };
         let bytes = error_return!(translate.bytes());
         sw.send(translate);

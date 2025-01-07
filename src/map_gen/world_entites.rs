@@ -1,5 +1,38 @@
+use crate::plugins::Qwaks;
+
 use super::BrushEntity;
 use bevy::{ecs::schedule::SystemConfigs, math::Vec3, prelude::*, time::Time};
+use macros::error_continue;
+use qwak_helper_types::MapInteraction;
+
+#[derive(Debug, Component, Clone)]
+pub struct Timer {
+    current_time: f32,
+    map_interact: MapInteraction,
+}
+impl Timer {
+    pub fn new(delay: f32, map_interact: MapInteraction) -> Self {
+        Self {
+            current_time: delay,
+            map_interact,
+        }
+    }
+
+    pub fn update(
+        mut commands: Commands,
+        qwaks: Res<Qwaks>,
+        time: Res<Time>,
+        mut query: Query<(Entity, &mut Timer)>,
+    ) {
+        for (ent, mut timer) in &mut query {
+            timer.current_time -= time.delta_secs();
+            if timer.current_time <= 0.0 {
+                commands.entity(ent).despawn();
+                error_continue!(qwaks.default.map_interact(timer.map_interact.clone()));
+            }
+        }
+    }
+}
 
 #[derive(Debug, Component, Clone, Copy)]
 pub struct RotateBrush {
@@ -82,5 +115,5 @@ impl TranslateBrush {
 }
 
 pub fn systems() -> SystemConfigs {
-    (TranslateBrush::update, RotateBrush::update).into_configs()
+    (TranslateBrush::update, RotateBrush::update, Timer::update).into_configs()
 }
