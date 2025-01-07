@@ -140,12 +140,21 @@ pub fn handle_messages(
                 let target = option_continue!(nw.targets.get(&target));
                 let (e, t) = option_continue!(nw.target_brushes.get(*target).ok());
                 let mut command = option_continue!(nw.commands.get_entity(e));
+                let translation = Vec3::new(
+                    translation.x.to_radians(),
+                    translation.y.to_radians(),
+                    translation.z.to_radians(),
+                );
                 let time = match delay {
                     0 => 0.0,
                     _ => (delay as f32) / 1000.0,
                 };
                 let (x, y, z) = t.rotation.to_euler(EulerRot::XYZ);
-                command.insert(RotateBrush::new(Vec3::new(x, y, z) + translation, time));
+                command.insert(RotateBrush::new(
+                    Vec3::new(x, y, z) + translation,
+                    Vec3::new(x, y, z),
+                    time,
+                ));
             }
             ServerMessage::DespawnPickup { id } => {
                 // TODO: Improve this

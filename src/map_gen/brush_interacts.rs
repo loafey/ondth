@@ -4,13 +4,15 @@ use bevy::{ecs::schedule::SystemConfigs, math::Vec3, prelude::*, time::Time};
 #[derive(Debug, Component, Clone, Copy)]
 pub struct RotateBrush {
     goal: Vec3,
+    current_rot: Vec3,
     time: f32,
     cur_time: f32,
 }
 impl RotateBrush {
-    pub fn new(goal: Vec3, time: f32) -> Self {
+    pub fn new(goal: Vec3, current_rot: Vec3, time: f32) -> Self {
         Self {
             goal,
+            current_rot,
             time,
             cur_time: 0.0,
         }
@@ -23,20 +25,16 @@ impl RotateBrush {
         for (ent, mut tb, mut t) in &mut query {
             if tb.time == 0.0 {
                 let (x, y, z) = t.rotation.to_euler(EulerRot::XYZ);
-                t.rotation = Quat::from_euler(
-                    EulerRot::XYZ,
-                    x + tb.goal.x.to_radians(),
-                    y + tb.goal.y.to_radians(),
-                    z + tb.goal.z.to_radians(),
-                );
+                t.rotation =
+                    Quat::from_euler(EulerRot::XYZ, x + tb.goal.x, y + tb.goal.y, z + tb.goal.z);
                 commands.entity(ent).remove::<RotateBrush>();
             } else {
-                let (x, y, z) = t.rotation.to_euler(EulerRot::XYZ);
+                tb.current_rot = tb.current_rot.lerp(tb.goal, tb.cur_time / tb.time);
                 t.rotation = Quat::from_euler(
                     EulerRot::XYZ,
-                    x.lerp(tb.goal.x.to_radians(), tb.cur_time / tb.time),
-                    y.lerp(tb.goal.y.to_radians(), tb.cur_time / tb.time),
-                    z.lerp(tb.goal.z.to_radians(), tb.cur_time / tb.time),
+                    tb.current_rot.x,
+                    tb.current_rot.y,
+                    tb.current_rot.z,
                 );
                 tb.cur_time += time.delta_secs();
                 tb.cur_time = tb.cur_time.min(tb.time);
