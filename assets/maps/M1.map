@@ -2483,7 +2483,7 @@
 {
 "classname" "scriptable"
 "script" "res://maps/E1/M1/BigDoors.cs"
-"targetname" "bigDoors"
+"targetname" "bigDoor2"
 "argument0" "-0.5,0,0"
 // brush 0
 {
@@ -2500,8 +2500,7 @@
 "classname" "interactable"
 "invisible" "1"
 "triggerbox" "0"
-"target" "bigDoors"
-"script" "debug_log"
+"script" "open_big_doors"
 // brush 0
 {
 ( 716 64 64 ) ( 716 48 48 ) ( 716 64 48 ) maps/Invisible 0 0 0 0.5 0.5
@@ -2516,7 +2515,7 @@
 {
 "classname" "scriptable"
 "script" "res://maps/E1/M1/BigDoors.cs"
-"targetname" "bigDoors"
+"targetname" "bigDoor1"
 "argument0" "0.5,0,0"
 // brush 0
 {

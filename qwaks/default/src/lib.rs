@@ -1,4 +1,5 @@
 #![allow(missing_docs)]
+use extism_pdk::Msgpack;
 use qwak_helper_types::MapInteraction;
 use qwak_shared::QwakPlugin;
 
@@ -54,6 +55,20 @@ impl QwakPlugin for Plugin {
                 };
                 host::brush_rotate(target, x, y, z, delay);
                 // host::brush_translate(target, x, y, z, delay);
+            }
+            "open_big_doors" => {
+                let v = extism_pdk::var::get::<Msgpack<bool>>("bigDoorsOpened")
+                    .unwrap_or_default()
+                    .map(|b| b.0)
+                    .unwrap_or_default();
+                if v {
+                    return;
+                }
+                host::brush_rotate("bigDoor1".to_string(), 0.0, 50.0, 0.0, 100000);
+                host::brush_translate("bigDoor1".to_string(), 0.5, 0.0, -0.5, 100000);
+                host::brush_rotate("bigDoor2".to_string(), 0.0, -50.0, 0.0, 100000);
+                host::brush_translate("bigDoor2".to_string(), 0.5, 0.0, 0.5, 100000);
+                extism_pdk::var::set("bigDoorsOpened", Msgpack(true)).unwrap();
             }
             _ => panic!("unknown interaction: {script}"),
         }
