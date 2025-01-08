@@ -20,7 +20,8 @@ started with brush editing.
 
 If you are using [Nix](https://nixos.org/) you can simply run `nix develop` to have TrenchBroom
 (`trenchbroom`) added to your path. If you are not using Nix package manager
-or NixOS you are on your own.
+or NixOS you are on your own when it comes to installation, but checking the official
+website should suffice.
 
 ## Step 1.
 To create a new map press the `New map...` button.
