@@ -8,6 +8,14 @@ developed for Quake. Any editor supporting this format should be usable but
 [TrenchBroom](https://trenchbroom.github.io/) has been used so far. 
 The following chapter shows how to set up TrenchBroom for Ondth development.
 
+I can recommend the TrenchBroom tutorial by 
+[dumptruck_ds](https://www.youtube.com/@dumptruckds)
+to get started:
+[youtube.com/playlist?list=PLgDKRPte5Y0AZ_K_PZbWbgBAEt5xf74aE&si=Gvt-tgHmPAKhJjGQ](https://www.youtube.com/playlist?list=PLgDKRPte5Y0AZ_K_PZbWbgBAEt5xf74aE).
+Keep in mind that everything in this tutorial might not be applicable,
+as Ondth does not do scripting etc the same way Quake does, but it should get you 
+started with brush editing.
+
 If you are using [Nix](https://nixos.org/) you can simply run `nix develop` to have TrenchBroom
 (`trenchbroom`) added to your path. If you are not using Nix package manager
 or NixOS you are on your own.
