@@ -20,6 +20,7 @@ use bevy_rapier3d::{
     plugin::RapierContext, prelude::ShapeCastOptions,
 };
 use bevy_scene_hook::reload::{Hook, State as HookState};
+use bevy_tnua::prelude::{TnuaBuiltinJump, TnuaBuiltinWalk, TnuaController};
 use faststr::FastStr;
 use macros::{error_continue, option_continue, option_return};
 use resources::{
@@ -250,14 +251,7 @@ impl Player {
 
     pub fn update_interact(
         keys: Res<PlayerInput>,
-        mut query: Query<
-            (
-                &mut KinematicCharacterController,
-                &mut Player,
-                &mut Transform,
-            ),
-            With<PlayerController>,
-        >,
+        mut query: Query<(&mut Player, &mut Transform), With<PlayerController>>,
         mut client_events: EventWriter<ClientMessage>,
     ) {
         for _ in &mut query {
@@ -271,11 +265,7 @@ impl Player {
         keys: Res<PlayerInput>,
         time: Res<Time>,
         mut query: Query<
-            (
-                &mut KinematicCharacterController,
-                &mut Player,
-                &mut Transform,
-            ),
+            (&mut TnuaController, &mut Player, &mut Transform),
             With<PlayerController>,
         >,
         cameras: Query<(&Camera3d, &Transform), Without<PlayerController>>,
@@ -327,21 +317,21 @@ impl Player {
                 player.camera_movement.bob_goal = 0.0;
             }
 
-            if player.on_ground && player.jump_timer <= 0.0 {
-                player.velocity.y = 0.0;
-                player.jump_timer = 0.0;
-                if keys.jump_just_pressed {
-                    player.jump_timer = 0.1;
-                    player.velocity.y = player.jump_height;
-                    player.air_time = Some(std::time::Instant::now())
-                }
-            } else {
-                player.velocity.y += player.jump_timer * player.gravity;
-                player.jump_timer -= time.delta_secs() * 50.0;
-                player.jump_timer = player.jump_timer.clamp(-0.1, 1.0);
+            if keys.jump_pressed {
+                controller.action(TnuaBuiltinJump {
+                    height: player.jump_height,
+                    ..default()
+                });
             }
+            player.velocity.y = 0.0;
 
-            controller.translation = Some(player.velocity);
+            controller.basis(TnuaBuiltinWalk {
+                desired_velocity: player.velocity,
+                // desired_forward: Dir3::new(player.velocity * 100.0).ok(),
+                float_height: 0.51,
+                spring_strengh: 1000.0,
+                ..Default::default()
+            });
 
             let x = player.velocity.x;
             let z = player.velocity.z;

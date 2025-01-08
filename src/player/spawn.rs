@@ -1,17 +1,19 @@
 use super::{
-    Player, PlayerController, PlayerFpsMaterial, PlayerFpsModel, PlayerMpModel, ARMOR_GLYPH,
-    HEALTH_GLYPH,
+    ARMOR_GLYPH, HEALTH_GLYPH, Player, PlayerController, PlayerFpsMaterial, PlayerFpsModel,
+    PlayerMpModel,
 };
 use crate::{
     net::{
-        steam::{CurrentAvatar, SteamClient},
         PlayerInfo,
+        steam::{CurrentAvatar, SteamClient},
     },
     queries::NetWorld,
 };
 use bevy::{prelude::*, render::view::NoFrustumCulling, text::FontSmoothing};
 use bevy_rapier3d::prelude::*;
 use bevy_scene_hook::reload::{Hook, SceneBundle as HookedSceneBundle};
+use bevy_tnua::prelude::TnuaController;
+use bevy_tnua_rapier3d::{TnuaRapier3dIOBundle, TnuaRapier3dSensorShape};
 use faststr::FastStr;
 use resources::PlayerSpawnpoint;
 
@@ -63,7 +65,10 @@ impl Player {
         let player_commands = entity
             .insert(ActiveEvents::COLLISION_EVENTS)
             .insert(Transform::from_translation(player_spawn))
-            .insert(KinematicCharacterController::default())
+            .insert(RigidBody::Dynamic)
+            .insert(TnuaRapier3dIOBundle::default())
+            .insert(TnuaController::default())
+            .insert(TnuaRapier3dSensorShape(Collider::cylinder(0.1, 0.15)))
             .insert(Restitution::coefficient(0.0))
             .insert(LockedAxes::ROTATION_LOCKED)
             .insert(GlobalTransform::default())
@@ -120,15 +125,12 @@ impl Player {
 
                 camera = Some(new_camera_id);
                 if is_own {
-                    c.spawn((
-                        Camera2d,
-                        Camera {
-                            order: 2,
-                            clear_color: ClearColorConfig::None,
-                            is_active: is_own,
-                            ..default()
-                        },
-                    ))
+                    c.spawn((Camera2d, Camera {
+                        order: 2,
+                        clear_color: ClearColorConfig::None,
+                        is_active: is_own,
+                        ..default()
+                    }))
                     .insert(IsDefaultUiCamera);
 
                     c.spawn(Sprite {
@@ -317,14 +319,10 @@ impl Player {
                     })
                     .with_children(|c| {
                         debug_hud = Some(
-                            c.spawn((
-                                Visibility::Hidden,
-                                Text::new("debug"),
-                                TextFont {
-                                    font_size: 16.0,
-                                    ..default()
-                                },
-                            ))
+                            c.spawn((Visibility::Hidden, Text::new("debug"), TextFont {
+                                font_size: 16.0,
+                                ..default()
+                            }))
                             .id(),
                         );
                     });

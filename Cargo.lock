@@ -367,6 +367,37 @@ dependencies = [
 ]
 
 [[package]]
+name = "bevy-tnua"
+version = "0.21.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a8a5783db12b6f927e7cc9976c15e23fd5b107319a9c1be8b92622fa10b94a62"
+dependencies = [
+ "bevy",
+ "bevy-tnua-physics-integration-layer",
+ "thiserror",
+]
+
+[[package]]
+name = "bevy-tnua-physics-integration-layer"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1fbe99d25b7253cb99a00f69fe9accc875645b4ecf9910bb5f24459835ff177e"
+dependencies = [
+ "bevy",
+]
+
+[[package]]
+name = "bevy-tnua-rapier3d"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4378cd28dbfadd30f4341516b15ad19dcf460c6e1c0c1ccf7adeeff9d34e9219"
+dependencies = [
+ "bevy",
+ "bevy-tnua-physics-integration-layer",
+ "bevy_rapier3d",
+]
+
+[[package]]
 name = "bevy_a11y"
 version = "0.15.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4225,6 +4256,8 @@ version = "0.1.0"
 dependencies = [
  "bevy",
  "bevy-scene-hook",
+ "bevy-tnua",
+ "bevy-tnua-rapier3d",
  "bevy_hanabi",
  "bevy_obj",
  "bevy_rapier3d",

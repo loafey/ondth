@@ -99,8 +99,18 @@ impl QwakPlugin for Plugin {
                 host::play_sound(sound, volume);
             }
             "elevator" => {
+                #[derive(Clone, Copy, Default)]
+                struct FlipFlop(bool);
+                let k = storage_get!(FlipFlop).unwrap_or_default().0;
                 let target = "elevator".to_string();
-                host::brush_translate(target, 0.0, 2.0, 0.0, 60000);
+                if k {
+                    host::brush_translate(target, 0.0, -2.0, 0.0, 60000);
+                    host::broadcast_message("going down".to_string());
+                } else {
+                    host::brush_translate(target, 0.0, 2.0, 0.0, 60000);
+                    host::broadcast_message("going up".to_string());
+                }
+                storage_put!(FlipFlop(!k))
             }
             _ => panic!("unknown interaction: {script}"),
         }

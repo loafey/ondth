@@ -2,7 +2,7 @@ use crate::plugins::Qwaks;
 
 use super::BrushEntity;
 use bevy::{ecs::schedule::SystemConfigs, math::Vec3, prelude::*, time::Time};
-use bevy_rapier3d::prelude::{KinematicCharacterController, RigidBody};
+use bevy_rapier3d::prelude::RigidBody;
 use macros::error_continue;
 use qwak_helper_types::MapInteraction;
 

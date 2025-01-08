@@ -28,6 +28,8 @@ resources              = { workspace = true }
 qwak_helper_types      = { workspace = true }
 qwak_shared            = { workspace = true }
 qwak                   = { workspace = true }
+bevy-tnua-rapier3d     = { workspace = true }
+bevy-tnua              = { workspace = true }
 
 [lints]
 workspace = true
@@ -74,6 +76,8 @@ bevy-scene-hook        = { git = "https://github.com/AlephCubed/bevy-scene-hook.
 bevy_hanabi            = { git = "https://github.com/djeedai/bevy_hanabi.git", default-features = false, features = ["3d"] }
 bevy_renet             = { git = "https://github.com/lucaspoffo/renet.git", features = ["steam"] }
 renet_steam            = { git = "https://github.com/lucaspoffo/renet.git", features = ["bevy"] }
+bevy-tnua-rapier3d     = "0.9.0"
+bevy-tnua              = "0.21.0"
 
 # Custom crates
 map_parser             = { path = "crates/map_parser" }
