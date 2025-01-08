@@ -2,6 +2,9 @@
 Run with `./run.sh`.
 Right now your shell has to be located in the same folder as the assets folder or else assets will not load.
 
+The game runs on Rust nightly (1.85 to be exact), so you need to use this version of the compiler
+along with installing the compilation target for `wasm32-unknown-unknown`. 
+
 # To create maps:
 Maps are developed in the [Map](https://quakewiki.org/wiki/Quake_Map_Format) format first 
 developed for Quake. Any editor supporting this format should be usable but
