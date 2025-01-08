@@ -8,6 +8,8 @@ developed for Quake. Any editor supporting this format should be usable but
 [TrenchBroom](https://trenchbroom.github.io/) has been used so far. 
 The following chapter shows how to set up TrenchBroom for Ondth development.
 
+Maps should be saved in `assets/maps` folder, or a subfolder there.
+
 I can recommend the TrenchBroom tutorial by 
 [dumptruck_ds](https://www.youtube.com/@dumptruckds)
 to get started:
