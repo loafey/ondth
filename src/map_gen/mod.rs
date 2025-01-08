@@ -15,7 +15,7 @@ use bevy::{
         render_resource::{PrimitiveTopology, encase::rts_array::Length},
     },
 };
-use bevy_rapier3d::{geometry::Collider, prelude::KinematicCharacterController};
+use bevy_rapier3d::{geometry::Collider, prelude::RigidBody};
 use bevy_renet::renet::RenetClient;
 use entities::spawn_entity;
 use faststr::FastStr;
@@ -76,7 +76,7 @@ pub fn load_map(
                     .spawn((
                         BrushEntity,
                         Transform::default(),
-                        KinematicCharacterController::default(),
+                        RigidBody::KinematicPositionBased,
                     ))
                     .id(),
             );

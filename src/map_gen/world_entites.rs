@@ -2,7 +2,7 @@ use crate::plugins::Qwaks;
 
 use super::BrushEntity;
 use bevy::{ecs::schedule::SystemConfigs, math::Vec3, prelude::*, time::Time};
-use bevy_rapier3d::prelude::KinematicCharacterController;
+use bevy_rapier3d::prelude::{KinematicCharacterController, RigidBody};
 use macros::error_continue;
 use qwak_helper_types::MapInteraction;
 
@@ -98,22 +98,18 @@ impl TranslateBrush {
         time: Res<Time>,
         mut commands: Commands,
         mut query: Query<
-            (
-                Entity,
-                &mut TranslateBrush,
-                &mut Transform,
-                &mut KinematicCharacterController,
-            ),
+            (Entity, &mut TranslateBrush, &mut Transform, &RigidBody),
             With<BrushEntity>,
         >,
     ) {
-        for (ent, mut tb, mut t, mut kcc) in &mut query {
+        for (ent, mut tb, mut t, _) in &mut query {
             if tb.time == 0.0 {
                 t.translation = tb.goal;
                 commands.entity(ent).remove::<TranslateBrush>();
             } else {
-                let diff = t.translation - t.translation.lerp(tb.goal, tb.cur_time / tb.time);
-                kcc.translation = Some(diff);
+                t.translation = t.translation.lerp(tb.goal, tb.cur_time / tb.time);
+                // let diff = t.translation.lerp(tb.goal, tb.cur_time / tb.time) - t.translation;
+                // kcc.translation = Some(diff);
                 tb.cur_time += time.delta_secs();
                 tb.cur_time = tb.cur_time.min(tb.time);
                 if tb.cur_time >= tb.time {
