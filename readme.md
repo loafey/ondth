@@ -1,5 +1,5 @@
 # To run
-Run with `./run.sh` (without release the performance is real bad)
+Run with `./run.sh`.
 Right now your shell has to be located in the same folder as the assets folder or else assets will not load.
 
 # To create maps:
