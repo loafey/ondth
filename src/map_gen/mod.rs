@@ -15,7 +15,7 @@ use bevy::{
         render_resource::{PrimitiveTopology, encase::rts_array::Length},
     },
 };
-use bevy_rapier3d::geometry::Collider;
+use bevy_rapier3d::{geometry::Collider, prelude::KinematicCharacterController};
 use bevy_renet::renet::RenetClient;
 use entities::spawn_entity;
 use faststr::FastStr;
@@ -71,7 +71,15 @@ pub fn load_map(
     for entity in map.iter() {
         if let Some(tn) = entity.attributes.get(&tn) {
             let vec = targets.entry(tn.clone()).or_insert(Vec::new());
-            vec.push(commands.spawn((BrushEntity, Transform::default())).id());
+            vec.push(
+                commands
+                    .spawn((
+                        BrushEntity,
+                        Transform::default(),
+                        KinematicCharacterController::default(),
+                    ))
+                    .id(),
+            );
         }
     }
 
