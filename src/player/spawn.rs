@@ -12,7 +12,7 @@ use crate::{
 use bevy::{prelude::*, render::view::NoFrustumCulling, text::FontSmoothing};
 use bevy_rapier3d::prelude::*;
 use bevy_scene_hook::reload::{Hook, SceneBundle as HookedSceneBundle};
-use bevy_tnua::prelude::TnuaController;
+use bevy_tnua::{control_helpers::TnuaSimpleAirActionsCounter, prelude::TnuaController};
 use bevy_tnua_rapier3d::{TnuaRapier3dIOBundle, TnuaRapier3dSensorShape};
 use faststr::FastStr;
 use resources::PlayerSpawnpoint;
@@ -66,9 +66,12 @@ impl Player {
             .insert(ActiveEvents::COLLISION_EVENTS)
             .insert(Transform::from_translation(player_spawn))
             .insert(RigidBody::Dynamic)
+            .insert(GravityScale(0.8))
+            .insert(Friction::new(0.0))
             .insert(TnuaRapier3dIOBundle::default())
             .insert(TnuaController::default())
-            .insert(TnuaRapier3dSensorShape(Collider::cylinder(0.1, 0.15)))
+            .insert(TnuaRapier3dSensorShape(Collider::cylinder(0.2, 0.10)))
+            .insert(TnuaSimpleAirActionsCounter::default())
             .insert(Restitution::coefficient(0.0))
             .insert(LockedAxes::ROTATION_LOCKED)
             .insert(GlobalTransform::default())

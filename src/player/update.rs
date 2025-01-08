@@ -16,11 +16,14 @@ use bevy::{
     window::{CursorGrabMode, PrimaryWindow},
 };
 use bevy_rapier3d::{
-    control::KinematicCharacterController, geometry::Collider, pipeline::QueryFilter,
-    plugin::RapierContext, prelude::ShapeCastOptions,
+    geometry::Collider, pipeline::QueryFilter, plugin::RapierContext, prelude::ShapeCastOptions,
 };
 use bevy_scene_hook::reload::{Hook, State as HookState};
-use bevy_tnua::prelude::{TnuaBuiltinJump, TnuaBuiltinWalk, TnuaController};
+use bevy_tnua::{
+    TnuaAction,
+    control_helpers::{TnuaAirActionsTracker, TnuaSimpleAirActionsCounter},
+    prelude::{TnuaBuiltinJump, TnuaBuiltinWalk, TnuaController},
+};
 use faststr::FastStr;
 use macros::{error_continue, option_continue, option_return};
 use resources::{
@@ -317,21 +320,26 @@ impl Player {
                 player.camera_movement.bob_goal = 0.0;
             }
 
-            if keys.jump_pressed {
-                controller.action(TnuaBuiltinJump {
-                    height: player.jump_height,
-                    ..default()
-                });
-            }
             player.velocity.y = 0.0;
 
             controller.basis(TnuaBuiltinWalk {
                 desired_velocity: player.velocity,
                 // desired_forward: Dir3::new(player.velocity * 100.0).ok(),
-                float_height: 0.51,
-                spring_strengh: 1000.0,
+                float_height: 0.5001,
+                // spring_strengh: 1000.0,
+                // spring_dampening: 0.8,
+                cling_distance: 0.2,
                 ..Default::default()
             });
+            if keys.jump_pressed {
+                controller.action(TnuaBuiltinJump {
+                    height: player.jump_height,
+                    takeoff_extra_gravity: 0.0,
+                    fall_extra_gravity: 0.0,
+                    shorten_extra_gravity: 0.0,
+                    ..default()
+                });
+            }
 
             let x = player.velocity.x;
             let z = player.velocity.z;
