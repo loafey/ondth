@@ -98,6 +98,10 @@ impl QwakPlugin for Plugin {
                 let (sound, volume) = serde_json::from_str(&argument.unwrap()).unwrap();
                 host::play_sound(sound, volume);
             }
+            "elevator" => {
+                let target = "elevator".to_string();
+                host::brush_translate(target, 0.0, 2.0, 0.0, 60000);
+            }
             _ => panic!("unknown interaction: {script}"),
         }
     }
