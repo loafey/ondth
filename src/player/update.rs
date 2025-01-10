@@ -322,24 +322,27 @@ impl Player {
 
             player.velocity.y = 0.0;
 
+            if keys.jump_pressed && !controller.is_airborne().unwrap_or_default() {
+                controller.action(TnuaBuiltinJump {
+                    height: player.jump_height,
+                    // takeoff_extra_gravity: 30.0,
+                    // fall_extra_gravity: 20.0,
+                    shorten_extra_gravity: 0.0,
+
+                    ..default()
+                });
+            }
             controller.basis(TnuaBuiltinWalk {
                 desired_velocity: player.velocity,
+                // spring_strengh: 100.0,
+                spring_dampening: 0.6,
                 // desired_forward: Dir3::new(player.velocity * 100.0).ok(),
                 float_height: 0.5001,
                 // spring_strengh: 1000.0,
                 // spring_dampening: 0.8,
-                cling_distance: 0.2,
+                // cling_distance: 0.02,
                 ..Default::default()
             });
-            if keys.jump_pressed {
-                controller.action(TnuaBuiltinJump {
-                    height: player.jump_height,
-                    takeoff_extra_gravity: 0.0,
-                    fall_extra_gravity: 0.0,
-                    shorten_extra_gravity: 0.0,
-                    ..default()
-                });
-            }
 
             let x = player.velocity.x;
             let z = player.velocity.z;
