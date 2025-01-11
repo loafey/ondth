@@ -63,7 +63,10 @@ impl Player {
         let player_commands = entity
             .insert(ActiveEvents::COLLISION_EVENTS)
             .insert(Transform::from_translation(player_spawn))
-            .insert(RigidBody::Dynamic)
+            .insert(match is_own {
+                true => RigidBody::Dynamic,
+                false => RigidBody::Fixed,
+            })
             .insert(Velocity::zero())
             .insert(GravityScale(1.0))
             .insert(Friction::new(0.0))
