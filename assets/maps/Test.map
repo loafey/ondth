@@ -1126,3 +1126,17 @@
 ( 80 -112 16 ) ( 80 -112 17 ) ( 80 -111 16 ) maps/Button00 64 0 0 0.5 0.5
 }
 }
+// entity 139
+{
+"classname" "interactable"
+"script" "hurt_me"
+// brush 0
+{
+( 0 240 48 ) ( 0 241 48 ) ( 0 240 49 ) maps/MarbleFloor 1 -10 0 0.4 0.4
+( 0 240 48 ) ( 0 240 49 ) ( 1 240 48 ) maps/MarbleFloor 1 -10 0 0.4 0.4
+( 0 240 48 ) ( 1 240 48 ) ( 0 241 48 ) maps/MarbleFloor 1 -10 0 0.4 0.4
+( 16 256 64 ) ( 16 257 64 ) ( 17 256 64 ) maps/MarbleFloor 1 -10 0 0.4 0.4
+( 16 256 64 ) ( 17 256 64 ) ( 16 256 65 ) maps/MarbleFloor 1 -10 0 0.4 0.4
+( 16 256 64 ) ( 16 256 65 ) ( 16 257 64 ) maps/MarbleFloor 1 -10 0 0.4 0.4
+}
+}
