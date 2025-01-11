@@ -61,6 +61,8 @@ pub struct PlayerChildren {
 
 #[derive(Debug, Default)]
 pub struct DebugInfo {
+    pub velocity: Vec3,
+    pub on_ground: bool,
     pub current_speed: f32,
     pub current_falling: f32,
     pub last_airtime: f32,
@@ -92,10 +94,10 @@ pub struct Player {
 
     velocity: Vec3,
     hort_speed: f32,
-    hort_max_speed: f32,
     hort_friction: f32,
     jump_height: f32,
     on_ground: bool,
+    gravity: f32,
 
     camera_movement: CameraMovement,
 
@@ -123,11 +125,11 @@ impl Default for Player {
             health: 100.0,
             armour: 100.0,
             velocity: Vec3::ZERO,
-            hort_friction: 1.0,
-            hort_speed: 5.0,
-            hort_max_speed: 0.4,
-            jump_height: 1.5,
+            hort_friction: 8.0,
+            hort_speed: 0.6,
             on_ground: false,
+            jump_height: 7.0,
+            gravity: -15.0,
             half_height: 0.5,
             radius: 0.15,
             air_time: None,

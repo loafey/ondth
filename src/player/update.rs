@@ -16,14 +16,12 @@ use bevy::{
     window::{CursorGrabMode, PrimaryWindow},
 };
 use bevy_rapier3d::{
-    geometry::Collider, pipeline::QueryFilter, plugin::RapierContext, prelude::ShapeCastOptions,
+    geometry::Collider,
+    pipeline::QueryFilter,
+    plugin::RapierContext,
+    prelude::{RigidBody, ShapeCastOptions, Velocity},
 };
 use bevy_scene_hook::reload::{Hook, State as HookState};
-use bevy_tnua::{
-    TnuaAction,
-    control_helpers::{TnuaAirActionsTracker, TnuaSimpleAirActionsCounter},
-    prelude::{TnuaBuiltinJump, TnuaBuiltinWalk, TnuaController},
-};
 use faststr::FastStr;
 use macros::{error_continue, option_continue, option_return};
 use resources::{
@@ -267,10 +265,7 @@ impl Player {
     pub fn update_input(
         keys: Res<PlayerInput>,
         time: Res<Time>,
-        mut query: Query<
-            (&mut TnuaController, &mut Player, &mut Transform),
-            With<PlayerController>,
-        >,
+        mut query: Query<(&mut Velocity, &mut Player, &mut Transform), With<PlayerController>>,
         cameras: Query<(&Camera3d, &Transform), Without<PlayerController>>,
         mut events: EventWriter<ClientMessage>,
     ) {
@@ -312,7 +307,7 @@ impl Player {
                         .abs()
                         .length()
                         - player.velocity.y.abs())
-                    * 120.0;
+                    * 4.0;
                 if player.camera_movement.bob_goal > std::f32::consts::PI * 2.0 {
                     player.camera_movement.bob_goal -= std::f32::consts::PI * 2.0;
                 }
@@ -320,38 +315,34 @@ impl Player {
                 player.camera_movement.bob_goal = 0.0;
             }
 
-            player.velocity.y = 0.0;
+            // player.velocity.y = 0.0;
 
-            if keys.jump_pressed && !controller.is_airborne().unwrap_or_default() {
-                controller.action(TnuaBuiltinJump {
-                    height: player.jump_height,
-                    // takeoff_extra_gravity: 30.0,
-                    // fall_extra_gravity: 20.0,
-                    shorten_extra_gravity: 0.0,
-
-                    ..default()
-                });
+            if keys.jump_just_pressed && player.on_ground {
+                player.velocity.y = player.jump_height;
+            } else if !player.on_ground {
+                player.velocity.y += player.gravity * time.delta_secs();
+            } else {
+                player.velocity.y = 0.0;
             }
-            controller.basis(TnuaBuiltinWalk {
-                desired_velocity: player.velocity,
-                // spring_strengh: 100.0,
-                spring_dampening: 0.6,
-                // desired_forward: Dir3::new(player.velocity * 100.0).ok(),
-                float_height: 0.5001,
-                // spring_strengh: 1000.0,
-                // spring_dampening: 0.8,
-                // cling_distance: 0.02,
-                ..Default::default()
-            });
+            controller.linvel = player.velocity;
+            // controller.basis(TnuaBuiltinWalk {
+            //     desired_velocity: player.velocity,
+            //     // spring_strengh: 100.0,
+            //     spring_dampening: 0.6,
+            //     // desired_forward: Dir3::new(player.velocity * 100.0).ok(),
+            //     float_height: 0.5001,
+            //     // spring_strengh: 1000.0,
+            //     // spring_dampening: 0.8,
+            //     // cling_distance: 0.02,
+            //     ..Default::default()
+            // });
 
             let x = player.velocity.x;
             let z = player.velocity.z;
             player.velocity = Vec3::new(
-                x.lerp(0.0, player.hort_friction)
-                    .clamp(-player.hort_max_speed, player.hort_max_speed),
+                x.lerp(0.0, time.delta_secs() * player.hort_friction),
                 player.velocity.y,
-                z.lerp(0.0, player.hort_friction)
-                    .clamp(-player.hort_max_speed, player.hort_max_speed),
+                z.lerp(0.0, time.delta_secs() * player.hort_friction),
             );
 
             events.send(ClientMessage::UpdatePosition {
@@ -366,7 +357,9 @@ impl Player {
             });
 
             player.debug_info.current_speed = Vec2::new(x, z).distance(Vec2::ZERO);
+            player.debug_info.velocity = player.velocity;
             player.debug_info.current_falling = player.velocity.y;
+            player.debug_info.on_ground = player.on_ground;
         }
     }
 
@@ -706,7 +699,7 @@ impl Player {
         let rapier_context = rapier_context.single();
         for (mut player, trans) in query.iter_mut() {
             let collider_height = 0.01;
-            let shape = Collider::cylinder(collider_height, player.radius);
+            let shape = Collider::cylinder(collider_height, player.radius * 0.9);
             let mut shape_pos = trans.translation;
             shape_pos.y -= player.half_height + collider_height * 4.0;
             let shape_rot = Quat::default();

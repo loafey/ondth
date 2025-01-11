@@ -22,8 +22,6 @@ use bevy_renet::{
 };
 use bevy_scene_hook::reload::Plugin as HookPlugin;
 use bevy_simple_text_input::TextInputPlugin;
-use bevy_tnua::prelude::TnuaControllerPlugin;
-use bevy_tnua_rapier3d::TnuaRapier3dPlugin;
 use net::{ClientMessage, ServerMessage};
 use plugins::{ClientPlugin, GameStage, MainMenuStage, Resources, ServerPlugin, StartupStage};
 use steamworks::{AppId, SingleClient};
@@ -87,8 +85,6 @@ fn main() {
     app.add_plugins((StartupStage, MainMenuStage, GameStage));
     app.add_plugins(HanabiPlugin);
     app.add_plugins(TextInputPlugin);
-    app.add_plugins(TnuaControllerPlugin::default());
-    app.add_plugins(TnuaRapier3dPlugin::default());
     // MP
     app.add_plugins(RenetClientPlugin);
     app.add_plugins(RenetServerPlugin);
