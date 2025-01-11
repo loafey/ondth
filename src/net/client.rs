@@ -182,6 +182,10 @@ pub fn handle_messages(
                 let player = option_continue!(nw.lobby.get(&nw.current_id.0)).entity;
                 let (_, mut player, _) = error_continue!(nw.players.get_mut(player));
                 player.health -= amount;
+                nw.commands.spawn((
+                    AudioPlayer::new(nw.asset_server.load("sounds/Player/Hurt/hurt.ogg")),
+                    PlaybackSettings::DESPAWN.with_volume(Volume::new(0.5)),
+                ));
             }
             ServerMessage::CreateTimer {
                 delay,
