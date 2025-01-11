@@ -8,7 +8,7 @@ use crate::{
 };
 use bevy::math::Vec3;
 pub use inner::functions as qwak_functions;
-use macros::error_return;
+use macros::{error_continue, error_return};
 use qwak_helper_types::MapInteraction;
 use qwak_shared::QwakHostFunctions;
 
@@ -76,6 +76,21 @@ impl QwakHostFunctions for Host {
         let bytes = error_return!(translate.bytes());
         sw.send(translate);
         server.broadcast_message(ServerChannel::NetworkedEntities as u8, bytes);
+    }
+
+    fn hurt_player(id: u64, damage: f32) {
+        let (nw, server, _) = get_nw!();
+        for (_, mut hit_player, _) in &mut nw.players {
+            hit_player.last_hurter = id;
+            hit_player.health -= damage;
+            if hit_player.id != nw.current_id.0 {
+                server.send_message(
+                    hit_player.id,
+                    ServerChannel::NetworkedEntities as u8,
+                    error_continue!(ServerMessage::Hit { amount: damage }.bytes()),
+                )
+            }
+        }
     }
 
     fn timeout(map_interaction: MapInteraction, delay: u32) {

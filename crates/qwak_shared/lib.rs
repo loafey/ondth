@@ -36,4 +36,6 @@ pub trait QwakHostFunctions {
     fn play_sound(path: String, volume: f32);
     #[doc = "Run a MapInteract after a set amount of time."]
     fn timeout(map_int: qwak_helper_types::MapInteraction, delay: u32);
+    #[doc = "Hurt a specific player."]
+    fn hurt_player(id: u64, damage: f32);
 }

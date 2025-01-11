@@ -112,6 +112,10 @@ impl QwakPlugin for Plugin {
                 }
                 storage_put!(FlipFlop(!k))
             }
+            "hurt_me" => {
+                host::broadcast_message("OUCH!".to_string());
+                host::hurt_player(player_id, 10.0);
+            }
             _ => panic!("unknown interaction: {script}"),
         }
     }
