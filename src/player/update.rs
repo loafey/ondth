@@ -319,6 +319,8 @@ impl Player {
 
             if keys.jump_just_pressed && player.on_ground {
                 player.velocity.y = player.jump_height;
+            } else if player.velocity.y > 0.0 && player.head_hit && !player.on_ground {
+                player.velocity.y += player.gravity * time.delta_secs() * 4.0;
             } else if !player.on_ground {
                 player.velocity.y += player.gravity * time.delta_secs();
             } else {
@@ -360,6 +362,7 @@ impl Player {
             player.debug_info.velocity = player.velocity;
             player.debug_info.current_falling = player.velocity.y;
             player.debug_info.on_ground = player.on_ground;
+            player.debug_info.head_hit = player.head_hit;
         }
     }
 
@@ -700,28 +703,37 @@ impl Player {
         for (mut player, trans) in query.iter_mut() {
             let collider_height = 0.01;
             let shape = Collider::cylinder(collider_height, player.radius * 0.9);
-            let mut shape_pos = trans.translation;
-            shape_pos.y -= player.half_height + collider_height * 4.0;
+
             let shape_rot = Quat::default();
-            let shape_vel = Vec3::new(0.0, -0.2, 0.0);
             let max_time_of_impact = 0.0;
             let filter = QueryFilter::default();
             let stop_at_penetration = true;
 
-            player.on_ground = rapier_context
-                .cast_shape(
-                    shape_pos,
-                    shape_rot,
-                    shape_vel,
-                    &shape,
-                    ShapeCastOptions {
-                        max_time_of_impact,
-                        stop_at_penetration,
-                        ..default()
-                    },
-                    filter,
-                )
-                .is_some();
+            macro_rules! check {
+                ($m:expr,$v:expr) => {
+                    rapier_context
+                        .cast_shape(
+                            {
+                                let mut shape_pos = trans.translation;
+                                shape_pos.y += $m * (player.half_height + collider_height * 4.0);
+                                shape_pos
+                            },
+                            shape_rot,
+                            Vec3::new(0.0, $v, 0.0),
+                            &shape,
+                            ShapeCastOptions {
+                                max_time_of_impact,
+                                stop_at_penetration,
+                                ..default()
+                            },
+                            filter,
+                        )
+                        .is_some()
+                };
+            }
+
+            player.on_ground = check!(-1.0, -0.2);
+            player.head_hit = check!(1.0, 0.2);
 
             if player.on_ground {
                 if let Some(air_time) = player.air_time {
