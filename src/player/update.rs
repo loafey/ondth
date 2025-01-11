@@ -19,7 +19,7 @@ use bevy_rapier3d::{
     geometry::Collider,
     pipeline::QueryFilter,
     plugin::RapierContext,
-    prelude::{RigidBody, ShapeCastOptions, Velocity},
+    prelude::{ShapeCastOptions, Velocity},
 };
 use bevy_scene_hook::reload::{Hook, State as HookState};
 use faststr::FastStr;
