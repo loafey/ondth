@@ -2,6 +2,7 @@
 //! with a plugin, how the plugins can interact with the host.
 
 #![allow(clippy::unused_unit)]
+
 /// The functions a plugin needs to define.
 #[qwak_macro::plugin]
 pub trait QwakPlugin {
@@ -15,6 +16,10 @@ pub trait QwakPlugin {
     fn map_init() -> ();
     #[doc = "The function which defines the scripts `interactable` entities can call in a map."]
     fn map_interact(args: qwak_helper_types::MapInteraction) -> ();
+
+    #[doc = "The function which defines the scripts `interactable` entities can call in a map."]
+    fn plugin_get_projectiles()
+    -> std::collections::HashMap<faststr::FastStr, qwak_helper_types::Projectile>;
 }
 
 #[qwak_macro::host]

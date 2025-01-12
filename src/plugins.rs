@@ -51,6 +51,7 @@ impl Resources {
 }
 impl Plugin for Resources {
     fn build(&self, app: &mut App) {
+        let qwaks = Qwaks::new(qwak_functions());
         app.init_state::<CurrentStage>()
             .init_state::<NetState>()
             .insert_resource(CurrentMap(Self::get_map()))
@@ -65,9 +66,9 @@ impl Plugin for Resources {
             .insert_resource(PlayerInput::default())
             .insert_resource(entropy_game())
             .insert_resource(entropy_misc())
-            .insert_resource(Projectiles::default())
+            .insert_resource(Projectiles(qwaks.default.plugin_get_projectiles().unwrap()))
             .insert_resource(TargetMap(HashMap::default()))
-            .insert_resource(Qwaks::new(qwak_functions()));
+            .insert_resource(qwaks);
     }
 }
 

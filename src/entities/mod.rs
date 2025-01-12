@@ -9,7 +9,7 @@ use bevy::{
     math::Vec3,
     transform::components::Transform,
 };
-use resources::data::Projectile;
+use qwak_helper_types::Projectile;
 
 pub mod message;
 pub mod pickup;

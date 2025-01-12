@@ -8,6 +8,7 @@ qwak_shared       = { workspace = true }
 extism            = { workspace = true }
 extism-pdk        = { workspace = true }
 qwak_helper_types = { workspace = true }
+faststr           = { workspace = true }
 
 [lib]
 path = "lib.rs"

@@ -8,6 +8,7 @@ use std::{
 };
 
 use extism_pdk::{FromBytes, Msgpack, ToBytes};
+use faststr::FastStr;
 use serde::{Deserialize, Serialize};
 
 /// A heterogenus HashMap that uses values type's as keys.
@@ -91,4 +92,21 @@ pub struct MapInteraction {
     pub argument: Option<String>,
     /// The id of the player activating the interaction
     pub player_id: u64,
+}
+
+/// The data for a projectile
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct Projectile {
+    /// The projectile id
+    pub id: FastStr,
+    /// The projectile model. Should be OBJ.
+    pub model_file: FastStr,
+    /// The texture location. Should be PNG.
+    pub texture_file: FastStr,
+    /// The scale of the model.
+    pub scale: f32,
+    /// The rotation of the model.
+    pub rotation: [f32; 3],
+    /// The flying speed of the projectile.
+    pub speed: f32,
 }

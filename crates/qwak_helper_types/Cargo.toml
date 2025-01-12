@@ -6,6 +6,7 @@ edition = "2024"
 [dependencies]
 serde      = { workspace = true }
 extism-pdk = { workspace = true }
+faststr    = { workspace = true }
 
 [lib]
 path = "lib.rs"

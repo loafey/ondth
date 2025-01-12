@@ -1,35 +1,12 @@
-use bevy::{ecs::system::Resource, utils::HashMap};
+use bevy::ecs::system::Resource;
 use faststr::FastStr;
+use qwak_helper_types::Projectile;
 use serde::{Deserialize, Serialize};
-use std::fs::read_to_string;
-
-/// The data for a projectile
-#[derive(Debug, Deserialize, Clone)]
-pub struct Projectile {
-    /// The projectile id
-    pub id: FastStr,
-    /// The projectile model. Should be OBJ.
-    pub model_file: FastStr,
-    /// The texture location. Should be PNG.
-    pub texture_file: FastStr,
-    /// The scale of the model.
-    pub scale: f32,
-    /// The rotation of the model.
-    pub rotation: [f32; 3],
-    /// The flying speed of the projectile.
-    pub speed: f32,
-}
+use std::collections::HashMap;
 
 /// A [HashMap] of all projectile data.
 #[derive(Debug, Resource)]
 pub struct Projectiles(pub HashMap<FastStr, Projectile>);
-impl Default for Projectiles {
-    fn default() -> Self {
-        let input = read_to_string("assets/projectiles.json").unwrap();
-        let json = serde_json::from_str::<Vec<Projectile>>(&input).unwrap();
-        Projectiles(json.into_iter().map(|p| (p.id.clone(), p)).collect())
-    }
-}
 
 /// The type of a pickup.
 #[derive(Serialize, Deserialize, Debug, Clone)]

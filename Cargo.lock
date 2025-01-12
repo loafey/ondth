@@ -2196,6 +2196,7 @@ name = "default"
 version = "0.1.0"
 dependencies = [
  "extism-pdk",
+ "faststr",
  "qwak_helper_types",
  "qwak_shared",
  "serde_json",
@@ -4575,6 +4576,7 @@ version = "0.1.0"
 dependencies = [
  "extism",
  "extism-pdk",
+ "faststr",
  "qwak_helper_types",
  "qwak_shared",
 ]
@@ -4584,6 +4586,7 @@ name = "qwak_helper_types"
 version = "0.1.0"
 dependencies = [
  "extism-pdk",
+ "faststr",
  "serde",
 ]
 
@@ -4600,6 +4603,7 @@ dependencies = [
 name = "qwak_shared"
 version = "0.1.0"
 dependencies = [
+ "faststr",
  "qwak_helper_types",
  "qwak_macro",
 ]
@@ -4893,6 +4897,7 @@ dependencies = [
  "faststr",
  "input_derive",
  "macros",
+ "qwak_helper_types",
  "serde",
  "serde_json",
 ]

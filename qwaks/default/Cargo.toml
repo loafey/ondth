@@ -8,6 +8,7 @@ qwak_shared       = { workspace = true }
 qwak_helper_types = { workspace = true }
 extism-pdk        = { workspace = true }
 serde_json        = { workspace = true }
+faststr           = { workspace = true }
 
 [lib]
 crate-type = ["cdylib"]

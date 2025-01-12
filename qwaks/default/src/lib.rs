@@ -1,11 +1,16 @@
 #![allow(missing_docs)]
 #![feature(thread_local)]
-use std::cell::{LazyCell, RefCell};
-
+use faststr::FastStr;
 use qwak_helper_types::{
-    MapInteraction, TypeMap, storage, storage_clear, storage_get, storage_put,
+    MapInteraction, Projectile, TypeMap, storage, storage_clear, storage_get, storage_put,
 };
 use qwak_shared::QwakPlugin;
+use std::{
+    cell::{LazyCell, RefCell},
+    collections::HashMap,
+};
+
+mod projectiles;
 
 qwak_shared::plugin_gen!(Plugin);
 qwak_shared::host_calls!();
@@ -123,5 +128,9 @@ impl QwakPlugin for Plugin {
     fn map_init() {
         host::debug_log("clearing map storage...".to_string());
         storage_clear!();
+    }
+
+    fn plugin_get_projectiles() -> HashMap<FastStr, Projectile> {
+        projectiles::get_projectiles()
     }
 }
