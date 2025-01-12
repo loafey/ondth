@@ -25,7 +25,7 @@ use bevy_renet::{
 };
 use faststr::FastStr;
 use macros::{error_continue, error_return, option_return};
-use qwak_helper_types::{Attack, MapInteraction};
+use qwak_helper_types::{Attack, MapInteraction, PlayerKilled};
 use renet_steam::{AccessPermission, SteamServerConfig, SteamServerTransport};
 use resources::CurrentMap;
 use std::{net::UdpSocket, time::SystemTime};
@@ -77,27 +77,10 @@ fn frag_checker(server: &mut RenetServer, nw: &mut NetWorld) {
                 .bytes()
             ),
         );
-        let id = if let Some(info) = nw.lobby.get_mut(&id) {
-            info.deaths += 1;
-            info.name.clone()
-        } else {
-            format!("{id}").into()
-        };
-        let hurter = if let Some(info) = nw.lobby.get_mut(&hurter) {
-            info.kills += 1;
-            info.name.clone()
-        } else {
-            format!("{hurter}").into()
-        };
-        transmit_message(
-            server,
-            nw,
-            format!(
-                "{} GOT FRAGGED BY {}",
-                id.to_lowercase(),
-                hurter.to_lowercase()
-            ),
-        );
+        error_continue!(nw.plugins.default.map_player_killed(PlayerKilled {
+            player_id: id,
+            by_id: Some(hurter),
+        }));
     }
 }
 

@@ -2,8 +2,8 @@
 #![feature(thread_local)]
 use faststr::FastStr;
 use qwak_helper_types::{
-    MapInteraction, PickupData, Projectile, TypeMap, WeaponData, storage, storage_clear,
-    storage_get, storage_put,
+    MapInteraction, PickupData, PlayerKilled, Projectile, TypeMap, WeaponData, storage,
+    storage_clear, storage_get, storage_put,
 };
 use qwak_shared::QwakPlugin;
 use std::{
@@ -139,5 +139,15 @@ impl QwakPlugin for Plugin {
     fn map_init() {
         log::debug("clearing map storage...".to_string());
         storage_clear!();
+    }
+
+    fn map_player_killed(PlayerKilled { player_id, by_id }: PlayerKilled) {
+        let killed = game::get_player_name(player_id);
+        let killer = game::get_player_name(by_id.unwrap_or_default());
+        game::broadcast_message(format!(
+            "{} GOT FRAGGED BY {}!",
+            killed.to_lowercase(),
+            killer.to_uppercase()
+        ));
     }
 }

@@ -12,10 +12,12 @@ pub trait QwakPlugin {
     fn plugin_name() -> String;
     #[doc = "Returns the version of a plugin."]
     fn plugin_version() -> [i32; 3];
-    #[doc = "Map init."]
+    #[doc = "Function called by the game when a map is loaded."]
     fn map_init() -> ();
     #[doc = "The function which defines the scripts `interactable` entities can call in a map."]
     fn map_interact(args: qwak_helper_types::MapInteraction) -> ();
+    #[doc = "Function called by the game when a player is killed."]
+    fn map_player_killed(args: qwak_helper_types::PlayerKilled) -> ();
 
     #[doc = "The projectiles this plugin defines."]
     fn plugin_get_projectiles()

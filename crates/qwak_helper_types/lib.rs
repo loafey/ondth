@@ -94,6 +94,16 @@ pub struct MapInteraction {
     pub player_id: u64,
 }
 
+/// The argument to [`map_player_killed`](../qwak_shared/trait.QwakPlugin.html#tymethod.map_player_killed).
+#[derive(Debug, Clone, FromBytes, ToBytes, Deserialize, Serialize)]
+#[encoding(Msgpack)]
+pub struct PlayerKilled {
+    /// The killed player.
+    pub player_id: u64,
+    /// The player that killed them.
+    pub by_id: Option<u64>,
+}
+
 /// The data for a projectile
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Projectile {
