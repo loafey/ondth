@@ -24,9 +24,9 @@ use bevy_rapier3d::{
 use bevy_scene_hook::reload::{Hook, State as HookState};
 use faststr::FastStr;
 use macros::{error_continue, option_continue, option_return};
+use qwak_helper_types::{Attack, SoundEffect};
 use resources::{
-    Paused,
-    data::{Attack, Projectiles, SoundEffect},
+    Paused, Projectiles,
     entropy::{EGame, EMisc, Entropy},
     inputs::PlayerInput,
 };

@@ -9,8 +9,7 @@ use crate::{
 use bevy::{ecs::system::SystemParam, prelude::*};
 use bevy_rapier3d::plugin::RapierContext;
 use resources::{
-    PlayerSpawnpoint, TargetMap, WeaponMap,
-    data::Projectiles,
+    PlayerSpawnpoint, Projectiles, TargetMap, WeaponMap,
     entropy::{EGame, Entropy},
 };
 

@@ -23,6 +23,9 @@ pub trait QwakPlugin {
     #[doc = "The pickups this plugin defines."]
     fn plugin_get_pickups()
     -> std::collections::HashMap<faststr::FastStr, qwak_helper_types::PickupData>;
+    #[doc = "The weapons this plugin defines."]
+    fn plugin_get_weapons()
+    -> std::collections::HashMap<faststr::FastStr, qwak_helper_types::WeaponData>;
 }
 
 #[qwak_macro::host]

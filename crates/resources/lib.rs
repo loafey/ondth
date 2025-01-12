@@ -1,20 +1,15 @@
 //! Contains all the resources used by the game.
 use bevy::{
     asset::{Handle, UntypedHandle},
-    ecs::system::{Res, Resource},
+    ecs::system::Res,
     image::Image,
-    log::info,
     math::Vec3,
-    prelude::{Entity, States},
+    prelude::{Entity, Resource, States},
 };
-use data::WeaponData;
 use faststr::FastStr;
-use macros::error_return;
-use qwak_helper_types::PickupData;
-use std::{collections::HashMap, fs, ops::Deref, path::PathBuf};
+use qwak_helper_types::{PickupData, Projectile, WeaponData};
+use std::{collections::HashMap, ops::Deref, path::PathBuf};
 
-/// Contains data definitions for weapons, enemies etc.
-pub mod data;
 /// Contains the structs for randomeness.
 pub mod entropy;
 /// Contains the struct for player input.
@@ -95,25 +90,13 @@ pub struct TextureMap(pub HashMap<FastStr, Handle<Image>>);
 #[derive(Debug, Resource, Default)]
 pub struct PickupMap(pub HashMap<FastStr, PickupData>);
 
+/// A [HashMap] of all projectile data.
+#[derive(Debug, Resource)]
+pub struct Projectiles(pub HashMap<FastStr, Projectile>);
+
 /// A map with weapon data
 #[derive(Debug, Resource, Default)]
 pub struct WeaponMap(pub HashMap<FastStr, WeaponData>);
-impl WeaponMap {
-    /// Loads the weapon data from disc.
-    pub fn new() -> Self {
-        info!("Loading weapons...");
-        let data = error_return!(fs::read_to_string("assets/weapons.json"));
-        let parsed = error_return!(serde_json::from_str::<Vec<WeaponData>>(&data));
-
-        let mut map = HashMap::new();
-        for item in parsed {
-            map.insert(item.id.clone(), item);
-        }
-
-        info!("Done loading weapons...");
-        Self(map)
-    }
-}
 
 /// A struct containing a [HashMap] containing ids and their respective [Entities](bevy::prelude::Entity).
 #[derive(Debug, Resource, Default)]

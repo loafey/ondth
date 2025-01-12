@@ -25,9 +25,9 @@ use bevy_renet::{
 };
 use faststr::FastStr;
 use macros::{error_continue, error_return, option_return};
-use qwak_helper_types::MapInteraction;
+use qwak_helper_types::{Attack, MapInteraction};
 use renet_steam::{AccessPermission, SteamServerConfig, SteamServerTransport};
-use resources::{CurrentMap, data::Attack};
+use resources::CurrentMap;
 use std::{net::UdpSocket, time::SystemTime};
 use steamworks::SteamId;
 

@@ -1,10 +1,8 @@
-use std::collections::HashMap;
-
+use crate::entities::message::Message;
 use bevy::prelude::*;
 use faststr::FastStr;
-use resources::data::WeaponData;
-
-use crate::entities::message::Message;
+use qwak_helper_types::WeaponData;
+use std::collections::HashMap;
 
 mod debug;
 mod spawn;

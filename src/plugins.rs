@@ -9,7 +9,6 @@ use crate::player::Player;
 use crate::qwak_host_functions::qwak_functions;
 use crate::{mainmenu, startup};
 use bevy::prelude::*;
-use data::Projectiles;
 use qwak::*;
 use resources::{
     entropy::{entropy_game, entropy_misc},
@@ -62,7 +61,7 @@ impl Plugin for Resources {
             .insert_resource(MapDoneLoading(false))
             .insert_resource(Paused(true))
             .insert_resource(PickupMap(qwaks.default.plugin_get_pickups().unwrap()))
-            .insert_resource(WeaponMap::new())
+            .insert_resource(WeaponMap(qwaks.default.plugin_get_weapons().unwrap()))
             .insert_resource(PlayerInput::default())
             .insert_resource(entropy_game())
             .insert_resource(entropy_misc())
