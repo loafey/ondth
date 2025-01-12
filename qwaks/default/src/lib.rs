@@ -2,7 +2,8 @@
 #![feature(thread_local)]
 use faststr::FastStr;
 use qwak_helper_types::{
-    MapInteraction, Projectile, TypeMap, storage, storage_clear, storage_get, storage_put,
+    MapInteraction, PickupData, Projectile, TypeMap, storage, storage_clear, storage_get,
+    storage_put,
 };
 use qwak_shared::QwakPlugin;
 use std::{
@@ -10,6 +11,7 @@ use std::{
     collections::HashMap,
 };
 
+mod pickups;
 mod projectiles;
 
 qwak_shared::plugin_gen!(Plugin);
@@ -132,5 +134,9 @@ impl QwakPlugin for Plugin {
 
     fn plugin_get_projectiles() -> HashMap<FastStr, Projectile> {
         projectiles::get_projectiles()
+    }
+
+    fn plugin_get_pickups() -> HashMap<FastStr, PickupData> {
+        pickups::get_pickups()
     }
 }

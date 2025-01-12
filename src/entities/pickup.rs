@@ -10,7 +10,7 @@ use bevy::{
     transform::components::Transform,
 };
 use bevy_rapier3d::{pipeline::CollisionEvent, rapier::geometry::CollisionEventFlags};
-use resources::data::PickupData;
+use qwak_helper_types::PickupData;
 
 #[derive(Debug, Component)]
 pub struct PickupEntity {

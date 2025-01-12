@@ -17,9 +17,12 @@ pub trait QwakPlugin {
     #[doc = "The function which defines the scripts `interactable` entities can call in a map."]
     fn map_interact(args: qwak_helper_types::MapInteraction) -> ();
 
-    #[doc = "The function which defines the scripts `interactable` entities can call in a map."]
+    #[doc = "The projectiles this plugin defines."]
     fn plugin_get_projectiles()
     -> std::collections::HashMap<faststr::FastStr, qwak_helper_types::Projectile>;
+    #[doc = "The pickups this plugin defines."]
+    fn plugin_get_pickups()
+    -> std::collections::HashMap<faststr::FastStr, qwak_helper_types::PickupData>;
 }
 
 #[qwak_macro::host]

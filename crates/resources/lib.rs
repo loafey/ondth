@@ -7,9 +7,10 @@ use bevy::{
     math::Vec3,
     prelude::{Entity, States},
 };
-use data::{PickupData, WeaponData};
+use data::WeaponData;
 use faststr::FastStr;
 use macros::error_return;
+use qwak_helper_types::PickupData;
 use std::{collections::HashMap, fs, ops::Deref, path::PathBuf};
 
 /// Contains data definitions for weapons, enemies etc.
@@ -93,22 +94,6 @@ pub struct TextureMap(pub HashMap<FastStr, Handle<Image>>);
 /// A map with pickup data
 #[derive(Debug, Resource, Default)]
 pub struct PickupMap(pub HashMap<FastStr, PickupData>);
-impl PickupMap {
-    /// Loads the pickup data from disc.
-    pub fn new() -> Self {
-        info!("Loading pickups...");
-        let data = error_return!(fs::read_to_string("assets/pickups.json"));
-        let parsed = error_return!(serde_json::from_str::<Vec<PickupData>>(&data));
-
-        let mut map = HashMap::new();
-        for item in parsed {
-            map.insert(item.classname.clone(), item);
-        }
-
-        info!("Done loading pickups...");
-        Self(map)
-    }
-}
 
 /// A map with weapon data
 #[derive(Debug, Resource, Default)]

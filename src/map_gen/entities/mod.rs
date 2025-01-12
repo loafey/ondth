@@ -14,7 +14,8 @@ use bevy_rapier3d::{
     geometry::{ActiveCollisionTypes, ActiveEvents, Collider, Sensor},
 };
 use faststr::FastStr;
-use resources::{PickupMap, PlayerSpawnpoint, data::PickupData};
+use qwak_helper_types::PickupData;
+use resources::{PickupMap, PlayerSpawnpoint};
 use std::collections::HashMap;
 
 use super::Interactable;

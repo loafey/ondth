@@ -8,32 +8,6 @@ use std::collections::HashMap;
 #[derive(Debug, Resource)]
 pub struct Projectiles(pub HashMap<FastStr, Projectile>);
 
-/// The type of a pickup.
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub enum PickupType {
-    /// This will result in a weapon.
-    Weapon,
-}
-
-/// The data for a pickup item.
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct PickupData {
-    /// The type of the pickup.
-    pub pickup_type: PickupType,
-    /// The map classname.
-    pub classname: FastStr,
-    /// The item you will get by picking this up.
-    pub gives: FastStr,
-    /// The model for this pickup, should be OBJ.
-    pub pickup_model: FastStr,
-    /// The material for this pickup, should be MTL.
-    pub pickup_material: FastStr,
-    /// The texture for this pickup, should be PNG.
-    pub texture_file: FastStr,
-    /// The scale of this texture.
-    pub scale: f32,
-}
-
 /// The sound effect to be played when using a weapon/or by an enemy.
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
 #[serde(untagged)]

@@ -61,7 +61,7 @@ impl Plugin for Resources {
             .insert_resource(PlayerSpawnpoint(Vec3::ZERO))
             .insert_resource(MapDoneLoading(false))
             .insert_resource(Paused(true))
-            .insert_resource(PickupMap::new())
+            .insert_resource(PickupMap(qwaks.default.plugin_get_pickups().unwrap()))
             .insert_resource(WeaponMap::new())
             .insert_resource(PlayerInput::default())
             .insert_resource(entropy_game())
