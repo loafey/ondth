@@ -40,15 +40,15 @@ missing_docs = "warn"
 unsafe_code  = "deny"
 
 [workspace.lints.clippy]
-print_stdout                  = "warn"
-print_stderr                  = "warn"
+print_stdout                    = "warn"
+print_stderr                    = "warn"
 # missing_docs_in_private_items = "warn"
-missing_errors_doc            = "warn"
-missing_panic_doc             = "warn"
-missing_unsafe_doc            = "warn"
+missing_errors_doc              = "warn"
+missing_panic_doc               = "warn"
+missing_unsafe_doc              = "warn"
 # undocumented_unsafe_blocks    = "warn"
-unnecessary_safety_comment    = "warn"
-unnecessary_safety_doc        = "warn"
+unnecessary_safety_comment      = "warn"
+unnecessary_safety_doc          = "warn"
 
 [workspace.dependencies]
 serde                  = { version = "1.0.*" }
@@ -71,9 +71,9 @@ bevy_obj               = { version = "0.15.*" }
 bevy-inspector-egui    = { version = "0.28.*" }
 bevy_simple_text_input = { version = "0.10.*" }
 bevy-scene-hook        = { git = "https://github.com/AlephCubed/bevy-scene-hook.git" }
-bevy_hanabi            = { git = "https://github.com/djeedai/bevy_hanabi.git", default-features = false, features = ["3d"] }
-bevy_renet             = { git = "https://github.com/lucaspoffo/renet.git", features = ["steam"] }
-renet_steam            = { git = "https://github.com/lucaspoffo/renet.git", features = ["bevy"] }
+bevy_hanabi            = { version = "0.14.*", default-features = false, features = ["3d"] }
+bevy_renet             = { version = "1.0.*", features = ["steam"] }
+renet_steam            = { version = "1.0.*", features = ["bevy"] }
 
 # Custom crates
 map_parser             = { path = "crates/map_parser" }
