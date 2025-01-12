@@ -35,6 +35,18 @@ impl QwakPlugin for Plugin {
         [0, 0, 1]
     }
 
+    fn plugin_get_projectiles() -> HashMap<FastStr, Projectile> {
+        projectiles::get_projectiles()
+    }
+
+    fn plugin_get_pickups() -> HashMap<FastStr, PickupData> {
+        pickups::get_pickups()
+    }
+
+    fn plugin_get_weapons() -> HashMap<FastStr, WeaponData> {
+        weapons::get_weapons()
+    }
+
     // The functions scriptable entities can call
     fn map_interact(
         MapInteraction {
@@ -127,17 +139,5 @@ impl QwakPlugin for Plugin {
     fn map_init() {
         log::debug("clearing map storage...".to_string());
         storage_clear!();
-    }
-
-    fn plugin_get_projectiles() -> HashMap<FastStr, Projectile> {
-        projectiles::get_projectiles()
-    }
-
-    fn plugin_get_pickups() -> HashMap<FastStr, PickupData> {
-        pickups::get_pickups()
-    }
-
-    fn plugin_get_weapons() -> HashMap<FastStr, WeaponData> {
-        weapons::get_weapons()
     }
 }
