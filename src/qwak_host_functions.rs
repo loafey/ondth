@@ -108,4 +108,20 @@ impl QwakHostFunctions for Host {
         sw.send(translate);
         server.broadcast_message(ServerChannel::NetworkedEntities as u8, bytes);
     }
+
+    fn game_teleport_player(id: u64, x: f32, y: f32, z: f32) {
+        let (nw, server, sw) = get_nw!();
+        let msg = ServerMessage::TeleportPlayer {
+            location: Vec3::new(x, y, z),
+        };
+        if id == nw.current_id.0 {
+            sw.send(msg);
+        } else {
+            server.send_message(
+                id,
+                ServerChannel::NetworkedEntities as u8,
+                error_return!(msg.bytes()),
+            );
+        }
+    }
 }

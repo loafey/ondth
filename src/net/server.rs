@@ -46,14 +46,12 @@ pub fn transmit_message(server: &mut RenetServer, nw: &mut NetWorld, text: Strin
 
 fn frag_checker(server: &mut RenetServer, nw: &mut NetWorld) {
     let mut frags = Vec::new();
-    for (_, mut player, mut trans) in &mut nw.players {
+    for (_, mut player, _) in &mut nw.players {
         if player.health <= 0.0 {
             player.health = 100.0;
             player.armour = 0.0;
 
-            if player.id == nw.current_id.0 {
-                trans.translation = nw.player_spawn.0;
-            } else {
+            if player.id != nw.current_id.0 {
                 server.send_message(
                     player.id,
                     ServerChannel::ServerMessages as u8,

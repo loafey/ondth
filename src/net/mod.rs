@@ -197,6 +197,9 @@ pub enum ServerMessage {
         translation: Vec3,
         delay: u32,
     },
+    TeleportPlayer {
+        location: Vec3,
+    },
     CreateTimer {
         delay: u32,
         map_interaction: MapInteraction,

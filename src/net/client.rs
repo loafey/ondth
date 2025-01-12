@@ -86,11 +86,10 @@ pub fn handle_messages(
             }
             ServerMessage::Reset => {
                 let player = option_continue!(nw.lobby.get(&nw.current_id.0)).entity;
-                let (_, mut player, mut trans) = error_continue!(nw.players.get_mut(player));
+                let (_, mut player, _) = error_continue!(nw.players.get_mut(player));
                 player.health = 100.0;
                 player.armour = 0.0;
                 player.last_hurter = 0;
-                trans.translation = nw.player_spawn.0;
             }
             ServerMessage::SpawnPickup {
                 id,
@@ -200,6 +199,14 @@ pub fn handle_messages(
             } => {
                 nw.commands
                     .spawn(Timer::new(delay as f32 / 1000.0, map_interaction));
+            }
+            ServerMessage::TeleportPlayer { location } => {
+                for (_, player, mut trans) in &mut nw.players {
+                    if player.id == nw.current_id.0 {
+                        trans.translation = location;
+                        break;
+                    }
+                }
             }
         }
     }
