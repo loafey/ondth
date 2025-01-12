@@ -143,7 +143,7 @@ pub fn get_host_calls(item: TS) -> TS {
         };
         let panic_handler = if func_name != "debug_log" {
             quote! {
-                inner::debug_log(format!("plugin crashed calling host function: {e}")).unwrap();
+                inner::log_debug(format!("plugin crashed calling host function: {e}")).unwrap();
             }
         } else {
             quote! {}

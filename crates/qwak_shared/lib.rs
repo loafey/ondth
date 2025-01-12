@@ -28,25 +28,39 @@ pub trait QwakPlugin {
     -> std::collections::HashMap<faststr::FastStr, qwak_helper_types::WeaponData>;
 }
 
+#[allow(clippy::unnecessary_safety_doc)]
 #[qwak_macro::host]
 /// The functions a the game defines for plugin -> game interaction.
 pub trait QwakHostFunctions {
     #[doc = "Log an error."]
-    fn print_error(message: String);
+    fn log_error(message: String);
     #[doc = "Prints to `stdout`."]
-    fn debug_log(val: String);
+    fn log_debug(val: String);
+
     #[doc = "Sends a message to all players."]
-    fn broadcast_message(val: String);
+    #[doc = "# Safety"]
+    #[doc = "Will segfault if ran outside of the game."]
+    fn game_broadcast_message(val: String);
     #[doc = "Returns the player name of a specified id."]
-    fn get_player_name(id: u64) -> String;
+    #[doc = "# Safety"]
+    #[doc = "Will segfault if ran outside of the game."]
+    fn game_get_player_name(id: u64) -> String;
     #[doc = "Move a brush by the vector provided."]
-    fn brush_translate(target: String, x: f32, y: f32, z: f32, duration: u32);
+    #[doc = "# Safety"]
+    #[doc = "Will segfault if ran outside of the game."]
+    fn game_brush_translate(target: String, x: f32, y: f32, z: f32, duration: u32);
     #[doc = "Rotate a brush by the vector provided."]
-    fn brush_rotate(target: String, x: f32, y: f32, z: f32, duration: u32);
+    #[doc = "# Safety"]
+    #[doc = "Will segfault if ran outside of the game."]
+    fn game_brush_rotate(target: String, x: f32, y: f32, z: f32, duration: u32);
     #[doc = "Plays a sound effect globaly."]
-    fn play_sound(path: String, volume: f32);
+    #[doc = "# Safety"]
+    #[doc = "Will segfault if ran outside of the game."]
+    fn game_play_sound(path: String, volume: f32);
     #[doc = "Run a MapInteract after a set amount of time."]
-    fn timeout(map_int: qwak_helper_types::MapInteraction, delay: u32);
+    fn game_timeout(map_int: qwak_helper_types::MapInteraction, delay: u32);
     #[doc = "Hurt a specific player."]
-    fn hurt_player(id: u64, damage: f32);
+    #[doc = "# Safety"]
+    #[doc = "Will segfault if ran outside of the game."]
+    fn game_hurt_player(id: u64, damage: f32);
 }

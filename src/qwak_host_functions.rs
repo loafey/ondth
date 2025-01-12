@@ -15,7 +15,7 @@ use qwak_shared::QwakHostFunctions;
 qwak_shared::host_gen!(Host);
 struct Host;
 impl QwakHostFunctions for Host {
-    fn get_player_name(id: u64) -> String {
+    fn game_get_player_name(id: u64) -> String {
         let (nw, _, _) = get_nw!();
         let name = nw
             .lobby
@@ -25,21 +25,21 @@ impl QwakHostFunctions for Host {
         name
     }
 
-    fn print_error(message: String) {
+    fn log_error(message: String) {
         bevy::log::error!(target: "plugin", "{message}");
     }
 
     #[allow(clippy::print_stderr)]
-    fn debug_log(value: String) {
+    fn log_debug(value: String) {
         bevy::log::debug!(target: "plugin", "{value}");
     }
 
-    fn broadcast_message(value: String) {
+    fn game_broadcast_message(value: String) {
         let (nw, server, _) = get_nw!();
         transmit_message(server, nw, value);
     }
 
-    fn brush_translate(target_name: String, x: f32, y: f32, z: f32, delay: u32) {
+    fn game_brush_translate(target_name: String, x: f32, y: f32, z: f32, delay: u32) {
         let (_, server, sw) = get_nw!();
         let target_name = target_name.into();
 
@@ -53,7 +53,7 @@ impl QwakHostFunctions for Host {
         server.broadcast_message(ServerChannel::NetworkedEntities as u8, bytes);
     }
 
-    fn brush_rotate(target_name: String, x: f32, y: f32, z: f32, delay: u32) {
+    fn game_brush_rotate(target_name: String, x: f32, y: f32, z: f32, delay: u32) {
         let (_, server, sw) = get_nw!();
         let target_name = target_name.into();
 
@@ -67,7 +67,7 @@ impl QwakHostFunctions for Host {
         server.broadcast_message(ServerChannel::NetworkedEntities as u8, bytes);
     }
 
-    fn play_sound(path: String, volume: f32) {
+    fn game_play_sound(path: String, volume: f32) {
         let (_, server, sw) = get_nw!();
         let translate = ServerMessage::PlaySoundGlobally {
             sound: path.into(),
@@ -78,7 +78,7 @@ impl QwakHostFunctions for Host {
         server.broadcast_message(ServerChannel::NetworkedEntities as u8, bytes);
     }
 
-    fn hurt_player(id: u64, damage: f32) {
+    fn game_hurt_player(id: u64, damage: f32) {
         let (nw, server, sw) = get_nw!();
         for (_, mut hit_player, _) in &mut nw.players {
             if hit_player.id == id {
@@ -98,7 +98,7 @@ impl QwakHostFunctions for Host {
         }
     }
 
-    fn timeout(map_interaction: MapInteraction, delay: u32) {
+    fn game_timeout(map_interaction: MapInteraction, delay: u32) {
         let (_, server, sw) = get_nw!();
         let translate = ServerMessage::CreateTimer {
             delay,

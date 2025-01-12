@@ -45,8 +45,10 @@ impl QwakPlugin for Plugin {
     ) {
         match &*script {
             "debug_log" => {
-                let name = host::get_player_name(player_id);
-                host::broadcast_message(format!("{name}: script: {script:?}, target: {target:?}"))
+                let name = host::game_get_player_name(player_id);
+                host::game_broadcast_message(format!(
+                    "{name}: script: {script:?}, target: {target:?}"
+                ))
             }
             "translate_brush" => {
                 let Some(target) = target else { return };
@@ -55,19 +57,14 @@ impl QwakPlugin for Plugin {
                     match serde_json::from_str(&arg) {
                         Ok(o) => o,
                         Err(e) => {
-                            host::print_error(format!(
-                                "{}:{}:{}: {e}",
-                                file!(),
-                                line!(),
-                                column!()
-                            ));
+                            host::log_error(format!("{}:{}:{}: {e}", file!(), line!(), column!()));
                             ([0.0, 0.1, 0.0], 100u32)
                         }
                     }
                 } else {
                     ([0.0, 0.1, 0.0], 100)
                 };
-                host::brush_rotate(target, x, y, z, delay);
+                host::game_brush_rotate(target, x, y, z, delay);
                 // host::brush_translate(target, x, y, z, delay);
             }
             "open_big_doors" => {
@@ -76,13 +73,13 @@ impl QwakPlugin for Plugin {
                 if storage_get!(BoolDoor).unwrap_or_default().0 {
                     return;
                 }
-                host::brush_rotate("bigDoor1".to_string(), 0.0, 50.0, 0.0, 100000);
-                host::brush_translate("bigDoor1".to_string(), 0.5, 0.0, -0.5, 100000);
-                host::brush_rotate("bigDoor2".to_string(), 0.0, -50.0, 0.0, 100000);
-                host::brush_translate("bigDoor2".to_string(), 0.5, 0.0, 0.5, 100000);
+                host::game_brush_rotate("bigDoor1".to_string(), 0.0, 50.0, 0.0, 100000);
+                host::game_brush_translate("bigDoor1".to_string(), 0.5, 0.0, -0.5, 100000);
+                host::game_brush_rotate("bigDoor2".to_string(), 0.0, -50.0, 0.0, 100000);
+                host::game_brush_translate("bigDoor2".to_string(), 0.5, 0.0, 0.5, 100000);
                 storage_put!(BoolDoor(true));
                 for i in 0..4 {
-                    host::timeout(
+                    host::game_timeout(
                         MapInteraction {
                             script: "play_sound".to_string(),
                             target: None,
@@ -92,7 +89,7 @@ impl QwakPlugin for Plugin {
                         i * 750,
                     );
                 }
-                host::timeout(
+                host::game_timeout(
                     MapInteraction {
                         script: "play_sound".to_string(),
                         target: None,
@@ -104,7 +101,7 @@ impl QwakPlugin for Plugin {
             }
             "play_sound" => {
                 let (sound, volume) = serde_json::from_str(&argument.unwrap()).unwrap();
-                host::play_sound(sound, volume);
+                host::game_play_sound(sound, volume);
             }
             "elevator" => {
                 #[derive(Clone, Copy, Default)]
@@ -112,24 +109,24 @@ impl QwakPlugin for Plugin {
                 let k = storage_get!(FlipFlop).unwrap_or_default().0;
                 let target = "elevator".to_string();
                 if k {
-                    host::brush_translate(target, 0.0, -2.0, 0.0, 60000);
-                    host::broadcast_message("going down".to_string());
+                    host::game_brush_translate(target, 0.0, -2.0, 0.0, 60000);
+                    host::game_broadcast_message("going down".to_string());
                 } else {
-                    host::brush_translate(target, 0.0, 2.0, 0.0, 60000);
-                    host::broadcast_message("going up".to_string());
+                    host::game_brush_translate(target, 0.0, 2.0, 0.0, 60000);
+                    host::game_broadcast_message("going up".to_string());
                 }
                 storage_put!(FlipFlop(!k))
             }
             "hurt_me" => {
-                host::broadcast_message("OUCH!".to_string());
-                host::hurt_player(player_id, 10.0);
+                host::game_broadcast_message("OUCH!".to_string());
+                host::game_hurt_player(player_id, 10.0);
             }
             _ => panic!("unknown interaction: {script}"),
         }
     }
 
     fn map_init() {
-        host::debug_log("clearing map storage...".to_string());
+        host::log_debug("clearing map storage...".to_string());
         storage_clear!();
     }
 
