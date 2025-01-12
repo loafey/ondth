@@ -51,8 +51,23 @@ impl Player {
             Player::shoot,
             Player::update_hud,
             Player::update_interact,
+            Player::hurt_flash,
         )
             .into_configs()
+    }
+
+    fn hurt_flash(
+        mut players: Query<&mut Player>,
+        mut hurt_flashes: Query<&mut BackgroundColor>,
+        time: Res<Time>,
+    ) {
+        for mut player in players.iter_mut() {
+            let ent = option_continue!(player.children.hurt_flash);
+            let mut bc = option_continue!(hurt_flashes.get_mut(ent).ok());
+            bc.0.set_alpha(player.hurt_flash.clamp(0.0, 0.9));
+            player.hurt_flash -= time.delta_secs();
+            player.hurt_flash = player.hurt_flash.max(0.0);
+        }
     }
 
     fn set_anim(weapon: &mut WeaponState, fire_time: f32, anim_time: f32, time: &Time) {

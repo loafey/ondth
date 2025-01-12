@@ -52,6 +52,7 @@ pub struct PlayerChildren {
     pub fps_model: Option<Entity>,
     pub health_hud: Option<Entity>,
     pub armour_hud: Option<Entity>,
+    pub hurt_flash: Option<Entity>,
     pub ammo_hud: Option<Entity>,
     pub debug_hud: Option<Entity>,
     pub message_holder: Option<Entity>,
@@ -91,7 +92,9 @@ pub struct Player {
     pub last_hurter: u64,
 
     pub health: f32,
+    pub max_health: f32,
     pub armour: f32,
+    pub hurt_flash: f32,
 
     velocity: Vec3,
     hort_speed: f32,
@@ -125,7 +128,9 @@ impl Default for Player {
             id: 0,
             last_hurter: 0,
             health: 100.0,
-            armour: 100.0,
+            max_health: 100.0,
+            armour: 0.0,
+            hurt_flash: 0.0,
             velocity: Vec3::ZERO,
             hort_friction: 8.0,
             hort_speed: 0.6,

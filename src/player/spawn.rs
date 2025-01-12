@@ -56,6 +56,7 @@ impl Player {
         let mut health_hud = None;
         let mut debug_hud = None;
         let mut message_holder = None;
+        let mut hurt_flash = None;
         let mut shoot_sound_holder = None;
         let mut lobby_hud = None;
         let mut entity = nw.commands.spawn(Collider::cylinder(0.5, 0.15));
@@ -173,6 +174,18 @@ impl Player {
                     ..default()
                 })
                 .with_children(|c| {
+                    hurt_flash = Some(
+                        c.spawn((
+                            Node {
+                                width: Val::Vw(100.0),
+                                height: Val::Vh(100.0),
+                                ..default()
+                            },
+                            BackgroundColor(Color::srgba(1.0, 0.0, 0.0, 0.0)),
+                        ))
+                        .id(),
+                    );
+
                     c.spawn((
                         Node {
                             position_type: PositionType::Absolute,
@@ -344,6 +357,7 @@ impl Player {
                 message_holder,
                 shoot_sound_holder,
                 lobby_hud,
+                hurt_flash,
             },
             ..default()
         };
