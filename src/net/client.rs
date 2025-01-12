@@ -186,7 +186,7 @@ pub fn handle_messages(
                     AudioPlayer::new(nw.asset_server.load("sounds/BulletHit.ogg")),
                     PlaybackSettings::DESPAWN.with_volume(Volume::new(0.5)),
                 ));
-                player.hurt_flash = (amount / 2.0) / player.max_health;
+                player.hurt_flash += (amount / 2.0) / player.max_health;
                 if amount >= 30.0 {
                     nw.commands.spawn((
                         AudioPlayer::new(nw.asset_server.load("sounds/Player/Hurt/hurt.ogg")),
