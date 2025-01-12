@@ -1,6 +1,9 @@
+use std::collections::HashMap;
+
 use proc_macro::TokenStream as TS;
+use proc_macro2::Span;
 use quote::quote;
-use syn::{FnArg, ItemTrait, Pat, TraitItem, Type, punctuated::Punctuated, token::Comma};
+use syn::{FnArg, Ident, ItemTrait, Pat, TraitItem, Type, punctuated::Punctuated, token::Comma};
 
 fn stringify(ty: &Type) -> String {
     match ty {
@@ -109,7 +112,7 @@ pub fn get_export_functions(item: TS) -> TS {
 pub fn get_host_calls(item: TS) -> TS {
     let tree = syn::parse::<ItemTrait>(item).unwrap();
     let mut exports = quote! {};
-    let mut pubs = quote! {};
+    let mut modules: HashMap<String, Vec<_>> = HashMap::new();
     for func in tree.items {
         let TraitItem::Fn(func) = func else {
             panic!("only functions are supported")
@@ -121,8 +124,12 @@ pub fn get_host_calls(item: TS) -> TS {
                 #attr
             };
         }
-        let sig = func.sig;
+        let mut sig = func.sig;
+        let og_sig = sig.clone();
         let func_name = sig.ident.clone();
+        let f = func_name.to_string();
+        let (module, name) = f.split_once('_').unwrap();
+        sig.ident = Ident::new(name, Span::call_site());
         let args = sig
             .inputs
             .iter()
@@ -139,21 +146,20 @@ pub fn get_host_calls(item: TS) -> TS {
         exports = quote! {
             #exports
             #[allow(missing_docs)]
-            pub unsafe #sig;
+            pub unsafe #og_sig;
         };
         let panic_handler = if func_name != "debug_log" {
             quote! {
-                inner::log_debug(format!("plugin crashed calling host function: {e}")).unwrap();
+                super::inner::log_debug(format!("plugin crashed calling host function: {e}")).unwrap();
             }
         } else {
             quote! {}
         };
-        pubs = quote! {
-            #pubs
+        modules.entry(module.to_string()).or_default().push(quote! {
             #attrs
             pub #sig {
                 unsafe {
-                    match inner::#func_name(#args) {
+                    match super::inner::#func_name(#args) {
                         Ok(o) => o,
                         Err(e) => {
                             #panic_handler
@@ -162,7 +168,23 @@ pub fn get_host_calls(item: TS) -> TS {
                     }
                 }
             }
+        });
+    }
+
+    let mut pubs = quote! {};
+    for (module, qoutes) in modules {
+        let mut inner = quote! {};
+        for qoute in qoutes {
+            inner = quote! {
+                #inner
+                #qoute
+            };
         }
+        let module = Ident::new(&module, Span::call_site());
+        pubs = quote! {
+            #pubs
+            pub mod #module { #inner }
+        };
     }
     // let d = format!("{:?}", format!("{tree:#?}"));
     quote! {
