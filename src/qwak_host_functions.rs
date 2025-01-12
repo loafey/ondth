@@ -9,7 +9,7 @@ use crate::{
 use bevy::math::Vec3;
 pub use inner::functions as qwak_functions;
 use macros::{error_continue, error_return};
-use qwak_helper_types::MapInteraction;
+use qwak_helper_types::{MapInteraction, MsgVec3};
 use qwak_shared::QwakHostFunctions;
 
 qwak_shared::host_gen!(Host);
@@ -122,6 +122,16 @@ impl QwakHostFunctions for Host {
                 ServerChannel::NetworkedEntities as u8,
                 error_return!(msg.bytes()),
             );
+        }
+    }
+
+    fn game_get_spawn_point() -> MsgVec3 {
+        let (nw, _, _) = get_nw!();
+        let v = nw.player_spawn.0;
+        MsgVec3 {
+            x: v.x,
+            y: v.y,
+            z: v.z,
         }
     }
 }

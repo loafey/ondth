@@ -149,6 +149,7 @@ impl QwakPlugin for Plugin {
             killed.to_lowercase(),
             killer.to_uppercase()
         ));
-        game::teleport_player(player_id, 0.0, 20.0, 0.0);
+        let spawn = game::get_spawn_point();
+        game::teleport_player(player_id, spawn.x, spawn.y, spawn.z);
     }
 }

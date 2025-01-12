@@ -36,6 +36,7 @@ fn get_type(ty: &Type) -> Type {
     let id = match &*ty {
         "String" => quote!(qwak::PTR),
         "qwak_helper_types::MapInteraction" => quote!(qwak::PTR),
+        "qwak_helper_types::MsgVec3" => quote!(qwak::PTR),
         "u32" => quote!(qwak::ValType::I64),
         "u64" => quote!(qwak::ValType::I64),
         "f32" => quote!(qwak::ValType::I64), // this is most likely a bug in extism?

@@ -66,5 +66,11 @@ pub trait QwakHostFunctions {
     #[doc = "Will segfault if ran outside of the game."]
     fn game_hurt_player(id: u64, damage: f32);
     #[doc = "Teleport player to the specified location."]
+    #[doc = "# Safety"]
+    #[doc = "Will segfault if ran outside of the game."]
     fn game_teleport_player(id: u64, x: f32, y: f32, z: f32);
+    #[doc = "Teleport player to the specified location."]
+    #[doc = "# Safety"]
+    #[doc = "Will segfault if ran outside of the game."]
+    fn game_get_spawn_point() -> qwak_helper_types::MsgVec3;
 }

@@ -104,6 +104,16 @@ pub struct PlayerKilled {
     pub by_id: Option<u64>,
 }
 
+/// A 3d vector
+#[derive(Debug, Clone, FromBytes, ToBytes, Deserialize, Serialize)]
+#[encoding(Msgpack)]
+#[allow(missing_docs)]
+pub struct MsgVec3 {
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
+}
+
 /// The data for a projectile
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Projectile {
