@@ -31,6 +31,40 @@ use resources::CurrentMap;
 use std::{net::UdpSocket, time::SystemTime};
 use steamworks::SteamId;
 
+// Yea this is cursed, I know, but somehow these references need to be passed to
+// host functions, and I don't feel like creating an EDSL, or passing them through
+// the WASM plugin. I promise that this should never segfault :)
+pub static mut NW_PTR: Option<(
+    &mut NetWorld,
+    &mut RenetServer,
+    &mut EventWriter<ServerMessage>,
+)> = None;
+/// Returns the content of [NW_PTR]
+#[macro_export]
+macro_rules! get_nw {
+    () => {{
+        #[allow(unsafe_code)]
+        unsafe {
+            #[allow(unsafe_code)]
+            let nw = NW_PTR.as_ref();
+            let r: *const _ = nw.unwrap_unchecked();
+            std::ptr::read(r)
+        }
+    }};
+}
+macro_rules! set_nw {
+    ($nw:expr,$server:expr, $server_events:expr) => {
+        #[allow(clippy::missing_transmute_annotations, unsafe_code)]
+        unsafe {
+            NW_PTR = Some(std::mem::transmute::<(&_, &_, &_), _>((
+                &*$nw,
+                &*$server,
+                &*$server_events,
+            )))
+        };
+    };
+}
+
 pub fn transmit_message(server: &mut RenetServer, nw: &mut NetWorld, text: String) {
     for (_, player, _) in &nw.players {
         if player.id == nw.current_id.0 {
@@ -241,27 +275,6 @@ pub fn client_events(
     }
 }
 
-// Yea this is cursed, I know, but somehow these references need to be passed to
-// host functions, and I don't feel like creating an EDSL, or passing them through
-// the WASM plugin. I promise that this should never segfault :)
-pub static mut NW_PTR: Option<(
-    &mut NetWorld,
-    &mut RenetServer,
-    &mut EventWriter<ServerMessage>,
-)> = None;
-/// Returns the content of [NW_PTR]
-#[macro_export]
-macro_rules! get_nw {
-    () => {{
-        #[allow(unsafe_code)]
-        unsafe {
-            #[allow(unsafe_code)]
-            let nw = NW_PTR.as_ref();
-            let r: *const _ = nw.unwrap_unchecked();
-            std::ptr::read(r)
-        }
-    }};
-}
 #[allow(mutable_transmutes)]
 pub fn handle_client_message(
     server: &mut RenetServer,
@@ -282,14 +295,7 @@ pub fn handle_client_message(
             let (int, _) =
                 option_return!(player.interact(player_entity, rapier_context, cam_trans, &trans));
             let (_e, int) = option_return!(nw.interactables.get(int).ok());
-            #[allow(clippy::missing_transmute_annotations, unsafe_code)]
-            unsafe {
-                NW_PTR = Some(std::mem::transmute::<(&_, &_, &_), _>((
-                    &*nw,
-                    &*server,
-                    &*server_events,
-                )))
-            };
+            set_nw!(nw, server, server_events);
             error_return!(nw.plugins.default.map_interact(MapInteraction {
                 script: int.script.to_string(),
                 target: int.target.as_ref().map(|s| s.to_string()),
@@ -378,6 +384,7 @@ pub fn handle_client_message(
             );
         }
         ClientMessage::RequestLobbyInfo => {
+            set_nw!(nw, server, server_events);
             let msg = ServerMessage::LobbyInfo(
                 error_return!(nw.plugins.default.map_get_lobby_info()).into(),
             );
