@@ -59,7 +59,7 @@ impl Plugin for Resources {
             .insert_resource(TextureMap::default())
             .insert_resource(PlayerSpawnpoint(Vec3::ZERO))
             .insert_resource(MapDoneLoading(false))
-            .insert_resource(Paused(true))
+            .insert_resource(Paused(false))
             .insert_resource(PickupMap(qwaks.default.plugin_get_pickups().unwrap()))
             .insert_resource(WeaponMap(qwaks.default.plugin_get_weapons().unwrap()))
             .insert_resource(PlayerInput::default())
@@ -185,6 +185,7 @@ impl Plugin for GameStage {
                 )
                     .run_if(in_state(CurrentStage::InGame)), //.run_if(if_not_paused),
             )
+            .add_systems(Update, Player::input_systems().run_if(if_not_paused))
             .add_systems(
                 Update,
                 (Player::pause_handler, Player::debug).run_if(in_state(CurrentStage::InGame)),

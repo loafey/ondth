@@ -9,11 +9,16 @@ use crate::{
     },
     queries::NetWorld,
 };
-use bevy::{prelude::*, render::view::NoFrustumCulling, text::FontSmoothing};
+use bevy::{
+    prelude::*,
+    render::view::NoFrustumCulling,
+    text::FontSmoothing,
+    window::{CursorGrabMode, PrimaryWindow},
+};
 use bevy_rapier3d::prelude::*;
 use bevy_scene_hook::reload::{Hook, SceneBundle as HookedSceneBundle};
 use faststr::FastStr;
-use resources::PlayerSpawnpoint;
+use resources::{Paused, PlayerSpawnpoint};
 
 impl Player {
     pub fn spawn_own_player(
@@ -21,7 +26,21 @@ impl Player {
         player_spawn: Res<PlayerSpawnpoint>,
         avatar: Option<Res<CurrentAvatar>>,
         steam: Option<Res<SteamClient>>,
+        mut q_windows: Query<&mut Window, With<PrimaryWindow>>,
+        paused: ResMut<Paused>,
     ) {
+        let mut primary_window = q_windows.single_mut();
+        if paused.0 {
+            //rapier_context.
+            primary_window.cursor_options.grab_mode = CursorGrabMode::None;
+            primary_window.cursor_options.visible = true;
+            //time.pause();
+        } else {
+            primary_window.cursor_options.grab_mode = CursorGrabMode::Locked;
+            primary_window.cursor_options.visible = false;
+            //time.unpause();
+        }
+
         let id = nw.current_id.0;
         let entity = Self::spawn(
             &mut nw,

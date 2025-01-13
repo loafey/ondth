@@ -34,20 +34,26 @@ enum SwitchDirection {
     Forward,
 }
 impl Player {
+    pub fn input_systems() -> SystemConfigs {
+        (
+            Player::update_cam_vert,
+            Player::update_cam_hort,
+            Player::shoot,
+            Player::update_interact,
+        )
+            .into_configs()
+    }
+
     pub fn systems() -> SystemConfigs {
         (
             Player::update_input,
-            Player::update_cam_vert,
-            Player::update_cam_hort,
             Player::ground_detection,
             Player::weaponry_switch,
             Player::weaponry_switch_wheel,
             Player::weaponry_switch_keys,
             Player::weapon_animations,
             Player::camera_movement,
-            Player::shoot,
             Player::update_hud,
-            Player::update_interact,
             Player::hurt_flash,
         )
             .into_configs()
@@ -276,6 +282,7 @@ impl Player {
         mut query: Query<(&mut Velocity, &mut Player, &mut Transform), With<PlayerController>>,
         cameras: Query<(&Camera3d, &Transform), Without<PlayerController>>,
         mut events: EventWriter<ClientMessage>,
+        paused: Res<Paused>,
     ) {
         for (mut controller, mut player, gt) in &mut query {
             // movement
@@ -284,20 +291,20 @@ impl Player {
             let right = Vec3::new(local_z.z, 0., -local_z.x);
 
             let hort_speed = player.hort_speed;
-            if keys.walk_forward_pressed {
+            if keys.walk_forward_pressed && !paused.0 {
                 player.velocity += forward * hort_speed;
                 player.camera_movement.backdrift_goal = player.camera_movement.backdrift_max;
-            } else if keys.walk_backward_pressed {
+            } else if keys.walk_backward_pressed && !paused.0 {
                 player.velocity -= forward * hort_speed;
                 player.camera_movement.backdrift_goal = -player.camera_movement.backdrift_max;
             } else {
                 player.camera_movement.backdrift_goal = 0.0;
             }
 
-            if keys.walk_left_pressed {
+            if keys.walk_left_pressed && !paused.0 {
                 player.velocity -= right * hort_speed;
                 player.camera_movement.cam_rot_goal = player.camera_movement.cam_rot_max_goal;
-            } else if keys.walk_right_pressed {
+            } else if keys.walk_right_pressed && !paused.0 {
                 player.velocity += right * hort_speed;
                 player.camera_movement.cam_rot_goal = -player.camera_movement.cam_rot_max_goal;
             } else {
@@ -325,7 +332,7 @@ impl Player {
 
             // player.velocity.y = 0.0;
 
-            if keys.jump_just_pressed && player.on_ground {
+            if keys.jump_just_pressed && player.on_ground && !paused.0 {
                 player.velocity.y = player.jump_height;
             } else if player.velocity.y > 0.0 && player.head_hit && !player.on_ground {
                 player.velocity.y += player.gravity * time.delta_secs() * 4.0;
