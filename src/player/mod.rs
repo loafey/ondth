@@ -88,6 +88,7 @@ pub struct Player {
 
     pub id: u64,
     pub last_hurter: u64,
+    pub lobby_info: FastStr,
 
     pub health: f32,
     pub max_health: f32,
@@ -123,6 +124,7 @@ pub struct Player {
 impl Default for Player {
     fn default() -> Self {
         Self {
+            lobby_info: "Server Info".into(),
             id: 0,
             last_hurter: 0,
             health: 100.0,

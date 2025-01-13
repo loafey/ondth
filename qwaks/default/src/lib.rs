@@ -19,6 +19,12 @@ qwak_shared::plugin_gen!(Plugin);
 qwak_shared::host_calls!();
 use host::*;
 
+#[derive(Debug, Default)]
+struct PlayerStats {
+    kills: usize,
+    deaths: usize,
+}
+
 storage!();
 
 // Simple QWAK plugin that contains the required functions.
@@ -136,6 +142,21 @@ impl QwakPlugin for Plugin {
         }
     }
 
+    fn map_get_lobby_info() -> String {
+        let mut storage = STORAGE.borrow_mut();
+        let player_info = storage.entry::<HashMap<u64, PlayerStats>>().or_default();
+        let mut s = "lobby info:".to_string();
+        for (p, v) in player_info.iter() {
+            s += &format!(
+                "\n{}: d: {}, k: {}",
+                game::get_player_name(*p).to_lowercase(),
+                v.deaths,
+                v.kills
+            );
+        }
+        s
+    }
+
     fn map_init() {
         log::debug("clearing map storage...".to_string());
         storage_clear!();
@@ -149,6 +170,15 @@ impl QwakPlugin for Plugin {
             killed.to_lowercase(),
             killer.to_uppercase()
         ));
+
+        let mut storage = STORAGE.borrow_mut();
+        let player_info = storage.entry::<HashMap<u64, PlayerStats>>().or_default();
+        player_info.entry(player_id).or_default().deaths += 1;
+        player_info
+            .entry(by_id.unwrap_or_default())
+            .or_default()
+            .kills += 1;
+
         let spawn = game::get_spawn_point();
         game::teleport_player(player_id, spawn.x, spawn.y, spawn.z);
     }

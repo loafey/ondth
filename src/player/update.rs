@@ -4,10 +4,7 @@ use super::{
     ARMOR_GLYPH, HEALTH_GLYPH, Player, PlayerController, PlayerFpsMaterial, PlayerFpsModel,
     PlayerMpModel, WeaponState,
 };
-use crate::{
-    entities::ProjectileEntity,
-    net::{ClientMessage, Lobby},
-};
+use crate::{entities::ProjectileEntity, net::ClientMessage};
 use bevy::{
     audio::Volume,
     ecs::schedule::SystemConfigs,
@@ -30,7 +27,7 @@ use resources::{
     entropy::{EGame, EMisc, Entropy},
     inputs::PlayerInput,
 };
-use std::{fmt::Write, mem::transmute};
+use std::mem::transmute;
 
 enum SwitchDirection {
     Back,
@@ -85,7 +82,7 @@ impl Player {
         q_players: Query<&Player, With<PlayerController>>,
         mut text: Query<(&mut Text, &mut Visibility)>,
         input: Res<PlayerInput>,
-        lobby: Res<Lobby>,
+        mut client_events: EventWriter<ClientMessage>,
     ) {
         for player in &q_players {
             let ammo_hud = option_continue!(player.children.ammo_hud);
@@ -102,16 +99,12 @@ impl Player {
             let lobby_hud = option_continue!(player.children.lobby_hud);
             let (mut text, mut vis) = error_continue!(text.get_mut(lobby_hud));
             if input.show_lobby_just_pressed {
-                *vis = Visibility::Visible;
-                text.0 = format!(
-                    "Players:\n{}",
-                    lobby.values().fold(String::new(), |mut output, i| {
-                        let _ = writeln!(output, "{}: K={}, D={}", i.name, i.kills, i.deaths);
-                        output
-                    })
-                )
+                client_events.send(ClientMessage::RequestLobbyInfo);
             }
-            if input.show_lobby_just_released {
+            if input.show_lobby_pressed {
+                *vis = Visibility::Visible;
+                text.0 = player.lobby_info.to_string();
+            } else {
                 *vis = Visibility::Hidden;
             }
         }

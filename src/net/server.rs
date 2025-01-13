@@ -377,6 +377,17 @@ pub fn handle_client_message(
                 error_return!(msg.bytes()),
             );
         }
+        ClientMessage::RequestLobbyInfo => {
+            let msg = ServerMessage::LobbyInfo(
+                error_return!(nw.plugins.default.map_get_lobby_info()).into(),
+            );
+            if client_id == nw.current_id.0 {
+                server_events.send(msg);
+            } else {
+                let bytes = error_return!(msg.bytes());
+                server.send_message(client_id, ServerChannel::ServerMessages as u8, bytes);
+            }
+        }
         message => {
             update_world(client_id, &message, nw);
             server.broadcast_message(

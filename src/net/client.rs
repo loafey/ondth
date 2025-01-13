@@ -208,6 +208,14 @@ pub fn handle_messages(
                     }
                 }
             }
+            ServerMessage::LobbyInfo(fast_str) => {
+                for (_, mut player, _) in &mut nw.players {
+                    if player.id == nw.current_id.0 {
+                        player.lobby_info = fast_str;
+                        break;
+                    }
+                }
+            }
         }
     }
 }

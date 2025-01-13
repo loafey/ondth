@@ -146,6 +146,8 @@ pub enum NetState {
 
 #[derive(Debug, Serialize, Deserialize, Event, Clone)]
 pub enum ClientMessage {
+    RequestLobbyInfo,
+
     UpdatePosition {
         position: Vec3,
         rotation: [f32; 4],
@@ -192,6 +194,7 @@ pub enum SimulationEvent {
 #[derive(Debug, Serialize, Deserialize, Event, Clone)]
 pub enum ServerMessage {
     SetMap(PathBuf),
+    LobbyInfo(FastStr),
     TranslateBrush {
         target: FastStr,
         translation: Vec3,
