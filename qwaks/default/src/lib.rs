@@ -182,4 +182,12 @@ impl QwakPlugin for Plugin {
         let spawn = game::get_spawn_point();
         game::teleport_player(player_id, spawn.x, spawn.y, spawn.z);
     }
+
+    fn map_player_join(id: u64) {
+        game::broadcast_message(format!("joins: {id}"));
+    }
+
+    fn map_player_leave(id: u64) {
+        game::broadcast_message(format!("leaves: {id}"));
+    }
 }

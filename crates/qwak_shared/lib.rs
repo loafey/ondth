@@ -20,6 +20,10 @@ pub trait QwakPlugin {
     fn map_player_killed(args: qwak_helper_types::PlayerKilled) -> ();
     #[doc = "Function called by the game when a player requests lobby info (i.e presses tab)."]
     fn map_get_lobby_info() -> String;
+    #[doc = "Function called by the game when a player joins."]
+    fn map_player_join(id: u64) -> ();
+    #[doc = "Function called by the game when a player leaves."]
+    fn map_player_leave(id: u64) -> ();
 
     #[doc = "The projectiles this plugin defines."]
     fn plugin_get_projectiles()
