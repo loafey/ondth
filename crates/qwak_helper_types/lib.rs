@@ -113,6 +113,14 @@ pub struct MsgVec3 {
     pub y: f32,
     pub z: f32,
 }
+/// The argument to [`map_player_leave`](../qwak_shared/trait.QwakPlugin.html#tymethod.map_player_leave).
+#[derive(Debug, Clone, FromBytes, ToBytes, Deserialize, Serialize)]
+#[encoding(Msgpack)]
+#[allow(missing_docs)]
+pub struct PlayerLeave {
+    pub id: u64,
+    pub reason: String,
+}
 
 /// The data for a projectile
 #[derive(Debug, Deserialize, Serialize, Clone)]

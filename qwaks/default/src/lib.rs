@@ -2,8 +2,8 @@
 #![feature(thread_local)]
 use faststr::FastStr;
 use qwak_helper_types::{
-    MapInteraction, PickupData, PlayerKilled, Projectile, TypeMap, WeaponData, storage,
-    storage_clear, storage_get, storage_put,
+    MapInteraction, PickupData, PlayerKilled, PlayerLeave, Projectile, TypeMap, WeaponData,
+    storage, storage_clear, storage_get, storage_put,
 };
 use qwak_shared::QwakPlugin;
 use std::{
@@ -184,10 +184,16 @@ impl QwakPlugin for Plugin {
     }
 
     fn map_player_join(id: u64) {
-        game::broadcast_message(format!("joins: {id}"));
+        game::broadcast_message(format!(
+            "{} JOINED",
+            game::get_player_name(id).to_lowercase()
+        ));
     }
 
-    fn map_player_leave(id: u64) {
-        game::broadcast_message(format!("leaves: {id}"));
+    fn map_player_leave(PlayerLeave { id, reason }: PlayerLeave) {
+        game::broadcast_message(format!(
+            "{} LEFT ({reason})",
+            game::get_player_name(id).to_lowercase()
+        ));
     }
 }

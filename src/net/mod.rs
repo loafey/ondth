@@ -133,6 +133,12 @@ pub fn send_messages(
     }
 }
 
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Event)]
+pub enum Connections {
+    Join(u64),
+    Leave(u64, String),
+}
+
 #[derive(Debug, Resource)]
 pub struct IsSteam;
 

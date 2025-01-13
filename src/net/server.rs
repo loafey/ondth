@@ -1,5 +1,5 @@
 use super::{
-    ClientChannel, ClientMessage, NetState, PROTOCOL_ID, SimulationEvent, SteamClient,
+    ClientChannel, ClientMessage, Connections, NetState, PROTOCOL_ID, SimulationEvent, SteamClient,
     connection_config, update_world,
 };
 use crate::{
@@ -25,7 +25,7 @@ use bevy_renet::{
 };
 use faststr::FastStr;
 use macros::{error_continue, error_return, option_return};
-use qwak_helper_types::{Attack, MapInteraction, PlayerKilled};
+use qwak_helper_types::{Attack, MapInteraction, PlayerKilled, PlayerLeave};
 use renet_steam::{AccessPermission, SteamServerConfig, SteamServerTransport};
 use resources::CurrentMap;
 use std::{net::UdpSocket, time::SystemTime};
@@ -123,6 +123,7 @@ fn frag_checker(
 #[allow(clippy::type_complexity)]
 pub fn server_events(
     mut events: EventReader<ServerEvent>,
+    mut connections: EventWriter<Connections>,
     mut sim_events: EventReader<SimulationEvent>,
     mut server: ResMut<RenetServer>,
 
@@ -131,10 +132,11 @@ pub fn server_events(
     mut nw: NetWorld,
 ) {
     // Handle connection details
-    let mut messages = Vec::new();
     for event in events.read() {
         match event {
             ServerEvent::ClientConnected { client_id } => {
+                connections.send(Connections::Join(*client_id));
+
                 server.send_message(
                     *client_id,
                     ServerChannel::ServerMessages as u8,
@@ -191,10 +193,6 @@ pub fn server_events(
                 nw.lobby
                     .insert(*client_id, PlayerInfo::new(entity, name.clone()));
 
-                let message = format!("PLAYER {} JOINED", name.to_lowercase());
-                info!("{message}");
-                messages.push(message);
-
                 server.broadcast_message(
                     ServerChannel::ServerMessages as u8,
                     error_continue!(
@@ -210,14 +208,8 @@ pub fn server_events(
             }
             ServerEvent::ClientDisconnected { client_id, reason } => {
                 if let Some(player_info) = nw.lobby.remove(client_id) {
+                    connections.send(Connections::Leave(*client_id, format!("{reason}")));
                     nw.commands.entity(player_info.entity).despawn_recursive();
-                    let message = format!(
-                        "PLAYER {} LEFT: {}",
-                        player_info.name.to_lowercase(),
-                        format!("{reason}").to_uppercase()
-                    );
-                    info!("{message}");
-                    messages.push(message);
                 }
 
                 server.broadcast_message(
@@ -226,10 +218,6 @@ pub fn server_events(
                 )
             }
         }
-    }
-
-    for message in messages {
-        transmit_message(&mut server, &mut nw, message);
     }
 
     for message in sim_events.read() {
@@ -263,7 +251,21 @@ pub fn client_events(
     mut server: ResMut<RenetServer>,
     mut nw: NetWorld,
     mut server_events: EventWriter<ServerMessage>,
+    mut connections: EventReader<Connections>,
 ) {
+    set_nw!(&nw, &server, &server_events);
+    for message in connections.read() {
+        match message {
+            Connections::Join(id) => error_continue!(nw.plugins.default.map_player_join(*id)),
+            Connections::Leave(id, reason) => {
+                error_continue!(nw.plugins.default.map_player_leave(PlayerLeave {
+                    id: *id,
+                    reason: reason.clone()
+                }));
+            }
+        }
+    }
+
     for client_id in server.clients_id() {
         while let Some(message) = server.receive_message(client_id, ClientChannel::Input as u8) {
             let message = error_continue!(ClientMessage::from_bytes(&message));

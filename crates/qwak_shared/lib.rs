@@ -23,7 +23,7 @@ pub trait QwakPlugin {
     #[doc = "Function called by the game when a player joins."]
     fn map_player_join(id: u64) -> ();
     #[doc = "Function called by the game when a player leaves."]
-    fn map_player_leave(id: u64) -> ();
+    fn map_player_leave(args: qwak_helper_types::PlayerLeave) -> ();
 
     #[doc = "The projectiles this plugin defines."]
     fn plugin_get_projectiles()
