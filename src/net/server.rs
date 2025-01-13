@@ -56,11 +56,10 @@ macro_rules! set_nw {
     ($nw:expr,$server:expr, $server_events:expr) => {
         #[allow(clippy::missing_transmute_annotations, unsafe_code)]
         unsafe {
-            NW_PTR = Some(std::mem::transmute::<(&_, &_, &_), _>((
-                &*$nw,
-                &*$server,
-                &*$server_events,
-            )))
+            NW_PTR = Some(std::mem::transmute::<
+                (&NetWorld, &RenetServer, &EventWriter<ServerMessage>),
+                _,
+            >((&*$nw, &*$server, &*$server_events)))
         };
     };
 }
@@ -78,7 +77,11 @@ pub fn transmit_message(server: &mut RenetServer, nw: &mut NetWorld, text: Strin
     );
 }
 
-fn frag_checker(server: &mut RenetServer, nw: &mut NetWorld) {
+fn frag_checker(
+    mut server: ResMut<RenetServer>,
+    mut nw: NetWorld,
+    event_writer: EventWriter<ServerMessage>,
+) {
     let mut frags = Vec::new();
     for (_, mut player, _) in &mut nw.players {
         if player.health <= 0.0 {
@@ -109,6 +112,7 @@ fn frag_checker(server: &mut RenetServer, nw: &mut NetWorld) {
                 .bytes()
             ),
         );
+        set_nw!(&nw, &server, &event_writer);
         error_continue!(nw.plugins.default.map_player_killed(PlayerKilled {
             player_id: id,
             by_id: Some(hurter),
@@ -126,8 +130,6 @@ pub fn server_events(
     map: Res<CurrentMap>,
     mut nw: NetWorld,
 ) {
-    frag_checker(&mut server, &mut nw);
-
     // Handle connection details
     let mut messages = Vec::new();
     for event in events.read() {
@@ -455,7 +457,7 @@ pub fn init_server(
 }
 
 pub fn systems() -> SystemConfigs {
-    (server_events, client_events).into_configs()
+    (server_events, client_events, frag_checker).into_configs()
 }
 
 pub fn errors() -> SystemConfigs {
