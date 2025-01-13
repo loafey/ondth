@@ -134,4 +134,9 @@ impl QwakHostFunctions for Host {
             z: v.z,
         }
     }
+
+    fn game_host_id() -> u64 {
+        let (nw, _, _) = get_nw!();
+        nw.current_id.0
+    }
 }

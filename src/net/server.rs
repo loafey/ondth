@@ -254,6 +254,14 @@ pub fn client_events(
     mut connections: EventReader<Connections>,
 ) {
     set_nw!(&nw, &server, &server_events);
+    static mut FIRST: bool = true;
+    #[allow(unsafe_code)]
+    unsafe {
+        if FIRST {
+            FIRST = false;
+            error_return!(nw.plugins.default.map_init());
+        }
+    }
     for message in connections.read() {
         match message {
             Connections::Join(id) => error_continue!(nw.plugins.default.map_player_join(*id)),

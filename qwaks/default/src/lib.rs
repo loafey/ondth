@@ -160,6 +160,10 @@ impl QwakPlugin for Plugin {
     fn map_init() {
         log::debug("clearing map storage...".to_string());
         storage_clear!();
+
+        let mut storage = STORAGE.borrow_mut();
+        let player_info = storage.entry::<HashMap<u64, PlayerStats>>().or_default();
+        player_info.insert(game::host_id(), PlayerStats::default());
     }
 
     fn map_player_killed(PlayerKilled { player_id, by_id }: PlayerKilled) {
@@ -188,6 +192,10 @@ impl QwakPlugin for Plugin {
             "{} JOINED",
             game::get_player_name(id).to_lowercase()
         ));
+
+        let mut storage = STORAGE.borrow_mut();
+        let player_info = storage.entry::<HashMap<u64, PlayerStats>>().or_default();
+        player_info.insert(id, PlayerStats::default());
     }
 
     fn map_player_leave(PlayerLeave { id, reason }: PlayerLeave) {
@@ -195,5 +203,9 @@ impl QwakPlugin for Plugin {
             "{} LEFT ({reason})",
             game::get_player_name(id).to_lowercase()
         ));
+
+        let mut storage = STORAGE.borrow_mut();
+        let player_info = storage.entry::<HashMap<u64, PlayerStats>>().or_default();
+        player_info.remove(&id);
     }
 }

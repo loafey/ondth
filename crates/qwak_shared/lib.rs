@@ -79,4 +79,8 @@ pub trait QwakHostFunctions {
     #[doc = "# Safety"]
     #[doc = "Will segfault if ran outside of the game."]
     fn game_get_spawn_point() -> qwak_helper_types::MsgVec3;
+    #[doc = "Call this to get the id of the host."]
+    #[doc = "# Safety"]
+    #[doc = "Will segfault if ran outside of the game."]
+    fn game_host_id() -> u64;
 }
