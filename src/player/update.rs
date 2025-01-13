@@ -687,10 +687,21 @@ impl Player {
         keys: Res<PlayerInput>,
         mut q_windows: Query<&mut Window, With<PrimaryWindow>>,
         mut paused: ResMut<Paused>,
+        players: Query<&Player>,
+        mut screens: Query<&mut Visibility>,
         //mut time: ResMut<Time<Virtual>>,
     ) {
         if keys.pause_game_just_pressed || keys.pause_game_alt_just_pressed {
             paused.0 = !paused.0;
+            for p in &players {
+                if let Some(ent) = p.children.pause_screen {
+                    let mut vis = error_continue!(screens.get_mut(ent));
+                    *vis = match paused.0 {
+                        false => Visibility::Hidden,
+                        true => Visibility::Visible,
+                    };
+                }
+            }
             match paused.0 {
                 true => info!("Pausing game"),
                 false => info!("Resuming game"),

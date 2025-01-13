@@ -79,6 +79,7 @@ impl Player {
         let mut shoot_sound_holder = None;
         let mut lobby_hud = None;
         let mut entity = nw.commands.spawn(Collider::cylinder(0.5, 0.15));
+        let mut pause_screen = None;
 
         let player_commands = entity
             .insert(ActiveEvents::COLLISION_EVENTS)
@@ -360,6 +361,44 @@ impl Player {
                         );
                     });
                 });
+
+            pause_screen = Some(
+                nw.commands
+                    .spawn(Node {
+                        width: Val::Percent(100.0),
+                        height: Val::Percent(100.0),
+                        justify_content: JustifyContent::Center,
+                        align_items: AlignItems::Center,
+                        flex_direction: FlexDirection::Column,
+                        row_gap: Val::Px(10.0),
+                        ..default()
+                    })
+                    .insert(Visibility::Hidden)
+                    .insert(BackgroundColor(Color::srgba(0.0, 0.0, 0.0, 0.8)))
+                    .with_children(|c| {
+                        c.spawn(Node {
+                            width: Val::Px(230.0),
+                            height: Val::Px(300.0),
+                            align_items: AlignItems::Center,
+                            flex_direction: FlexDirection::Column,
+                            row_gap: Val::Px(10.0),
+                            padding: UiRect {
+                                left: Val::ZERO,
+                                right: Val::ZERO,
+                                top: Val::Px(10.0),
+                                bottom: Val::Px(10.0),
+                            },
+                            ..default()
+                        })
+                        .insert(BackgroundColor(Color::srgba(0.0, 0.0, 0.0, 1.0)))
+                        .with_children(|c| {
+                            c.spawn(Text("- PAUSED -".to_string()));
+                            c.spawn((Text("Options".to_string()), Button));
+                            c.spawn((Text("Leave".to_string()), Button));
+                        });
+                    })
+                    .id(),
+            );
         }
 
         let mut player_commands = nw.commands.get_entity(id).unwrap();
@@ -377,6 +416,7 @@ impl Player {
                 shoot_sound_holder,
                 lobby_hud,
                 hurt_flash,
+                pause_screen,
             },
             ..default()
         };

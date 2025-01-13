@@ -56,6 +56,7 @@ pub struct PlayerChildren {
     pub message_holder: Option<Entity>,
     pub shoot_sound_holder: Option<Entity>,
     pub lobby_hud: Option<Entity>,
+    pub pause_screen: Option<Entity>,
 }
 
 #[derive(Debug, Default)]
