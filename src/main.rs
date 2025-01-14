@@ -70,7 +70,7 @@ fn main() {
                 // }),
     );
 
-    // app.add_plugins(bevy_inspector_egui::quick::WorldInspectorPlugin::new());
+    app.add_plugins(bevy_inspector_egui::quick::WorldInspectorPlugin::new());
 
     app.add_event::<ClientMessage>()
         .add_event::<SimulationEvent>()

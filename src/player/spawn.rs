@@ -1,8 +1,9 @@
 use super::{
-    ARMOR_GLYPH, HEALTH_GLYPH, Player, PlayerController, PlayerFpsMaterial, PlayerFpsModel,
-    PlayerMpModel,
+    ARMOR_GLYPH, HEALTH_GLYPH, PauseButtonEvent, Player, PlayerController, PlayerFpsMaterial,
+    PlayerFpsModel, PlayerMpModel,
 };
 use crate::{
+    map_gen::GameObject,
     net::{
         PlayerInfo,
         steam::{CurrentAvatar, SteamClient},
@@ -83,6 +84,8 @@ impl Player {
 
         let player_commands = entity
             .insert(ActiveEvents::COLLISION_EVENTS)
+            .insert(GameObject)
+            .insert(Name::new("player"))
             .insert(Transform::from_translation(player_spawn))
             .insert(match is_own {
                 true => RigidBody::Dynamic,
@@ -181,6 +184,8 @@ impl Player {
                     })),
                     trans,
                 ))
+                .insert(GameObject)
+                .insert(Name::new("player mp model"))
                 .insert(PlayerMpModel);
             });
         }
@@ -360,7 +365,9 @@ impl Player {
                             .id(),
                         );
                     });
-                });
+                })
+                .insert(Name::new("player gui holder"))
+                .insert(GameObject);
 
             pause_screen = Some(
                 nw.commands
@@ -373,6 +380,8 @@ impl Player {
                         row_gap: Val::Px(10.0),
                         ..default()
                     })
+                    .insert(Name::new("pause screen"))
+                    .insert(GameObject)
                     .insert(Visibility::Hidden)
                     .insert(BackgroundColor(Color::srgba(0.0, 0.0, 0.0, 0.8)))
                     .with_children(|c| {
@@ -390,11 +399,16 @@ impl Player {
                             },
                             ..default()
                         })
+                        .insert(Name::new("pause gui"))
                         .insert(BackgroundColor(Color::srgba(0.0, 0.0, 0.0, 1.0)))
                         .with_children(|c| {
                             c.spawn(Text("- PAUSED -".to_string()));
-                            c.spawn((Text("Options".to_string()), Button));
-                            c.spawn((Text("Leave".to_string()), Button));
+                            c.spawn((
+                                Text("Options".to_string()),
+                                Button,
+                                PauseButtonEvent::Options,
+                            ));
+                            c.spawn((Text("Leave".to_string()), Button, PauseButtonEvent::Leave));
                         });
                     })
                     .id(),

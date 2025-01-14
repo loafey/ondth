@@ -16,7 +16,7 @@ use bevy::{
     },
     hierarchy::DespawnRecursiveExt,
     log::{error, info},
-    prelude::{EventWriter, NextState},
+    prelude::{Commands, EventWriter, NextState},
 };
 use bevy_renet::{
     netcode::{NetcodeServerTransport, NetcodeTransportError, ServerAuthentication, ServerConfig},
@@ -464,6 +464,15 @@ pub fn init_server(
     next_state.set(NetState::Server);
     info!("started server...");
     true
+}
+
+fn clean_up(mut commands: Commands) {
+    commands.remove_resource::<RenetServer>();
+    commands.remove_resource::<Lobby>();
+}
+
+pub fn system_cleanup() -> SystemConfigs {
+    (clean_up,).into_configs()
 }
 
 pub fn systems() -> SystemConfigs {

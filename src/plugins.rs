@@ -3,7 +3,7 @@ use std::path::PathBuf;
 
 use crate::entities::message::Message;
 use crate::entities::{ProjectileEntity, pickup::PickupEntity};
-use crate::map_gen::{load_map, texture_systems::*, world_entites};
+use crate::map_gen::{clean_up_map, load_map, texture_systems::*, world_entites};
 use crate::net::{self, NetState};
 use crate::player::Player;
 use crate::qwak_host_functions::qwak_functions;
@@ -83,7 +83,8 @@ impl Plugin for ServerPlugin {
                 net::client::all_cons(),
             )
                 .run_if(in_state(NetState::Server)),
-        );
+        )
+        .add_systems(OnExit(CurrentStage::InGame), net::server::system_cleanup());
     }
 }
 
@@ -103,7 +104,8 @@ impl Plugin for ClientPlugin {
         .add_systems(
             PreUpdate,
             net::send_messages.run_if(in_state(NetState::Server).or(in_state(NetState::Client))),
-        );
+        )
+        .add_systems(OnExit(CurrentStage::InGame), net::client::system_cleanup());
     }
 }
 
@@ -189,6 +191,7 @@ impl Plugin for GameStage {
             .add_systems(
                 Update,
                 (Player::pause_handler, Player::debug).run_if(in_state(CurrentStage::InGame)),
-            );
+            )
+            .add_systems(OnExit(CurrentStage::InGame), clean_up_map);
     }
 }

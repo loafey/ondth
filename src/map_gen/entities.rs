@@ -18,7 +18,7 @@ use qwak_helper_types::PickupData;
 use resources::{PickupMap, PlayerSpawnpoint};
 use std::collections::HashMap;
 
-use super::Interactable;
+use super::{GameObject, Interactable};
 
 fn parse_vec(str: &str) -> Vec3 {
     let mut splat = str.split_whitespace();
@@ -96,6 +96,7 @@ pub fn spawn_entity(
                     ..Default::default()
                 },
                 Transform::from_translation(pos),
+                GameObject,
             ));
         }
         Some("directional_light") => {
@@ -114,6 +115,7 @@ pub fn spawn_entity(
                     ..Default::default()
                 },
                 trans,
+                GameObject,
             ));
         }
         Some("info_player_start") => {
@@ -186,5 +188,6 @@ pub fn spawn_pickup(
     };
     pickup
         .insert(trans)
-        .insert(PickupEntity::new(id, data.clone()));
+        .insert(PickupEntity::new(id, data.clone()))
+        .insert(GameObject);
 }

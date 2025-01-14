@@ -28,6 +28,7 @@ resources              = { workspace = true }
 qwak_helper_types      = { workspace = true }
 qwak_shared            = { workspace = true }
 qwak                   = { workspace = true }
+bevy-inspector-egui    = { workspace = true }
 
 [lints]
 workspace = true

@@ -24,7 +24,7 @@ use bevy::{
     hierarchy::DespawnRecursiveExt,
     log::info,
     math::{EulerRot, Vec3},
-    prelude::{EventWriter, NextState},
+    prelude::{Commands, EventWriter, NextState},
 };
 use bevy_renet::{
     netcode::{ClientAuthentication, NetcodeClientTransport, NetcodeTransportError},
@@ -267,6 +267,15 @@ pub fn init_client(
     next_state.set(NetState::Client);
     info!("started client");
     true
+}
+
+fn clean_up(mut commands: Commands) {
+    commands.remove_resource::<RenetClient>();
+    commands.remove_resource::<Lobby>();
+}
+
+pub fn system_cleanup() -> SystemConfigs {
+    (clean_up,).into_configs()
 }
 
 pub fn systems() -> SystemConfigs {

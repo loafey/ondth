@@ -43,6 +43,23 @@ fn vec_fix(mut v: Vec3) -> Vec3 {
 #[derive(Debug, Component, Clone, Copy)]
 pub struct BrushEntity;
 
+#[derive(Debug, Component, Clone, Copy)]
+pub struct GameObject;
+
+pub fn clean_up_map(
+    query: Query<(Entity, Option<&Name>), With<GameObject>>,
+    mut commands: Commands,
+) {
+    for (ent, _name) in &query {
+        let Some(mut cc) = commands.get_entity(ent) else {
+            continue;
+        };
+        cc.try_despawn_descendants();
+        cc.try_despawn();
+        cc.try_despawn_recursive();
+    }
+}
+
 #[allow(clippy::too_many_arguments)]
 pub fn load_map(
     client: Option<Res<RenetClient>>,
@@ -74,6 +91,7 @@ pub fn load_map(
                         BrushEntity,
                         Transform::default(),
                         RigidBody::KinematicPositionBased,
+                        GameObject,
                     ))
                     .id(),
             );
@@ -109,6 +127,7 @@ pub fn load_map(
                 Some(ent) => commands.get_entity(ent).unwrap(),
                 None => commands.spawn(BrushEntity),
             };
+            spawner.insert(GameObject);
             let mut brush_poly = Vec::new();
             let mut model_center = Vec3::ZERO;
             for poly in &polys {

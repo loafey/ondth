@@ -44,6 +44,12 @@ pub struct WeaponState {
     pub data: WeaponData,
 }
 
+#[derive(Debug, Component)]
+enum PauseButtonEvent {
+    Options,
+    Leave,
+}
+
 #[derive(Debug, Default)]
 pub struct PlayerChildren {
     pub camera: Option<Entity>,

@@ -1,10 +1,13 @@
 #![allow(clippy::missing_transmute_annotations)]
 
 use super::{
-    ARMOR_GLYPH, HEALTH_GLYPH, Player, PlayerController, PlayerFpsMaterial, PlayerFpsModel,
-    PlayerMpModel, WeaponState,
+    ARMOR_GLYPH, HEALTH_GLYPH, PauseButtonEvent, Player, PlayerController, PlayerFpsMaterial,
+    PlayerFpsModel, PlayerMpModel, WeaponState,
 };
-use crate::{entities::ProjectileEntity, net::ClientMessage};
+use crate::{
+    entities::ProjectileEntity,
+    net::{ClientMessage, NetState},
+};
 use bevy::{
     audio::Volume,
     ecs::schedule::SystemConfigs,
@@ -18,12 +21,13 @@ use bevy_rapier3d::{
     plugin::RapierContext,
     prelude::{ShapeCastOptions, Velocity},
 };
+use bevy_renet::renet::{RenetClient, RenetServer};
 use bevy_scene_hook::reload::{Hook, State as HookState};
 use faststr::FastStr;
 use macros::{error_continue, option_continue, option_return};
 use qwak_helper_types::{Attack, SoundEffect};
 use resources::{
-    Paused, Projectiles,
+    CurrentStage, Paused, Projectiles,
     entropy::{EGame, EMisc, Entropy},
     inputs::PlayerInput,
 };
@@ -55,8 +59,44 @@ impl Player {
             Player::camera_movement,
             Player::update_hud,
             Player::hurt_flash,
+            Player::pause_screen_buttons,
         )
             .into_configs()
+    }
+
+    #[allow(clippy::type_complexity)]
+    fn pause_screen_buttons(
+        interactions: Query<
+            (&Interaction, &PauseButtonEvent),
+            (Changed<Interaction>, With<Button>),
+        >,
+        mut paused: ResMut<Paused>,
+        mut server: Option<ResMut<RenetServer>>,
+        mut client: Option<ResMut<RenetClient>>,
+        mut current_stage: ResMut<NextState<CurrentStage>>,
+        mut net_state: ResMut<NextState<NetState>>,
+    ) {
+        for (interaction, event) in &interactions {
+            if matches!(interaction, Interaction::Pressed) {
+                match event {
+                    PauseButtonEvent::Options => error!("options not implemented"),
+                    PauseButtonEvent::Leave => {
+                        info!("leaving game");
+                        paused.0 = false;
+                        if let Some(server) = &mut server {
+                            server.disconnect_all();
+                            info!("disconnected all players");
+                        }
+                        if let Some(client) = &mut client {
+                            client.disconnect();
+                            info!("leaving server");
+                        }
+                        net_state.set(NetState::Offline);
+                        current_stage.set(CurrentStage::MainMenu);
+                    }
+                }
+            }
+        }
     }
 
     fn hurt_flash(
