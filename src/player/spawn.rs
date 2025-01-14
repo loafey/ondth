@@ -13,7 +13,6 @@ use crate::{
 use bevy::{
     prelude::*,
     render::view::NoFrustumCulling,
-    text::FontSmoothing,
     window::{CursorGrabMode, PrimaryWindow},
 };
 use bevy_rapier3d::prelude::*;
@@ -257,7 +256,6 @@ impl Player {
                                 Text::new("LOBBY DATA"),
                                 TextFont {
                                     font: nw.asset_server.load("ui/Color Basic.otf"),
-                                    font_smoothing: FontSmoothing::None,
                                     ..default()
                                 },
                                 TextColor(Color::WHITE),
@@ -281,7 +279,6 @@ impl Player {
                                 Text::new(format!("{HEALTH_GLYPH}100")),
                                 TextFont {
                                     font: nw.asset_server.load("ui/Color Basic.otf"),
-                                    font_smoothing: FontSmoothing::None,
                                     ..default()
                                 },
                                 TextColor(text_color),
@@ -302,7 +299,6 @@ impl Player {
                                 Text::new(format!("{ARMOR_GLYPH}100")),
                                 TextFont {
                                     font: nw.asset_server.load("ui/Color Basic.otf"),
-                                    font_smoothing: FontSmoothing::None,
                                     ..default()
                                 },
                                 TextColor(text_color),
@@ -323,7 +319,6 @@ impl Player {
                                 Text::new("100\nCRUTONS"),
                                 TextFont {
                                     font: nw.asset_server.load("ui/Color Basic.otf"),
-                                    font_smoothing: FontSmoothing::None,
                                     ..default()
                                 },
                                 TextColor(text_color),
