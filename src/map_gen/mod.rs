@@ -19,7 +19,10 @@ use entities::spawn_entity;
 use faststr::FastStr;
 use macros::error_return;
 use map_parser::parser::Brush;
-use resources::{CurrentMap, MapDoneLoading, PickupMap, PlayerSpawnpoint, TargetMap, TextureMap};
+use resources::{
+    CurrentMap, MapDoneLoading, Paused, PickupMap, PlayerSpawnpoint, TargetMap,
+    TextureLoadingState, TextureMap, TexturesLoading,
+};
 
 pub mod entities;
 mod interactable;
@@ -50,6 +53,12 @@ pub fn clean_up_map(
     query: Query<(Entity, Option<&Name>), With<GameObject>>,
     mut commands: Commands,
 ) {
+    commands.insert_resource(TextureLoadingState::NotLoaded);
+    commands.insert_resource(TexturesLoading::default());
+    commands.insert_resource(TextureMap::default());
+    commands.insert_resource(PlayerSpawnpoint(Vec3::ZERO));
+    commands.insert_resource(MapDoneLoading(false));
+    commands.insert_resource(Paused(false));
     for (ent, _name) in &query {
         let Some(mut cc) = commands.get_entity(ent) else {
             continue;

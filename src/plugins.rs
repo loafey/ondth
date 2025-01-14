@@ -168,14 +168,14 @@ impl Plugin for GameStage {
                     .run_if(if_texture_done_loading.and(run_once)),
             )
             .add_systems(
-                PreUpdate,
-                PlayerInput::update.run_if(in_state(CurrentStage::InGame)),
-            )
-            .add_systems(
                 Update,
                 Player::spawn_own_player
                     .run_if(in_state(CurrentStage::InGame))
                     .run_if(if_map_done_loading.and(run_once)),
+            )
+            .add_systems(
+                PreUpdate,
+                PlayerInput::update.run_if(in_state(CurrentStage::InGame)),
             )
             .add_systems(
                 Update,
