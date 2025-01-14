@@ -16,7 +16,7 @@ use bevy::{
     },
     hierarchy::DespawnRecursiveExt,
     log::{error, info},
-    prelude::{Commands, EventWriter, NextState},
+    prelude::{EventWriter, NextState},
 };
 use bevy_renet::{
     netcode::{NetcodeServerTransport, NetcodeTransportError, ServerAuthentication, ServerConfig},
@@ -466,7 +466,9 @@ pub fn init_server(
     true
 }
 
-fn clean_up(mut commands: Commands) {
+fn clean_up(commands: &mut World) {
+    commands.remove_resource::<NetcodeServerTransport>();
+    commands.remove_non_send_resource::<SteamServerTransport>();
     commands.remove_resource::<RenetServer>();
     commands.remove_resource::<Lobby>();
 }

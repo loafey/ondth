@@ -270,6 +270,8 @@ pub fn init_client(
 }
 
 fn clean_up(mut commands: Commands) {
+    commands.remove_resource::<NetcodeClientTransport>();
+    commands.remove_resource::<SteamClientTransport>();
     commands.remove_resource::<RenetClient>();
     commands.remove_resource::<Lobby>();
 }
