@@ -28,6 +28,7 @@ resources              = { workspace = true }
 qwak_helper_types      = { workspace = true }
 qwak_shared            = { workspace = true }
 qwak                   = { workspace = true }
+i-cant-believe-its-not-bsn = { workspace = true }
 # bevy-inspector-egui    = { workspace = true }
 
 [lints]
@@ -75,6 +76,7 @@ bevy-scene-hook        = { git = "https://github.com/AlephCubed/bevy-scene-hook.
 bevy_hanabi            = { version = "0.14.*", default-features = false, features = ["3d"] }
 bevy_renet             = { version = "1.0.*", features = ["steam"] }
 renet_steam            = { version = "1.0.*", features = ["bevy"] }
+i-cant-believe-its-not-bsn = { git = "https://github.com/Leafwing-Studios/i-cant-believe-its-not-bsn.git" }
 
 # Custom crates
 map_parser             = { path = "crates/map_parser" }

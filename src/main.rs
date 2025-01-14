@@ -36,6 +36,7 @@ mod plugins;
 mod queries;
 mod qwak_host_functions;
 mod startup;
+mod ui;
 
 const APP_ID: AppId = AppId(480);
 
@@ -94,6 +95,7 @@ fn main() {
 
     app.add_systems(Startup, particles::register_particles);
     app.add_systems(Update, particles::ParticleLifetime::update);
+    app.add_systems(Update, ui::ui_systems());
 
     if let Some((steam, single_client)) = try_steam() {
         app.insert_non_send_resource(single_client);

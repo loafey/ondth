@@ -752,6 +752,8 @@ impl Player {
                 //rapier_context.
                 primary_window.cursor_options.grab_mode = CursorGrabMode::None;
                 primary_window.cursor_options.visible = true;
+                let middle = primary_window.size() / 2.0;
+                primary_window.set_cursor_position(Some(middle));
                 //time.pause();
             } else {
                 primary_window.cursor_options.grab_mode = CursorGrabMode::Locked;

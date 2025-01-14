@@ -9,6 +9,7 @@ use crate::{
         steam::{CurrentAvatar, SteamClient},
     },
     queries::NetWorld,
+    ui::menu_button::MenuButton,
 };
 use bevy::{
     prelude::*,
@@ -384,28 +385,41 @@ impl Player {
                     .with_children(|c| {
                         c.spawn(Node {
                             width: Val::Px(230.0),
-                            height: Val::Px(300.0),
-                            align_items: AlignItems::Center,
+                            align_items: AlignItems::Stretch,
                             flex_direction: FlexDirection::Column,
                             row_gap: Val::Px(10.0),
                             padding: UiRect {
                                 left: Val::ZERO,
                                 right: Val::ZERO,
                                 top: Val::Px(10.0),
-                                bottom: Val::Px(10.0),
+                                bottom: Val::ZERO,
                             },
                             ..default()
                         })
                         .insert(Name::new("pause gui"))
                         .insert(BackgroundColor(Color::srgba(0.0, 0.0, 0.0, 1.0)))
                         .with_children(|c| {
-                            c.spawn(Text("- PAUSED -".to_string()));
-                            c.spawn((
-                                Text("Options".to_string()),
-                                Button,
+                            c.spawn(Node {
+                                align_items: AlignItems::Center,
+                                justify_content: JustifyContent::Center,
+                                width: Val::Percent(100.0),
+                                ..default()
+                            })
+                            .with_child(Text("- PAUSED -".to_string()));
+                            c.spawn(MenuButton::new(
+                                "Options",
+                                None,
+                                None,
+                                None,
                                 PauseButtonEvent::Options,
                             ));
-                            c.spawn((Text("Leave".to_string()), Button, PauseButtonEvent::Leave));
+                            c.spawn(MenuButton::new(
+                                "Leave",
+                                None,
+                                None,
+                                None,
+                                PauseButtonEvent::Leave,
+                            ));
                         });
                     })
                     .id(),

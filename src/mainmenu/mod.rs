@@ -2,6 +2,7 @@ use crate::{
     APP_ID,
     net::{self, NetState, steam::SteamClient},
     plugins::Qwaks,
+    ui::menu_button::MenuButton,
 };
 use bevy::{ecs::system::SystemState, prelude::*};
 use bevy_simple_text_input::{TextInput, TextInputSettings, TextInputTextFont, TextInputValue};
@@ -217,47 +218,53 @@ pub fn setup(
                 position_type: PositionType::Absolute,
                 width: Val::Vw(100.0),
                 border: UiRect::all(Val::Px(2.0)),
-                left: Val::Px(0.0),
+                left: Val::Px(76.0),
                 bottom: Val::Px(76.0),
                 flex_direction: FlexDirection::Column,
                 justify_content: JustifyContent::Center,
-                align_items: AlignItems::Center,
+                align_items: AlignItems::Start,
                 ..default()
             })
             .with_children(|c| {
-                c.spawn(Button)
-                    .insert((Text::new("Solo"), TextFont {
-                        font_size: 32.0,
-                        ..default()
-                    }))
-                    .insert(ButtonEvent::Solo);
-
-                c.spawn(Button)
-                    .insert((Text::new("Start MP"), TextFont {
-                        font_size: 32.0,
-                        ..default()
-                    }))
-                    .insert(ButtonEvent::StartMp);
-
-                c.spawn(Node::default()).insert((
-                    TextInput,
-                    TextInputValue("127.0.0.1:8000".to_string()),
-                    TextInputSettings {
-                        retain_on_submit: true,
-                        ..default()
-                    },
-                    TextInputTextFont(TextFont {
-                        font_size: 32.0,
-                        ..default()
-                    }),
-                ));
-
-                c.spawn(Button)
-                    .insert((Text::new("Join IP"), TextFont {
-                        font_size: 32.0,
-                        ..default()
-                    }))
-                    .insert(ButtonEvent::JoinMp);
+                c.spawn(Node {
+                    flex_direction: FlexDirection::Column,
+                    ..default()
+                })
+                .with_children(|c| {
+                    c.spawn(MenuButton::new(
+                        "Solo",
+                        Some(32.0),
+                        Some(5.0),
+                        Some(10.0),
+                        ButtonEvent::Solo,
+                    ));
+                    c.spawn(MenuButton::new(
+                        "Host Game",
+                        Some(32.0),
+                        Some(5.0),
+                        Some(10.0),
+                        ButtonEvent::StartMp,
+                    ));
+                    c.spawn(Node::default()).insert((
+                        TextInput,
+                        TextInputValue("127.0.0.1:8000".to_string()),
+                        TextInputSettings {
+                            retain_on_submit: true,
+                            ..default()
+                        },
+                        TextInputTextFont(TextFont {
+                            font_size: 32.0,
+                            ..default()
+                        }),
+                    ));
+                    c.spawn(MenuButton::new(
+                        "Join Game",
+                        Some(32.0),
+                        Some(5.0),
+                        Some(10.0),
+                        ButtonEvent::JoinMp,
+                    ));
+                });
             });
 
             c.spawn(Node {
@@ -299,19 +306,17 @@ pub fn setup(
                 }));
 
                 for map in map_files {
-                    c.spawn(
-                        Button, /*{
-                                   border: UiRect::all(Val::Px(5.0)),
-                                   border_color: BorderColor(Color::BLACK),
-                                   ..default()
-                               }*/
-                    )
-                    .insert(Text::new(format!("{map:?}")))
-                    .insert(TextFont {
-                        font_size: 16.0,
-                        ..default()
-                    })
-                    .insert(LevelButton(map.clone()));
+                    let s = format!("{map:?}");
+                    if s.contains("/autosave/") {
+                        continue;
+                    }
+                    c.spawn(MenuButton::new(
+                        s[13..s.len() - 5].to_string(),
+                        Some(16.0),
+                        Some(4.0),
+                        Some(2.0),
+                        LevelButton(map.clone()),
+                    ));
                 }
 
                 c.spawn((Text::new("Friends:".to_string()), TextFont {
@@ -319,22 +324,13 @@ pub fn setup(
                     ..default()
                 }));
                 for friend in friends {
-                    c.spawn(
-                        Button, /*{
-                                   style: Style {
-                                       border: UiRect::all(Val::Px(5.0)),
-                                       ..default()
-                                   },
-                                   border_color: BorderColor(Color::BLACK),
-                                   ..default()
-                               }*/
-                    )
-                    .insert(Text::new(friend.name()))
-                    .insert(TextFont {
-                        font_size: 16.0,
-                        ..default()
-                    })
-                    .insert(FriendButton(friend.id().raw()));
+                    c.spawn(MenuButton::new(
+                        friend.name(),
+                        Some(16.0),
+                        Some(4.0),
+                        Some(2.0),
+                        FriendButton(friend.id().raw()),
+                    ));
                 }
             });
         })

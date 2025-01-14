@@ -3070,6 +3070,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dfa686283ad6dd069f105e5ab091b04c62850d3e4cf5d67debad1933f55023df"
 
 [[package]]
+name = "i-cant-believe-its-not-bsn"
+version = "0.3.0"
+source = "git+https://github.com/Leafwing-Studios/i-cant-believe-its-not-bsn.git#17bcd1158e85d2a020fc51eb87feaae6b2c59821"
+dependencies = [
+ "bevy_ecs",
+ "bevy_hierarchy",
+]
+
+[[package]]
 name = "iana-time-zone"
 version = "0.1.61"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4237,6 +4246,7 @@ dependencies = [
  "bevy_simple_text_input",
  "bincode",
  "faststr",
+ "i-cant-believe-its-not-bsn",
  "image",
  "integrity",
  "macros",
