@@ -63,7 +63,6 @@ pub fn buttons(world: &mut World) {
     let mut state: SystemState<(
         Query<(&Interaction, &ButtonEvent), (Changed<Interaction>, With<Button>)>,
         Query<&TextInputValue>,
-        ResMut<NextState<CurrentStage>>,
         ResMut<NextState<NetState>>,
         Option<Res<SteamClient>>,
         Res<MainMenuState>,
@@ -73,7 +72,7 @@ pub fn buttons(world: &mut World) {
     #[allow(unsafe_code)]
     let world_copy = unsafe { &mut *(world as *mut World) };
 
-    let (query, text_inputs, mut next_state, mut next_net_state, steam_client, state, mut vis) =
+    let (query, text_inputs, mut next_net_state, steam_client, state, mut vis) =
         state.get_mut(world);
 
     for (interaction, event) in &query {
