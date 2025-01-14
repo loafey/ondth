@@ -22,7 +22,7 @@ use bevy::{
         world::World,
     },
     hierarchy::DespawnRecursiveExt,
-    log::info,
+    log::{error, info},
     math::{EulerRot, Vec3},
     prelude::{Commands, EventWriter, NextState},
 };
@@ -295,10 +295,19 @@ pub fn errors_steam() -> SystemConfigs {
     (panic_on_error_system_steam.run_if(resource_exists::<IsSteam>),).into_configs()
 }
 
-pub fn panic_on_error_system(mut renet_error: EventReader<NetcodeTransportError>) {
-    #[allow(clippy::never_loop)]
+pub fn panic_on_error_system(
+    mut renet_error: EventReader<NetcodeTransportError>,
+    mut current_stage: ResMut<NextState<CurrentStage>>,
+    mut net_state: ResMut<NextState<NetState>>,
+) {
+    let mut errored = false;
     for e in renet_error.read() {
-        panic!("{}", e);
+        error!("{e}");
+        errored = true;
+    }
+    if errored {
+        net_state.set(NetState::Offline);
+        current_stage.set(CurrentStage::MainMenu);
     }
 }
 

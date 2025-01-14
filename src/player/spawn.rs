@@ -187,7 +187,6 @@ impl Player {
                     })),
                     trans,
                 ))
-                .insert(GameObject)
                 .insert(Name::new("player mp model"))
                 .insert(PlayerMpModel);
             });
