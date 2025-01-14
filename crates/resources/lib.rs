@@ -40,12 +40,25 @@ pub fn if_not_paused(val: Res<Paused>) -> bool {
     !val.0
 }
 
+/// Contains true if this is the first frame of a map
+#[derive(Resource)]
+pub struct MapFirstRun(pub bool);
+
 /// True if the map is done and loaded
 #[derive(Resource)]
 pub struct MapDoneLoading(pub bool);
 
 /// Returns if the map is done loading.
 pub fn if_map_done_loading(val: Res<MapDoneLoading>) -> bool {
+    val.0
+}
+
+/// True if the player has been spawned
+#[derive(Resource)]
+pub struct PlayerSpawned(pub bool);
+
+/// Returns if the host player has been spawned.
+pub fn if_player_spawned(val: Res<PlayerSpawned>) -> bool {
     val.0
 }
 

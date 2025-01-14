@@ -167,7 +167,9 @@ pub fn get_plugin_calls(item: TS) -> TS {
                         /// Fails if the path does not exist or if the binary files is invalid.
                         pub fn new(path: impl AsRef<std::path::Path>, functions: impl IntoIterator<Item = extism::Function>) -> Result<Self, String> {
                             let wasm = extism::Wasm::file(path);
-                            let manifest = extism::Manifest::new([wasm]);
+                            let mut manifest = extism::Manifest::new([wasm]);
+                            manifest.memory.max_pages = Some(u32::MAX);
+                            manifest.memory.max_var_bytes = Some(u32::MAX as u64);
                             let plug = Arc::new(Mutex::new(
                                 extism::Plugin::new(&manifest, functions, true)
                                     .map_err(|e| format!("{e}"))?,

@@ -19,7 +19,7 @@ use bevy::{
 use bevy_rapier3d::prelude::*;
 use bevy_scene_hook::reload::{Hook, SceneBundle as HookedSceneBundle};
 use faststr::FastStr;
-use resources::{Paused, PlayerSpawnpoint};
+use resources::{Paused, PlayerSpawned, PlayerSpawnpoint};
 
 impl Player {
     pub fn spawn_own_player(
@@ -29,6 +29,7 @@ impl Player {
         steam: Option<Res<SteamClient>>,
         mut q_windows: Query<&mut Window, With<PrimaryWindow>>,
         paused: ResMut<Paused>,
+        mut player_spawned: ResMut<PlayerSpawned>,
     ) {
         let mut primary_window = q_windows.single_mut();
         if paused.0 {
@@ -59,6 +60,8 @@ impl Player {
                 FastStr::from(steam.map(|s| s.friends().name()).unwrap_or(format!("{id}"))),
             ),
         );
+
+        player_spawned.0 = true
     }
 
     pub fn spawn(

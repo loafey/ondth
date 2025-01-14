@@ -20,8 +20,8 @@ use faststr::FastStr;
 use macros::error_return;
 use map_parser::parser::Brush;
 use resources::{
-    CurrentMap, MapDoneLoading, Paused, PickupMap, PlayerSpawnpoint, TargetMap,
-    TextureLoadingState, TextureMap, TexturesLoading,
+    CurrentMap, MapDoneLoading, MapFirstRun, Paused, PickupMap, PlayerSpawned, PlayerSpawnpoint,
+    TargetMap, TextureLoadingState, TextureMap, TexturesLoading,
 };
 
 pub mod entities;
@@ -54,11 +54,13 @@ pub fn clean_up_map(
     mut commands: Commands,
 ) {
     commands.insert_resource(TextureLoadingState::NotLoaded);
+    commands.insert_resource(PlayerSpawned(false));
     commands.insert_resource(TexturesLoading::default());
     commands.insert_resource(TextureMap::default());
     commands.insert_resource(PlayerSpawnpoint(Vec3::ZERO));
     commands.insert_resource(MapDoneLoading(false));
     commands.insert_resource(Paused(false));
+    commands.insert_resource(MapFirstRun(true));
     for (ent, _name) in &query {
         let Some(mut cc) = commands.get_entity(ent) else {
             continue;

@@ -27,7 +27,7 @@ use faststr::FastStr;
 use macros::{error_continue, error_return, option_return};
 use qwak_helper_types::{Attack, MapInteraction, PlayerKilled, PlayerLeave};
 use renet_steam::{AccessPermission, SteamServerConfig, SteamServerTransport};
-use resources::CurrentMap;
+use resources::{CurrentMap, MapFirstRun};
 use std::{net::UdpSocket, time::SystemTime};
 use steamworks::SteamId;
 
@@ -252,15 +252,15 @@ pub fn client_events(
     mut nw: NetWorld,
     mut server_events: EventWriter<ServerMessage>,
     mut connections: EventReader<Connections>,
+    mut first_time: ResMut<MapFirstRun>,
 ) {
     set_nw!(&nw, &server, &server_events);
-    static mut FIRST: bool = true;
-    #[allow(unsafe_code)]
-    unsafe {
-        if FIRST {
-            FIRST = false;
-            error_return!(nw.plugins.default.map_init());
-        }
+    if first_time.0 {
+        first_time.0 = false;
+        nw.plugins
+            .default
+            .map_init()
+            .expect("failed running `map_init`");
     }
     for message in connections.read() {
         match message {

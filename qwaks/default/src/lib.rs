@@ -3,7 +3,7 @@
 use faststr::FastStr;
 use qwak_helper_types::{
     MapInteraction, PickupData, PlayerKilled, PlayerLeave, Projectile, TypeMap, WeaponData,
-    storage, storage_clear, storage_get, storage_put,
+    storage, storage_get, storage_put,
 };
 use qwak_shared::QwakPlugin;
 use std::{
@@ -159,9 +159,8 @@ impl QwakPlugin for Plugin {
 
     fn map_init() {
         log::debug("clearing map storage...".to_string());
-        storage_clear!();
-
         let mut storage = STORAGE.borrow_mut();
+        storage.clear();
         let player_info = storage.entry::<HashMap<u64, PlayerStats>>().or_default();
         player_info.insert(game::host_id(), PlayerStats::default());
     }

@@ -55,11 +55,13 @@ impl Plugin for Resources {
             .init_state::<NetState>()
             .insert_resource(CurrentMap(Self::get_map()))
             .insert_resource(TextureLoadingState::NotLoaded)
+            .insert_resource(PlayerSpawned(false))
             .insert_resource(TexturesLoading::default())
             .insert_resource(TextureMap::default())
             .insert_resource(PlayerSpawnpoint(Vec3::ZERO))
             .insert_resource(MapDoneLoading(false))
             .insert_resource(Paused(false))
+            .insert_resource(MapFirstRun(true))
             .insert_resource(PickupMap(qwaks.default.plugin_get_pickups().unwrap()))
             .insert_resource(WeaponMap(qwaks.default.plugin_get_weapons().unwrap()))
             .insert_resource(PlayerInput::default())
@@ -165,13 +167,15 @@ impl Plugin for GameStage {
                 Update,
                 load_map
                     .run_if(in_state(CurrentStage::InGame))
-                    .run_if(if_texture_done_loading.and(run_once)),
+                    .run_if(if_texture_done_loading)
+                    .run_if(not(if_map_done_loading)),
             )
             .add_systems(
                 Update,
                 Player::spawn_own_player
                     .run_if(in_state(CurrentStage::InGame))
-                    .run_if(if_map_done_loading.and(run_once)),
+                    .run_if(if_map_done_loading)
+                    .run_if(not(if_player_spawned)),
             )
             .add_systems(
                 PreUpdate,
