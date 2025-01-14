@@ -1,14 +1,15 @@
 #![allow(missing_docs)]
 #![feature(thread_local)]
+use extism_pdk::Msgpack;
 use faststr::FastStr;
 use qwak_helper_types::{
-    MapInteraction, PickupData, PlayerKilled, PlayerLeave, Projectile, TypeMap, WeaponData,
-    storage, storage_get, storage_put,
+    MapInteraction, PickupData, PlayerKilled, PlayerLeave, Projectile, WeaponData,
 };
 use qwak_shared::QwakPlugin;
+use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use std::{
-    cell::{LazyCell, RefCell},
-    collections::HashMap,
+    any::type_name,
+    collections::{HashMap, HashSet},
 };
 
 mod pickups;
@@ -19,13 +20,36 @@ qwak_shared::plugin_gen!(Plugin);
 qwak_shared::host_calls!();
 use host::*;
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Deserialize, Serialize)]
 struct PlayerStats {
     kills: usize,
     deaths: usize,
 }
 
-storage!();
+fn storage_init() {
+    if let Ok(Some(keys)) = extism_pdk::var::get::<Msgpack<HashSet<String>>>("----Keys----") {
+        for k in keys.0 {
+            extism_pdk::var::remove(k).unwrap();
+        }
+    }
+
+    extism_pdk::var::set("----Keys----", Msgpack(HashSet::<String>::new())).unwrap();
+}
+fn storage_set<T: Serialize>(val: T) {
+    let mut keys: HashSet<String> = extism_pdk::var::get("----Keys----")
+        .unwrap()
+        .map(|p: Msgpack<HashSet<String>>| p.0)
+        .unwrap_or_default();
+    keys.insert(type_name::<T>().to_string());
+    extism_pdk::var::set("----Keys----", Msgpack(keys)).unwrap();
+    extism_pdk::var::set(type_name::<T>(), Msgpack(val)).unwrap();
+}
+fn storage_get<T: DeserializeOwned>() -> Option<T> {
+    extism_pdk::var::get::<Msgpack<T>>(type_name::<T>())
+        .ok()
+        .and_then(|o| o)
+        .map(|o| o.0)
+}
 
 // Simple QWAK plugin that contains the required functions.
 // This is compiled to WASM.
@@ -85,16 +109,16 @@ impl QwakPlugin for Plugin {
                 // host::brush_translate(target, x, y, z, delay);
             }
             "open_big_doors" => {
-                #[derive(Clone, Copy, Default)]
+                #[derive(Default, Deserialize, Serialize)]
                 struct BoolDoor(bool);
-                if storage_get!(BoolDoor).unwrap_or_default().0 {
+                if storage_get::<BoolDoor>().unwrap_or_default().0 {
                     return;
                 }
                 game::brush_rotate("bigDoor1".to_string(), 0.0, 50.0, 0.0, 100000);
                 game::brush_translate("bigDoor1".to_string(), 0.5, 0.0, -0.5, 100000);
                 game::brush_rotate("bigDoor2".to_string(), 0.0, -50.0, 0.0, 100000);
                 game::brush_translate("bigDoor2".to_string(), 0.5, 0.0, 0.5, 100000);
-                storage_put!(BoolDoor(true));
+                storage_set(BoolDoor(true));
                 for i in 0..4 {
                     game::timeout(
                         MapInteraction {
@@ -121,9 +145,9 @@ impl QwakPlugin for Plugin {
                 game::play_sound(sound, volume);
             }
             "elevator" => {
-                #[derive(Clone, Copy, Default)]
+                #[derive(Default, Deserialize, Serialize)]
                 struct FlipFlop(bool);
-                let k = storage_get!(FlipFlop).unwrap_or_default().0;
+                let k = storage_get::<FlipFlop>().unwrap_or_default().0;
                 let target = "elevator".to_string();
                 if k {
                     game::brush_translate(target, 0.0, -2.0, 0.0, 60000);
@@ -132,7 +156,7 @@ impl QwakPlugin for Plugin {
                     game::brush_translate(target, 0.0, 2.0, 0.0, 60000);
                     game::broadcast_message("going up".to_string());
                 }
-                storage_put!(FlipFlop(!k))
+                storage_set(FlipFlop(!k));
             }
             "hurt_me" => {
                 game::broadcast_message("OUCH!".to_string());
@@ -143,8 +167,7 @@ impl QwakPlugin for Plugin {
     }
 
     fn map_get_lobby_info() -> String {
-        let mut storage = STORAGE.borrow_mut();
-        let player_info = storage.entry::<HashMap<u64, PlayerStats>>().or_default();
+        let player_info = storage_get::<HashMap<u64, PlayerStats>>().unwrap_or_default();
         let mut s = "lobby info:".to_string();
         for (p, v) in player_info.iter() {
             s += &format!(
@@ -159,10 +182,11 @@ impl QwakPlugin for Plugin {
 
     fn map_init() {
         log::debug("clearing map storage...".to_string());
-        let mut storage = STORAGE.borrow_mut();
-        storage.clear();
-        let player_info = storage.entry::<HashMap<u64, PlayerStats>>().or_default();
+        storage_init();
+        let mut player_info = storage_get::<HashMap<u64, PlayerStats>>().unwrap_or_default();
+        player_info.clear();
         player_info.insert(game::host_id(), PlayerStats::default());
+        storage_set(player_info);
     }
 
     fn map_player_killed(PlayerKilled { player_id, by_id }: PlayerKilled) {
@@ -174,13 +198,13 @@ impl QwakPlugin for Plugin {
             killer.to_uppercase()
         ));
 
-        let mut storage = STORAGE.borrow_mut();
-        let player_info = storage.entry::<HashMap<u64, PlayerStats>>().or_default();
+        let mut player_info = storage_get::<HashMap<u64, PlayerStats>>().unwrap_or_default();
         player_info.entry(player_id).or_default().deaths += 1;
         player_info
             .entry(by_id.unwrap_or_default())
             .or_default()
             .kills += 1;
+        storage_set(player_info);
 
         let spawn = game::get_spawn_point();
         game::teleport_player(player_id, spawn.x, spawn.y, spawn.z);
@@ -192,9 +216,9 @@ impl QwakPlugin for Plugin {
             game::get_player_name(id).to_lowercase()
         ));
 
-        let mut storage = STORAGE.borrow_mut();
-        let player_info = storage.entry::<HashMap<u64, PlayerStats>>().or_default();
+        let mut player_info = storage_get::<HashMap<u64, PlayerStats>>().unwrap_or_default();
         player_info.insert(id, PlayerStats::default());
+        storage_set(player_info);
     }
 
     fn map_player_leave(PlayerLeave { id, reason }: PlayerLeave) {
@@ -203,8 +227,8 @@ impl QwakPlugin for Plugin {
             game::get_player_name(id).to_lowercase()
         ));
 
-        let mut storage = STORAGE.borrow_mut();
-        let player_info = storage.entry::<HashMap<u64, PlayerStats>>().or_default();
+        let mut player_info = storage_get::<HashMap<u64, PlayerStats>>().unwrap_or_default();
         player_info.remove(&id);
+        storage_set(player_info);
     }
 }
