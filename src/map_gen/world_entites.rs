@@ -1,8 +1,10 @@
-use crate::plugins::Qwaks;
+use crate::{net::ServerMessage, plugins::Qwaks, queries::NetWorld, set_nw};
 
 use super::BrushEntity;
+use crate::net::server::NW_PTR;
 use bevy::{ecs::schedule::SystemConfigs, math::Vec3, prelude::*, time::Time};
 use bevy_rapier3d::prelude::RigidBody;
+use bevy_renet::renet::RenetServer;
 use macros::error_continue;
 use qwak_helper_types::MapInteraction;
 
@@ -20,7 +22,9 @@ impl Timer {
     }
 
     pub fn update(
-        mut commands: Commands,
+        mut nw: NetWorld,
+        server: Option<Res<RenetServer>>,
+        events: EventWriter<ServerMessage>,
         qwaks: Res<Qwaks>,
         time: Res<Time>,
         mut query: Query<(Entity, &mut Timer)>,
@@ -28,8 +32,11 @@ impl Timer {
         for (ent, mut timer) in &mut query {
             timer.current_time -= time.delta_secs();
             if timer.current_time <= 0.0 {
-                commands.entity(ent).despawn();
-                error_continue!(qwaks.default.map_interact(timer.map_interact.clone()));
+                if let Some(server) = &server {
+                    nw.commands.entity(ent).despawn();
+                    set_nw!(&nw, server, &events);
+                    error_continue!(qwaks.default.map_interact(timer.map_interact.clone()));
+                }
             }
         }
     }

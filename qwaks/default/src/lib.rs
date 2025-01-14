@@ -141,7 +141,8 @@ impl QwakPlugin for Plugin {
                 );
             }
             "play_sound" => {
-                let (sound, volume) = serde_json::from_str(&argument.unwrap()).unwrap();
+                let (sound, volume): (String, f32) =
+                    serde_json::from_str(&argument.unwrap()).unwrap();
                 game::play_sound(sound, volume);
             }
             "elevator" => {

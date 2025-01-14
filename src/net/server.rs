@@ -43,6 +43,7 @@ pub static mut NW_PTR: Option<(
 #[macro_export]
 macro_rules! get_nw {
     () => {{
+        // println!("maybe here: {}:{}:{}", file!(), line!(), column!());
         #[allow(unsafe_code)]
         unsafe {
             #[allow(unsafe_code)]
@@ -52,9 +53,15 @@ macro_rules! get_nw {
         }
     }};
 }
+/// Setsthe content of [NW_PTR]
+#[macro_export]
 macro_rules! set_nw {
     ($nw:expr,$server:expr, $server_events:expr) => {
-        #[allow(clippy::missing_transmute_annotations, unsafe_code)]
+        #[allow(
+            clippy::missing_transmute_annotations,
+            unsafe_code,
+            clippy::macro_metavars_in_unsafe
+        )]
         unsafe {
             NW_PTR = Some(std::mem::transmute::<
                 (&NetWorld, &RenetServer, &EventWriter<ServerMessage>),
@@ -112,6 +119,7 @@ fn frag_checker(
                 .bytes()
             ),
         );
+
         set_nw!(&nw, &server, &event_writer);
         error_continue!(nw.plugins.default.map_player_killed(PlayerKilled {
             player_id: id,
