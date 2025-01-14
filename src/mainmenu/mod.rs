@@ -17,11 +17,22 @@ use steamworks::FriendFlags;
 #[derive(Debug, Component)]
 pub struct MainMenuEnt;
 
+#[derive(Debug, Resource)]
+struct MainMenuState {
+    main: Entity,
+    join: Entity,
+    host: Entity,
+}
+
 #[derive(Debug, Component)]
 pub enum ButtonEvent {
+    #[allow(unused)]
     Solo,
-    StartMp,
+    HostScreen,
     JoinMp,
+    Back,
+    IpJoin,
+    FriendJoin(u64),
 }
 
 #[derive(Debug, Component)]
@@ -55,14 +66,15 @@ pub fn buttons(world: &mut World) {
         ResMut<NextState<CurrentStage>>,
         ResMut<NextState<NetState>>,
         Option<Res<SteamClient>>,
+        Res<MainMenuState>,
+        Query<&mut Visibility>,
     )> = SystemState::new(world);
-    #[allow(unsafe_code)]
     // yea this is cursed, but i am lazy, bypassing the borrow checker like a baus
+    #[allow(unsafe_code)]
     let world_copy = unsafe { &mut *(world as *mut World) };
 
-    let (query, text_inputs, mut next_state, mut next_net_state, steam_client) =
+    let (query, text_inputs, mut next_state, mut next_net_state, steam_client, state, mut vis) =
         state.get_mut(world);
-    let input = &error_return!(text_inputs.get_single()).0;
 
     for (interaction, event) in &query {
         if !matches!(interaction, Interaction::Pressed) {
@@ -73,14 +85,34 @@ pub fn buttons(world: &mut World) {
             ButtonEvent::Solo => {
                 error!("solo games are currently disabled");
             }
-            ButtonEvent::StartMp => {
-                info!("starting multiplayer game");
-                if net::server::init_server(world_copy, &mut next_net_state, &steam_client) {
-                    next_state.set(CurrentStage::InGame);
-                }
+            ButtonEvent::HostScreen => {
+                *error_continue!(vis.get_mut(state.host)) = Visibility::Visible;
+                *error_continue!(vis.get_mut(state.main)) = Visibility::Hidden;
+                *error_continue!(vis.get_mut(state.join)) = Visibility::Hidden;
             }
             ButtonEvent::JoinMp => {
-                net::client::init_client(world_copy, &mut next_net_state, input, &steam_client);
+                *error_continue!(vis.get_mut(state.host)) = Visibility::Hidden;
+                *error_continue!(vis.get_mut(state.main)) = Visibility::Hidden;
+                *error_continue!(vis.get_mut(state.join)) = Visibility::Visible;
+            }
+            ButtonEvent::Back => {
+                *error_continue!(vis.get_mut(state.host)) = Visibility::Hidden;
+                *error_continue!(vis.get_mut(state.main)) = Visibility::Visible;
+                *error_continue!(vis.get_mut(state.join)) = Visibility::Hidden;
+            }
+            ButtonEvent::IpJoin => {
+                if steam_client.is_none() {
+                    let input = &error_return!(text_inputs.get_single()).0;
+                    net::client::init_client(world_copy, &mut next_net_state, input, &steam_client);
+                }
+            }
+            ButtonEvent::FriendJoin(id) => {
+                net::client::init_client(
+                    world_copy,
+                    &mut next_net_state,
+                    &format!("{id}"),
+                    &steam_client,
+                );
             }
         }
     }
@@ -94,14 +126,27 @@ pub fn clear(query: Query<(Entity, &MainMenuEnt)>, mut commands: Commands) {
 }
 
 #[allow(clippy::type_complexity)]
-pub fn update_level_buttons(
-    query: Query<(&Interaction, &LevelButton), (Changed<Interaction>, With<Button>)>,
-    mut curlevel: ResMut<CurrentMap>,
-) {
+pub fn update_level_buttons(world: &mut World) {
+    #[allow(unsafe_code)]
+    // yea this is cursed, but i am lazy, bypassing the borrow checker like a baus
+    let world_copy = unsafe { &mut *(world as *mut World) };
+    let mut state: SystemState<(
+        Query<(&Interaction, &LevelButton), (Changed<Interaction>, With<Button>)>,
+        ResMut<NextState<CurrentStage>>,
+        ResMut<NextState<NetState>>,
+        Option<Res<SteamClient>>,
+        ResMut<CurrentMap>,
+    )> = SystemState::new(world);
+    let (query, mut next_state, mut next_net_state, steam_client, mut cur_level) =
+        state.get_mut(world);
+
     for (interaction, button) in &query {
         if matches!(interaction, Interaction::Pressed) {
-            curlevel.0.clone_from(&button.0);
-            info!("set level to: {:?}", curlevel.0);
+            cur_level.0.clone_from(&button.0);
+            info!("starting multiplayer game");
+            if net::server::init_server(world_copy, &mut next_net_state, &steam_client) {
+                next_state.set(CurrentStage::InGame);
+            }
         }
     }
 }
@@ -206,6 +251,13 @@ pub fn setup(
         MainMenuEnt,
     ));
 
+    let mut main = None;
+    let mut join = None;
+    let mut host = None;
+
+    const FONT_SIZE: Option<f32> = Some(32.0);
+    const PADDING: Option<f32> = Some(5.0);
+    const BORDER: Option<f32> = Some(10.0);
     commands
         .spawn(Node {
             width: Val::Percent(100.0),
@@ -214,58 +266,48 @@ pub fn setup(
             ..default()
         })
         .with_children(|c| {
-            c.spawn(Node {
-                position_type: PositionType::Absolute,
-                width: Val::Vw(100.0),
-                border: UiRect::all(Val::Px(2.0)),
-                left: Val::Px(76.0),
-                bottom: Val::Px(76.0),
-                flex_direction: FlexDirection::Column,
-                justify_content: JustifyContent::Center,
-                align_items: AlignItems::Start,
-                ..default()
-            })
-            .with_children(|c| {
+            main = Some(
                 c.spawn(Node {
+                    position_type: PositionType::Absolute,
+                    width: Val::Px(400.0),
+                    border: UiRect::all(Val::Px(2.0)),
+                    left: Val::Px(76.0),
+                    bottom: Val::Px(76.0),
                     flex_direction: FlexDirection::Column,
                     ..default()
                 })
+                .insert(Visibility::Visible)
                 .with_children(|c| {
-                    c.spawn(MenuButton::new(
-                        "Solo",
-                        Some(32.0),
-                        Some(5.0),
-                        Some(10.0),
-                        ButtonEvent::Solo,
-                    ));
-                    c.spawn(MenuButton::new(
-                        "Host Game",
-                        Some(32.0),
-                        Some(5.0),
-                        Some(10.0),
-                        ButtonEvent::StartMp,
-                    ));
-                    c.spawn(Node::default()).insert((
-                        TextInput,
-                        TextInputValue("127.0.0.1:8000".to_string()),
-                        TextInputSettings {
-                            retain_on_submit: true,
-                            ..default()
-                        },
-                        TextInputTextFont(TextFont {
-                            font_size: 32.0,
-                            ..default()
-                        }),
-                    ));
-                    c.spawn(MenuButton::new(
-                        "Join Game",
-                        Some(32.0),
-                        Some(5.0),
-                        Some(10.0),
-                        ButtonEvent::JoinMp,
-                    ));
-                });
-            });
+                    c.spawn(Node {
+                        flex_direction: FlexDirection::Column,
+                        ..default()
+                    })
+                    .with_children(|c| {
+                        // c.spawn(MenuButton::new(
+                        //     "Solo",
+                        //     Some(32.0),
+                        //     Some(5.0),
+                        //     Some(10.0),
+                        //     ButtonEvent::Solo,
+                        // ));
+                        c.spawn(MenuButton::new(
+                            "Host Game",
+                            FONT_SIZE,
+                            PADDING,
+                            BORDER,
+                            ButtonEvent::HostScreen,
+                        ));
+                        c.spawn(MenuButton::new(
+                            "Join Game",
+                            FONT_SIZE,
+                            PADDING,
+                            BORDER,
+                            ButtonEvent::JoinMp,
+                        ));
+                    });
+                })
+                .id(),
+            );
 
             c.spawn(Node {
                 position_type: PositionType::Absolute,
@@ -289,50 +331,125 @@ pub fn setup(
                 },
             ));
 
-            c.spawn(Node {
-                position_type: PositionType::Absolute,
-                width: Val::Px(400.0),
-                border: UiRect::all(Val::Px(2.0)),
-                height: Val::Vh(100.0),
-                right: Val::Px(0.0),
-                flex_direction: FlexDirection::Column,
-                // background_color: Color::rgb(0.65, 0.65, 0.65).into(),
-                ..default()
-            })
-            .with_children(|c| {
-                c.spawn((Text::new("Maps:".to_string()), TextFont {
-                    font_size: 32.0,
+            host = Some(
+                c.spawn(Node {
+                    position_type: PositionType::Absolute,
+                    width: Val::Px(400.0),
+                    border: UiRect::all(Val::Px(2.0)),
+                    left: Val::Px(76.0),
+                    bottom: Val::Px(76.0),
+                    flex_direction: FlexDirection::Column,
                     ..default()
-                }));
+                })
+                .insert(Visibility::Hidden)
+                .with_children(|c| {
+                    c.spawn(Node {
+                        padding: UiRect::all(Val::Px(PADDING.unwrap() * 2.0)),
+                        ..default()
+                    })
+                    .with_child((Text::new("Maps:".to_string()), TextFont {
+                        font_size: FONT_SIZE.unwrap(),
+                        ..default()
+                    }));
 
-                for map in map_files {
-                    let s = format!("{map:?}");
-                    if s.contains("/autosave/") {
-                        continue;
+                    for map in map_files {
+                        let s = format!("{map:?}");
+                        if s.contains("/autosave/") {
+                            continue;
+                        }
+                        c.spawn(MenuButton::new(
+                            s[13..s.len() - 5].to_string(),
+                            Some(16.0),
+                            Some(4.0),
+                            Some(2.0),
+                            LevelButton(map.clone()),
+                        ));
                     }
                     c.spawn(MenuButton::new(
-                        s[13..s.len() - 5].to_string(),
-                        Some(16.0),
-                        Some(4.0),
-                        Some(2.0),
-                        LevelButton(map.clone()),
+                        "Back",
+                        FONT_SIZE,
+                        PADDING,
+                        BORDER,
+                        ButtonEvent::Back,
                     ));
-                }
-
-                c.spawn((Text::new("Friends:".to_string()), TextFont {
-                    font_size: 32.0,
+                })
+                .id(),
+            );
+            join = Some(
+                c.spawn(Node {
+                    position_type: PositionType::Absolute,
+                    width: Val::Px(400.0),
+                    border: UiRect::all(Val::Px(2.0)),
+                    left: Val::Px(76.0),
+                    bottom: Val::Px(76.0),
+                    flex_direction: FlexDirection::Column,
                     ..default()
-                }));
-                for friend in friends {
+                })
+                .insert(Visibility::Hidden)
+                .with_children(|c| {
+                    if steam_client.is_some() {
+                        c.spawn(Node {
+                            padding: UiRect::all(Val::Px(PADDING.unwrap() * 2.0)),
+                            ..default()
+                        })
+                        .with_child((
+                            Text::new("Friends:".to_string()),
+                            TextFont {
+                                font_size: FONT_SIZE.unwrap(),
+                                ..default()
+                            },
+                        ));
+                        for friend in friends {
+                            c.spawn(MenuButton::new(
+                                friend.name(),
+                                Some(16.0),
+                                Some(4.0),
+                                Some(2.0),
+                                ButtonEvent::FriendJoin(friend.id().raw()),
+                            ));
+                        }
+                    } else {
+                        c.spawn((Text::new("Enter IP:".to_string()), TextFont {
+                            font_size: 32.0,
+                            ..default()
+                        }));
+
+                        c.spawn(Node::default()).insert((
+                            TextInput,
+                            TextInputValue("127.0.0.1:8000".to_string()),
+                            TextInputSettings {
+                                retain_on_submit: true,
+                                ..default()
+                            },
+                            TextInputTextFont(TextFont {
+                                font_size: 32.0,
+                                ..default()
+                            }),
+                        ));
+                        c.spawn(MenuButton::new(
+                            "Join",
+                            FONT_SIZE,
+                            PADDING,
+                            BORDER,
+                            ButtonEvent::IpJoin,
+                        ));
+                    }
                     c.spawn(MenuButton::new(
-                        friend.name(),
-                        Some(16.0),
-                        Some(4.0),
-                        Some(2.0),
-                        FriendButton(friend.id().raw()),
+                        "Back",
+                        FONT_SIZE,
+                        PADDING,
+                        BORDER,
+                        ButtonEvent::Back,
                     ));
-                }
-            });
+                })
+                .id(),
+            );
         })
         .insert(MainMenuEnt);
+
+    commands.insert_resource(MainMenuState {
+        main: main.unwrap(),
+        join: join.unwrap(),
+        host: host.unwrap(),
+    });
 }
