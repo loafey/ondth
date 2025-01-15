@@ -84,7 +84,9 @@ pub fn load_map(
     texture_map: Res<TextureMap>,
     mut done_loading: ResMut<MapDoneLoading>,
     mut player_spawn: ResMut<PlayerSpawnpoint>,
+    mut ambient_light: ResMut<AmbientLight>,
 ) {
+    ambient_light.brightness = 400.0;
     let map = error_return!(std::fs::read_to_string(&current_map.0));
     let map = error_return!(map_parser::parse(&map));
 
