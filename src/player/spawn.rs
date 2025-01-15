@@ -12,8 +12,9 @@ use crate::{
     ui::menu_button::MenuButton,
 };
 use bevy::{
+    pbr::NotShadowCaster,
     prelude::*,
-    render::view::NoFrustumCulling,
+    render::view::{NoFrustumCulling, RenderLayers},
     window::{CursorGrabMode, PrimaryWindow},
 };
 use bevy_rapier3d::prelude::*;
@@ -112,8 +113,10 @@ impl Player {
                         Transform::from_translation(Vec3::new(0.0, 0.25, 0.0)),
                         Camera {
                             is_active: is_own,
+                            order: 1,
                             ..default()
                         },
+                        RenderLayers::layer(1),
                     ))
                     // .insert(ScreenSpaceAmbientOcclusion::default())
                     // .insert(Msaa::Off)
@@ -125,9 +128,14 @@ impl Player {
                             .spawn(PlayerFpsModel)
                             .insert(HookedSceneBundle {
                                 scene: SceneRoot::default(),
-                                reload: Hook::new(|entity, commands, world, root| {
+                                reload: Hook::new(move |entity, commands, world, root| {
                                     if entity.get::<Mesh3d>().is_some() {
-                                        commands.insert(NoFrustumCulling);
+                                        let cc = commands
+                                            .insert(NoFrustumCulling)
+                                            .insert(NotShadowCaster);
+                                        if is_own {
+                                            cc.insert(RenderLayers::layer(1));
+                                        }
                                     }
                                     if entity.get::<MeshMaterial3d<StandardMaterial>>().is_some() {
                                         if let Some(material) =
@@ -146,6 +154,20 @@ impl Player {
                         if is_own {
                             c.spawn((Transform::IDENTITY, SpatialListener::new(2.0)));
                         }
+
+                        c.spawn((
+                            Camera3d::default(),
+                            Projection::Perspective(PerspectiveProjection {
+                                fov: 80.0f32.to_radians(),
+                                ..default()
+                            }),
+                            Transform::from_translation(Vec3::new(0.0, 0.25, 0.0)),
+                            Camera {
+                                is_active: is_own,
+                                ..default()
+                            },
+                            RenderLayers::layer(0),
+                        ));
 
                         shoot_sound_holder = Some(c.spawn(Transform::IDENTITY).id());
                     })

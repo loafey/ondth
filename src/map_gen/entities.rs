@@ -7,6 +7,7 @@ use bevy::{
     math::{EulerRot, Quat, Vec3},
     pbr::{DirectionalLight, MeshMaterial3d, PointLight, StandardMaterial},
     prelude::Mesh3d,
+    render::view::RenderLayers,
     transform::components::Transform,
 };
 use bevy_rapier3d::{
@@ -97,6 +98,7 @@ pub fn spawn_entity(
                 },
                 Transform::from_translation(pos),
                 GameObject,
+                RenderLayers::from_layers(&[0, 1]),
             ));
         }
         Some("directional_light") => {
@@ -116,6 +118,7 @@ pub fn spawn_entity(
                 },
                 trans,
                 GameObject,
+                RenderLayers::from_layers(&[0, 1]),
             ));
         }
         Some("info_player_start") => {
