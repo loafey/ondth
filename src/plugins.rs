@@ -182,7 +182,7 @@ impl Plugin for GameStage {
                 PlayerInput::update.run_if(in_state(CurrentStage::InGame)),
             )
             .add_systems(
-                Update,
+                FixedUpdate,
                 (
                     Player::systems(),
                     PickupEntity::systems(),
