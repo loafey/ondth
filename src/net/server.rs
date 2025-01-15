@@ -90,8 +90,8 @@ fn frag_checker(
     event_writer: EventWriter<ServerMessage>,
 ) {
     let mut frags = Vec::new();
-    for (_, mut player, _) in &mut nw.players {
-        if player.health <= 0.0 {
+    for (_, mut player, trans) in &mut nw.players {
+        if player.health <= 0.0 || trans.translation.y < -10000.0 {
             player.health = 100.0;
             player.armour = 0.0;
 
