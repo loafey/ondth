@@ -332,20 +332,20 @@ impl Player {
 
             let hort_speed = player.hort_speed;
             if keys.walk_forward_pressed && !paused.0 {
-                player.velocity += forward * hort_speed;
+                player.velocity += forward * hort_speed * time.delta_secs();
                 player.camera_movement.backdrift_goal = player.camera_movement.backdrift_max;
             } else if keys.walk_backward_pressed && !paused.0 {
-                player.velocity -= forward * hort_speed;
+                player.velocity -= forward * hort_speed * time.delta_secs();
                 player.camera_movement.backdrift_goal = -player.camera_movement.backdrift_max;
             } else {
                 player.camera_movement.backdrift_goal = 0.0;
             }
 
             if keys.walk_left_pressed && !paused.0 {
-                player.velocity -= right * hort_speed;
+                player.velocity -= right * hort_speed * time.delta_secs();
                 player.camera_movement.cam_rot_goal = player.camera_movement.cam_rot_max_goal;
             } else if keys.walk_right_pressed && !paused.0 {
-                player.velocity += right * hort_speed;
+                player.velocity += right * hort_speed * time.delta_secs();
                 player.camera_movement.cam_rot_goal = -player.camera_movement.cam_rot_max_goal;
             } else {
                 player.camera_movement.cam_rot_goal = 0.0;
