@@ -140,7 +140,7 @@ impl Default for Player {
             hurt_flash: 0.0,
             velocity: Vec3::ZERO,
             hort_friction: 8.0,
-            hort_speed: 45.0,
+            hort_speed: 260.0,
             on_ground: false,
             head_hit: false,
             jump_height: 7.0,

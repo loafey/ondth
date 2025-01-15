@@ -331,30 +331,32 @@ impl Player {
             let right = Vec3::new(local_z.z, 0., -local_z.x);
 
             let hort_speed = player.hort_speed;
+            let y_before = player.velocity.y;
             if keys.walk_forward_pressed && !paused.0 {
-                player.velocity += forward * hort_speed * time.delta_secs();
+                player.velocity = forward * hort_speed * time.delta_secs();
                 player.camera_movement.backdrift_goal = player.camera_movement.backdrift_max;
             } else if keys.walk_backward_pressed && !paused.0 {
-                player.velocity -= forward * hort_speed * time.delta_secs();
+                player.velocity = -forward * hort_speed * time.delta_secs();
                 player.camera_movement.backdrift_goal = -player.camera_movement.backdrift_max;
             } else {
                 player.camera_movement.backdrift_goal = 0.0;
             }
 
             if keys.walk_left_pressed && !paused.0 {
-                player.velocity -= right * hort_speed * time.delta_secs();
+                player.velocity = -right * hort_speed * time.delta_secs();
                 player.camera_movement.cam_rot_goal = player.camera_movement.cam_rot_max_goal;
             } else if keys.walk_right_pressed && !paused.0 {
-                player.velocity += right * hort_speed * time.delta_secs();
+                player.velocity = right * hort_speed * time.delta_secs();
                 player.camera_movement.cam_rot_goal = -player.camera_movement.cam_rot_max_goal;
             } else {
                 player.camera_movement.cam_rot_goal = 0.0;
             }
+            player.velocity.y = y_before;
 
             if !keys.walk_left_pressed
-                || !keys.walk_right_pressed
-                || !keys.walk_forward_pressed
-                || !keys.walk_backward_pressed
+                && !keys.walk_right_pressed
+                && !keys.walk_forward_pressed
+                && !keys.walk_backward_pressed
             {
                 let x = player.velocity.x;
                 let z = player.velocity.z;
