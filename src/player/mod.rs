@@ -73,6 +73,7 @@ pub struct DebugInfo {
     pub current_speed: f32,
     pub current_falling: f32,
     pub last_airtime: f32,
+    pub delta_time: f32,
 }
 
 #[derive(Component, Debug, Default)]

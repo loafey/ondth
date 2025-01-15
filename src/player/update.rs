@@ -429,6 +429,7 @@ impl Player {
             player.debug_info.current_falling = player.velocity.y;
             player.debug_info.on_ground = player.on_ground;
             player.debug_info.head_hit = player.head_hit;
+            player.debug_info.delta_time = time.delta_secs();
         }
     }
 
