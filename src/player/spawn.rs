@@ -161,7 +161,7 @@ impl Player {
                                 fov: 80.0f32.to_radians(),
                                 ..default()
                             }),
-                            Transform::from_translation(Vec3::new(0.0, 0.25, 0.0)),
+                            Transform::default(),
                             Camera {
                                 is_active: is_own,
                                 ..default()
