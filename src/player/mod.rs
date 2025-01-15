@@ -45,9 +45,10 @@ pub struct WeaponState {
 }
 
 #[derive(Debug, Component)]
-enum PauseButtonEvent {
+enum GameButtonEvents {
     Options,
     Leave,
+    Respawn,
 }
 
 #[derive(Debug, Default)]
@@ -63,6 +64,7 @@ pub struct PlayerChildren {
     pub shoot_sound_holder: Option<Entity>,
     pub lobby_hud: Option<Entity>,
     pub pause_screen: Option<Entity>,
+    pub death_splash: Option<Entity>,
 }
 
 #[derive(Debug, Default)]

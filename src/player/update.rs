@@ -1,7 +1,7 @@
 #![allow(clippy::missing_transmute_annotations)]
 
 use super::{
-    ARMOR_GLYPH, HEALTH_GLYPH, PauseButtonEvent, Player, PlayerController, PlayerFpsMaterial,
+    ARMOR_GLYPH, GameButtonEvents, HEALTH_GLYPH, Player, PlayerController, PlayerFpsMaterial,
     PlayerFpsModel, PlayerMpModel, WeaponState,
 };
 use crate::{
@@ -67,7 +67,7 @@ impl Player {
     #[allow(clippy::type_complexity)]
     fn pause_screen_buttons(
         interactions: Query<
-            (&Interaction, &PauseButtonEvent),
+            (&Interaction, &GameButtonEvents),
             (Changed<Interaction>, With<Button>),
         >,
         mut paused: ResMut<Paused>,
@@ -79,8 +79,8 @@ impl Player {
         for (interaction, event) in &interactions {
             if matches!(interaction, Interaction::Pressed) {
                 match event {
-                    PauseButtonEvent::Options => error!("options not implemented"),
-                    PauseButtonEvent::Leave => {
+                    GameButtonEvents::Options => error!("options not implemented"),
+                    GameButtonEvents::Leave => {
                         info!("leaving game");
                         paused.0 = false;
                         if let Some(server) = &mut server {
@@ -93,6 +93,9 @@ impl Player {
                         }
                         net_state.set(NetState::Offline);
                         current_stage.set(CurrentStage::MainMenu);
+                    }
+                    GameButtonEvents::Respawn => {
+                        error!("respawn not implemented")
                     }
                 }
             }

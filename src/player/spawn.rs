@@ -1,5 +1,5 @@
 use super::{
-    ARMOR_GLYPH, HEALTH_GLYPH, PauseButtonEvent, Player, PlayerController, PlayerFpsMaterial,
+    ARMOR_GLYPH, GameButtonEvents, HEALTH_GLYPH, Player, PlayerController, PlayerFpsMaterial,
     PlayerFpsModel, PlayerMpModel,
 };
 use crate::{
@@ -85,6 +85,7 @@ impl Player {
         let mut lobby_hud = None;
         let mut entity = nw.commands.spawn(Collider::cylinder(0.5, 0.15));
         let mut pause_screen = None;
+        let mut death_splash = None;
 
         let player_commands = entity
             .insert(ActiveEvents::COLLISION_EVENTS)
@@ -226,12 +227,47 @@ impl Player {
                     hurt_flash = Some(
                         c.spawn((
                             Node {
+                                position_type: PositionType::Absolute,
                                 width: Val::Vw(100.0),
                                 height: Val::Vh(100.0),
                                 ..default()
                             },
                             BackgroundColor(Color::srgba(1.0, 0.0, 0.0, 0.0)),
                         ))
+                        .id(),
+                    );
+
+                    death_splash = Some(
+                        c.spawn((
+                            Node {
+                                position_type: PositionType::Absolute,
+                                width: Val::Vw(100.0),
+                                height: Val::Vh(100.0),
+                                align_items: AlignItems::Center,
+                                justify_content: JustifyContent::Center,
+                                ..default()
+                            },
+                            BackgroundColor(Color::srgba(1.0, 0.0, 0.0, 0.6)),
+                        ))
+                        .with_children(|c| {
+                            c.spawn(Node {
+                                padding: UiRect::all(Val::Px(10.0)),
+                                flex_direction: FlexDirection::Column,
+                                align_items: AlignItems::Center,
+                                ..default()
+                            })
+                            .insert(BackgroundColor(Color::BLACK))
+                            .with_children(|c| {
+                                c.spawn(Text("- You are dead -".to_string()));
+                                c.spawn(MenuButton::new(
+                                    "Respawn",
+                                    None,
+                                    None,
+                                    None,
+                                    GameButtonEvents::Respawn,
+                                ));
+                            });
+                        })
                         .id(),
                     );
 
@@ -433,14 +469,14 @@ impl Player {
                                 None,
                                 None,
                                 None,
-                                PauseButtonEvent::Options,
+                                GameButtonEvents::Options,
                             ));
                             c.spawn(MenuButton::new(
                                 "Leave",
                                 None,
                                 None,
                                 None,
-                                PauseButtonEvent::Leave,
+                                GameButtonEvents::Leave,
                             ));
                         });
                     })
@@ -464,6 +500,7 @@ impl Player {
                 lobby_hud,
                 hurt_flash,
                 pause_screen,
+                death_splash,
             },
             ..default()
         };
