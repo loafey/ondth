@@ -351,6 +351,20 @@ impl Player {
                 player.camera_movement.cam_rot_goal = 0.0;
             }
 
+            if !keys.walk_left_pressed
+                || !keys.walk_right_pressed
+                || !keys.walk_forward_pressed
+                || !keys.walk_backward_pressed
+            {
+                let x = player.velocity.x;
+                let z = player.velocity.z;
+                player.velocity = Vec3::new(
+                    x.lerp(0.0, time.delta_secs() * player.hort_friction),
+                    player.velocity.y,
+                    z.lerp(0.0, time.delta_secs() * player.hort_friction),
+                );
+            }
+
             player.camera_movement.backdrift_goal += (player.velocity.y.abs() / 5.0).min(0.03);
 
             //player.velocity.x = player.velocity.x.clamp(-5.0, 5.0);
@@ -394,14 +408,6 @@ impl Player {
             //     ..Default::default()
             // });
 
-            let x = player.velocity.x;
-            let z = player.velocity.z;
-            player.velocity = Vec3::new(
-                x.lerp(0.0, time.delta_secs() * player.hort_friction),
-                player.velocity.y,
-                z.lerp(0.0, time.delta_secs() * player.hort_friction),
-            );
-
             events.send(ClientMessage::UpdatePosition {
                 position: gt.translation,
                 rotation: gt.rotation.into(),
@@ -413,7 +419,8 @@ impl Player {
                     .unwrap_or_default(),
             });
 
-            player.debug_info.current_speed = Vec2::new(x, z).distance(Vec2::ZERO);
+            player.debug_info.current_speed =
+                Vec2::new(player.velocity.x, player.velocity.z).distance(Vec2::ZERO);
             player.debug_info.velocity = player.velocity;
             player.debug_info.current_falling = player.velocity.y;
             player.debug_info.on_ground = player.on_ground;
