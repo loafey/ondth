@@ -242,7 +242,7 @@ pub fn init_client(
         let current_time = error_return!(SystemTime::now().duration_since(SystemTime::UNIX_EPOCH));
 
         let server_addr = error_return!(ip.parse());
-        let socket = error_return!(UdpSocket::bind("127.0.0.1:0"));
+        let socket = error_return!(UdpSocket::bind("0.0.0.0:0"));
 
         let client_id = current_time.as_micros() as u64;
 
@@ -302,7 +302,7 @@ pub fn panic_on_error_system(
 ) {
     let mut errored = false;
     for e in renet_error.read() {
-        error!("{e}");
+        error!("connection error: {e}");
         errored = true;
     }
     if errored {
