@@ -451,7 +451,7 @@ pub fn init_server(
         world.insert_resource(CurrentClientId(sc.user().steam_id().raw()))
     } else {
         let current_time = error_return!(SystemTime::now().duration_since(SystemTime::UNIX_EPOCH));
-        let public_addr = error_return!("127.0.0.1:8000".parse());
+        let public_addr = error_return!("0.0.0.0:8000".parse());
         let socket = error_return!(UdpSocket::bind(public_addr));
 
         let server_config = ServerConfig {
