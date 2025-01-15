@@ -773,7 +773,7 @@ impl Player {
             let shape = Collider::cylinder(collider_height, player.radius * 0.9);
 
             let shape_rot = Quat::default();
-            let max_time_of_impact = 0.0;
+            let max_time_of_impact = 0.05;
             let filter = QueryFilter::default();
             let stop_at_penetration = true;
 

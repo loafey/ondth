@@ -95,7 +95,7 @@ impl Player {
                 false => RigidBody::Fixed,
             })
             .insert(Velocity::zero())
-            .insert(GravityScale(1.0))
+            .insert(GravityScale(0.0))
             .insert(Friction::new(0.0))
             .insert(Restitution::coefficient(0.0))
             .insert(LockedAxes::ROTATION_LOCKED)
