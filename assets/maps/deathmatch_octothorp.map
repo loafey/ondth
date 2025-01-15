@@ -2172,3 +2172,13 @@
 "classname" "weapon_pumpshotgun"
 "origin" "164 100 -356"
 }
+// entity 15
+{
+"classname" "weapon_revolver"
+"origin" "180 4 -340"
+}
+// entity 16
+{
+"classname" "weapon_pumpshotgun"
+"origin" "180 4 -364"
+}
