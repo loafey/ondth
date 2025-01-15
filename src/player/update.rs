@@ -352,7 +352,7 @@ impl Player {
             } else {
                 player.camera_movement.cam_rot_goal = 0.0;
             }
-            player.velocity = temp * time.delta_secs();
+            player.velocity = temp;
             player.velocity.y = y_before;
 
             if !keys.walk_left_pressed
