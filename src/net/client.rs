@@ -24,7 +24,8 @@ use bevy::{
     hierarchy::DespawnRecursiveExt,
     log::{error, info},
     math::{EulerRot, Vec3},
-    prelude::{Commands, EventWriter, NextState},
+    prelude::{Commands, EventWriter, NextState, Visibility, With},
+    window::{CursorGrabMode, PrimaryWindow, Window},
 };
 use bevy_renet::{
     netcode::{ClientAuthentication, NetcodeClientTransport, NetcodeTransportError},
@@ -54,6 +55,8 @@ pub fn handle_messages(
     mut state: ResMut<NextState<CurrentStage>>,
     mut nw: NetWorld,
     mut server_events: EventReader<ServerMessage>,
+    mut visiblities: Query<&mut Visibility>,
+    mut q_windows: Query<&mut Window, With<PrimaryWindow>>,
 ) {
     for message in server_events.read() {
         match message.clone() {
@@ -61,8 +64,18 @@ pub fn handle_messages(
                 for (_, mut player, _) in &mut nw.players {
                     if player.id == id {
                         player.dead = true;
-                        break;
+                        if nw.current_id.0 == id {
+                            *error_continue!(
+                                visiblities.get_mut(option_continue!(player.children.death_splash))
+                            ) = Visibility::Visible;
+                            let mut window = q_windows.single_mut();
+                            window.cursor_options.grab_mode = CursorGrabMode::None;
+                            window.cursor_options.visible = true;
+                            let middle = window.size() / 2.0;
+                            window.set_cursor_position(Some(middle));
+                        }
                     }
+                    break;
                 }
             }
             ServerMessage::PlaySoundGlobally { sound, volume } => {

@@ -237,41 +237,6 @@ impl Player {
                         .id(),
                     );
 
-                    death_splash = Some(
-                        c.spawn((
-                            Node {
-                                position_type: PositionType::Absolute,
-                                width: Val::Vw(100.0),
-                                height: Val::Vh(100.0),
-                                align_items: AlignItems::Center,
-                                justify_content: JustifyContent::Center,
-                                ..default()
-                            },
-                            BackgroundColor(Color::srgba(1.0, 0.0, 0.0, 0.4)),
-                        ))
-                        .insert(Visibility::Hidden)
-                        .with_children(|c| {
-                            c.spawn(Node {
-                                padding: UiRect::all(Val::Px(10.0)),
-                                flex_direction: FlexDirection::Column,
-                                align_items: AlignItems::Center,
-                                ..default()
-                            })
-                            .insert(BackgroundColor(Color::BLACK))
-                            .with_children(|c| {
-                                c.spawn(Text("- You are dead -".to_string()));
-                                c.spawn(MenuButton::new(
-                                    "Respawn",
-                                    None,
-                                    None,
-                                    None,
-                                    GameButtonEvents::Respawn,
-                                ));
-                            });
-                        })
-                        .id(),
-                    );
-
                     c.spawn((
                         Node {
                             position_type: PositionType::Absolute,
@@ -422,6 +387,41 @@ impl Player {
                             .id(),
                         );
                     });
+
+                    death_splash = Some(
+                        c.spawn((
+                            Node {
+                                position_type: PositionType::Absolute,
+                                width: Val::Vw(100.0),
+                                height: Val::Vh(100.0),
+                                align_items: AlignItems::Center,
+                                justify_content: JustifyContent::Center,
+                                ..default()
+                            },
+                            BackgroundColor(Color::srgba(1.0, 0.0, 0.0, 0.4)),
+                        ))
+                        .insert(Visibility::Hidden)
+                        .with_children(|c| {
+                            c.spawn(Node {
+                                padding: UiRect::all(Val::Px(10.0)),
+                                flex_direction: FlexDirection::Column,
+                                align_items: AlignItems::Center,
+                                ..default()
+                            })
+                            .insert(BackgroundColor(Color::BLACK))
+                            .with_children(|c| {
+                                c.spawn(Text("- You are dead -".to_string()));
+                                c.spawn(MenuButton::new(
+                                    "Respawn",
+                                    None,
+                                    None,
+                                    None,
+                                    GameButtonEvents::Respawn,
+                                ));
+                            });
+                        })
+                        .id(),
+                    );
                 })
                 .insert(Name::new("player gui holder"))
                 .insert(GameObject);
