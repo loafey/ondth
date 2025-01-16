@@ -6,7 +6,7 @@ use super::{
 };
 use crate::{
     entities::ProjectileEntity,
-    net::{ClientMessage, NetState},
+    net::{ClientChannel, ClientMessage, NetState},
 };
 use bevy::{
     audio::Volume,
@@ -99,7 +99,10 @@ impl Player {
                             info!("respawn: server");
                         }
                         if let Some(client) = &mut client {
-                            info!("respawn: client");
+                            client.send_message(
+                                ClientChannel::Command as u8,
+                                error_continue!(ClientMessage::RequestRespawn.bytes()),
+                            );
                         }
                     }
                 }

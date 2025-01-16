@@ -152,6 +152,7 @@ pub enum NetState {
 
 #[derive(Debug, Serialize, Deserialize, Event, Clone)]
 pub enum ClientMessage {
+    RequestRespawn,
     RequestLobbyInfo,
 
     UpdatePosition {
