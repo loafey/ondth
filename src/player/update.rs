@@ -95,7 +95,12 @@ impl Player {
                         current_stage.set(CurrentStage::MainMenu);
                     }
                     GameButtonEvents::Respawn => {
-                        error!("respawn not implemented")
+                        if let Some(server) = &mut server {
+                            info!("respawn: server");
+                        }
+                        if let Some(client) = &mut client {
+                            info!("respawn: client");
+                        }
                     }
                 }
             }
