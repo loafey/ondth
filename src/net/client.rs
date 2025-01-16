@@ -177,6 +177,17 @@ pub fn handle_messages(
             ServerMessage::HitscanHits { hits } => {
                 hitscan_hit_gfx(&nw.asset_server, &mut nw.commands, &hits, &nw.particles)
             }
+            ServerMessage::Heal { amount } => {
+                let player = option_continue!(nw.lobby.get(&nw.current_id.0)).entity;
+                let (_, mut player, _) = error_continue!(nw.players.get_mut(player));
+                player.health += amount;
+                player.health = player.health.min(player.max_health);
+                nw.commands.spawn((
+                    AudioPlayer::new(nw.asset_server.load("sounds/BulletHit.ogg")),
+                    PlaybackSettings::DESPAWN.with_volume(Volume::new(0.5)),
+                ));
+            }
+
             ServerMessage::Hit { amount } => {
                 let player = option_continue!(nw.lobby.get(&nw.current_id.0)).entity;
                 let (_, mut player, _) = error_continue!(nw.players.get_mut(player));

@@ -249,6 +249,9 @@ pub enum ServerMessage {
     Hit {
         amount: f32,
     },
+    Heal {
+        amount: f32,
+    },
     Reset,
     Message {
         text: String,

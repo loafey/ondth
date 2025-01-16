@@ -98,6 +98,27 @@ impl QwakHostFunctions for Host {
         }
     }
 
+    fn game_heal_player(id: u64, heal: f32) {
+        let (nw, server, sw) = get_nw!();
+        for (_, mut hit_player, _) in &mut nw.players {
+            if hit_player.id == id {
+                let msg = ServerMessage::Heal { amount: heal };
+                if hit_player.id != nw.current_id.0 {
+                    hit_player.last_hurter = id;
+                    hit_player.health += heal;
+                    hit_player.health = hit_player.health.min(hit_player.max_health);
+                    server.send_message(
+                        hit_player.id,
+                        ServerChannel::NetworkedEntities as u8,
+                        error_continue!(msg.bytes()),
+                    )
+                } else {
+                    sw.send(ServerMessage::Heal { amount: heal });
+                }
+            }
+        }
+    }
+
     fn game_timeout(map_interaction: MapInteraction, delay: u32) {
         let (_, server, sw) = get_nw!();
         let translate = ServerMessage::CreateTimer {

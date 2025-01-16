@@ -163,6 +163,10 @@ impl QwakPlugin for Plugin {
                 game::broadcast_message("OUCH!".to_string());
                 game::hurt_player(player_id, 10.0);
             }
+            "heal_me" => {
+                game::broadcast_message("DE-OUCH!".to_string());
+                game::heal_player(player_id, 10.0);
+            }
             _ => panic!("unknown interaction: {script}"),
         }
     }
