@@ -101,6 +101,7 @@ pub struct Player {
     pub lobby_info: FastStr,
 
     pub health: f32,
+    pub default_health: f32,
     pub max_health: f32,
     pub armour: f32,
     pub hurt_flash: f32,
@@ -128,6 +129,8 @@ pub struct Player {
     radius: f32,
     air_time: Option<std::time::Instant>,
 
+    pub dead: bool,
+
     pub debug_info: DebugInfo,
 }
 
@@ -138,7 +141,9 @@ impl Default for Player {
             id: 0,
             last_hurter: 0,
             health: 100.0,
+            default_health: 100.0,
             max_health: 100.0,
+            dead: false,
             armour: 0.0,
             hurt_flash: 0.0,
             velocity: Vec3::ZERO,
