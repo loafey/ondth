@@ -121,10 +121,12 @@ fn frag_checker(
         );
 
         set_nw!(&nw, &server, &event_writer);
-        error_continue!(nw.plugins.default.map_player_killed(PlayerKilled {
+        let info = PlayerKilled {
             player_id: id,
             by_id: Some(hurter),
-        }));
+        };
+        error_continue!(nw.plugins.default.map_player_killed(info));
+        error_continue!(nw.plugins.default.map_player_respawn(info));
     }
 }
 

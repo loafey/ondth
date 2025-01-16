@@ -18,6 +18,8 @@ pub trait QwakPlugin {
     fn map_interact(args: qwak_helper_types::MapInteraction) -> ();
     #[doc = "Function called by the game when a player is killed."]
     fn map_player_killed(args: qwak_helper_types::PlayerKilled) -> ();
+    #[doc = "Function called by the game when a player requests to respawn."]
+    fn map_player_respawn(args: qwak_helper_types::PlayerKilled) -> ();
     #[doc = "Function called by the game when a player requests lobby info (i.e presses tab)."]
     fn map_get_lobby_info() -> String;
     #[doc = "Function called by the game when a player joins."]

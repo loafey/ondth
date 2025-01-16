@@ -20,7 +20,7 @@ pub struct MapInteraction {
 }
 
 /// The argument to [`map_player_killed`](../qwak_shared/trait.QwakPlugin.html#tymethod.map_player_killed).
-#[derive(Debug, Clone, FromBytes, ToBytes, Deserialize, Serialize)]
+#[derive(Debug, Clone, Copy, FromBytes, ToBytes, Deserialize, Serialize)]
 #[encoding(Msgpack)]
 pub struct PlayerKilled {
     /// The killed player.
