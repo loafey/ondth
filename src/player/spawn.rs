@@ -247,8 +247,9 @@ impl Player {
                                 justify_content: JustifyContent::Center,
                                 ..default()
                             },
-                            BackgroundColor(Color::srgba(1.0, 0.0, 0.0, 0.6)),
+                            BackgroundColor(Color::srgba(1.0, 0.0, 0.0, 0.4)),
                         ))
+                        .insert(Visibility::Hidden)
                         .with_children(|c| {
                             c.spawn(Node {
                                 padding: UiRect::all(Val::Px(10.0)),
