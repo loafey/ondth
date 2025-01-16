@@ -169,6 +169,9 @@ impl Player {
         mut client_events: EventWriter<ClientMessage>,
     ) {
         for (player_ent, mut player, _) in &mut q_players {
+            if player.dead {
+                continue;
+            }
             let (slot, row) = option_continue!(player.current_weapon);
             // let cur = player.current_weapon_anim.clone();
             let weapon = &mut player.weapons[slot][row];
@@ -281,6 +284,9 @@ impl Player {
         mut motion_evr: EventReader<MouseMotion>,
     ) {
         for player in q_parent.iter() {
+            if player.dead {
+                continue;
+            }
             if let Ok((_, mut trans)) = query.get_mut(option_continue!(player.children.camera)) {
                 for ev in motion_evr.read() {
                     let old = trans.rotation;
@@ -297,7 +303,10 @@ impl Player {
         mut query: Query<(&Player, &mut Transform), With<PlayerController>>,
         mut motion_evr: EventReader<MouseMotion>,
     ) {
-        for (_, mut gt) in &mut query {
+        for (player, mut gt) in &mut query {
+            if player.dead {
+                continue;
+            }
             // handle cursor
             for ev in motion_evr.read() {
                 let x_delta = ev.delta.x / -1000.0;
@@ -312,7 +321,10 @@ impl Player {
         mut query: Query<(&mut Player, &mut Transform), With<PlayerController>>,
         mut client_events: EventWriter<ClientMessage>,
     ) {
-        for _ in &mut query {
+        for (player, _) in &mut query {
+            if player.dead {
+                continue;
+            }
             if keys.interact_just_pressed {
                 client_events.send(ClientMessage::Interact);
             }
@@ -574,6 +586,9 @@ impl Player {
         mut client_events: EventWriter<ClientMessage>,
     ) {
         for mut player in query.iter_mut() {
+            if player.dead {
+                continue;
+            }
             let dir = if keys.weapon_next_pressed {
                 SwitchDirection::Forward
             } else if keys.weapon_previous_pressed {
@@ -645,6 +660,9 @@ impl Player {
         asset_server: Res<AssetServer>,
     ) {
         for mut player in query.iter_mut() {
+            if player.dead {
+                continue;
+            }
             if player.current_weapon == player.current_weapon_old {
                 continue;
             }
