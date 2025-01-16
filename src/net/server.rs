@@ -92,6 +92,7 @@ fn frag_checker(
     let mut frags = Vec::new();
     for (_, mut player, trans) in &mut nw.players {
         if (player.health <= 0.0 || trans.translation.y < -10000.0) && !player.dead {
+            player.dead = true;
             let event = ServerMessage::MarkPlayerAsDead { id: player.id };
             event_writer.send(event.clone());
             server.broadcast_message(

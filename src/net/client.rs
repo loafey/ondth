@@ -74,8 +74,8 @@ pub fn handle_messages(
                             let middle = window.size() / 2.0;
                             window.set_cursor_position(Some(middle));
                         }
+                        break;
                     }
-                    break;
                 }
             }
             ServerMessage::PlaySoundGlobally { sound, volume } => {
