@@ -336,20 +336,20 @@ impl Player {
             let hort_speed = player.hort_speed;
             let y_before = player.velocity.y;
             let mut temp = Vec3::ZERO;
-            if keys.walk_forward_pressed && !paused.0 {
+            if keys.walk_forward_pressed && !paused.0 && !player.dead {
                 temp += forward * hort_speed;
                 player.camera_movement.backdrift_goal = player.camera_movement.backdrift_max;
-            } else if keys.walk_backward_pressed && !paused.0 {
+            } else if keys.walk_backward_pressed && !paused.0 && !player.dead {
                 temp += -forward * hort_speed;
                 player.camera_movement.backdrift_goal = -player.camera_movement.backdrift_max;
             } else {
                 player.camera_movement.backdrift_goal = 0.0;
             }
 
-            if keys.walk_left_pressed && !paused.0 {
+            if keys.walk_left_pressed && !paused.0 && !player.dead {
                 temp += -right * hort_speed;
                 player.camera_movement.cam_rot_goal = player.camera_movement.cam_rot_max_goal;
-            } else if keys.walk_right_pressed && !paused.0 {
+            } else if keys.walk_right_pressed && !paused.0 && !player.dead {
                 temp += right * hort_speed;
                 player.camera_movement.cam_rot_goal = -player.camera_movement.cam_rot_max_goal;
             } else {
@@ -393,7 +393,7 @@ impl Player {
 
             // player.velocity.y = 0.0;
 
-            if keys.jump_just_pressed && player.on_ground && !paused.0 {
+            if keys.jump_just_pressed && player.on_ground && !paused.0 && !player.dead {
                 player.velocity.y = player.jump_height;
             } else if player.velocity.y > 0.0 && player.head_hit && !player.on_ground {
                 player.velocity.y += player.gravity * time.delta_secs() * 4.0;
