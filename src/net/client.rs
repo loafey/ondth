@@ -57,6 +57,14 @@ pub fn handle_messages(
 ) {
     for message in server_events.read() {
         match message.clone() {
+            ServerMessage::MarkPlayerAsDead { id } => {
+                for (_, mut player, _) in &mut nw.players {
+                    if player.id == id {
+                        player.dead = true;
+                        break;
+                    }
+                }
+            }
             ServerMessage::PlaySoundGlobally { sound, volume } => {
                 nw.commands.spawn((
                     AudioPlayer::new(nw.asset_server.load(sound.to_string())),

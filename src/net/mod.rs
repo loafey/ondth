@@ -199,6 +199,9 @@ pub enum SimulationEvent {
 
 #[derive(Debug, Serialize, Deserialize, Event, Clone)]
 pub enum ServerMessage {
+    MarkPlayerAsDead {
+        id: u64,
+    },
     SetMap(PathBuf),
     LobbyInfo(FastStr),
     TranslateBrush {

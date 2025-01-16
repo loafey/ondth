@@ -87,21 +87,25 @@ pub fn transmit_message(server: &mut RenetServer, nw: &mut NetWorld, text: Strin
 fn frag_checker(
     mut server: ResMut<RenetServer>,
     mut nw: NetWorld,
-    event_writer: EventWriter<ServerMessage>,
+    mut event_writer: EventWriter<ServerMessage>,
 ) {
     let mut frags = Vec::new();
     for (_, mut player, trans) in &mut nw.players {
-        if player.health <= 0.0 || trans.translation.y < -10000.0 {
-            player.health = 100.0;
-            player.armour = 0.0;
+        if (player.health <= 0.0 || trans.translation.y < -10000.0) && !player.dead {
+            let event = ServerMessage::MarkPlayerAsDead { id: player.id };
+            event_writer.send(event.clone());
+            server.broadcast_message(
+                ServerChannel::ServerMessages as u8,
+                error_continue!(event.bytes()),
+            );
 
-            if player.id != nw.current_id.0 {
-                server.send_message(
-                    player.id,
-                    ServerChannel::ServerMessages as u8,
-                    error_continue!(ServerMessage::Reset.bytes()),
-                );
-            }
+            // if player.id != nw.current_id.0 {
+            // server.send_message(
+            // player.id,
+            // ServerChannel::ServerMessages as u8,
+            // error_continue!(ServerMessage::Reset.bytes()),
+            // );
+            // }
 
             frags.push((player.id, player.last_hurter));
             player.last_hurter = 0;
@@ -126,7 +130,7 @@ fn frag_checker(
             by_id: Some(hurter),
         };
         error_continue!(nw.plugins.default.map_player_killed(info));
-        error_continue!(nw.plugins.default.map_player_respawn(info));
+        // error_continue!(nw.plugins.default.map_player_respawn(info));
     }
 }
 
