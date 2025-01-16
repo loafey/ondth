@@ -768,7 +768,7 @@ impl Player {
         keys: Res<PlayerInput>,
         mut q_windows: Query<&mut Window, With<PrimaryWindow>>,
         mut paused: ResMut<Paused>,
-        players: Query<&Player>,
+        players: Query<&Player, With<PlayerController>>,
         mut screens: Query<&mut Visibility>,
         //mut time: ResMut<Time<Virtual>>,
     ) {
@@ -782,24 +782,25 @@ impl Player {
                         true => Visibility::Visible,
                     };
                 }
-            }
-            match paused.0 {
-                true => info!("Pausing game"),
-                false => info!("Resuming game"),
-            }
 
-            let mut primary_window = q_windows.single_mut();
-            if paused.0 {
-                //rapier_context.
-                primary_window.cursor_options.grab_mode = CursorGrabMode::None;
-                primary_window.cursor_options.visible = true;
-                let middle = primary_window.size() / 2.0;
-                primary_window.set_cursor_position(Some(middle));
-                //time.pause();
-            } else {
-                primary_window.cursor_options.grab_mode = CursorGrabMode::Locked;
-                primary_window.cursor_options.visible = false;
-                //time.unpause();
+                match paused.0 {
+                    true => info!("Pausing game"),
+                    false => info!("Resuming game"),
+                }
+
+                let mut primary_window = q_windows.single_mut();
+                if paused.0 {
+                    //rapier_context.
+                    primary_window.cursor_options.grab_mode = CursorGrabMode::None;
+                    primary_window.cursor_options.visible = true;
+                    let middle = primary_window.size() / 2.0;
+                    primary_window.set_cursor_position(Some(middle));
+                    //time.pause();
+                } else if !p.dead {
+                    primary_window.cursor_options.grab_mode = CursorGrabMode::Locked;
+                    primary_window.cursor_options.visible = false;
+                    //time.unpause();
+                }
             }
         }
     }
