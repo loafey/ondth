@@ -66,7 +66,7 @@ impl Player {
             .into_configs()
     }
 
-    #[allow(clippy::type_complexity)]
+    #[allow(clippy::type_complexity, clippy::too_many_arguments)]
     fn pause_screen_buttons(
         nw: NetWorld,
         interactions: Query<
