@@ -67,12 +67,13 @@ impl Player {
             .into_configs()
     }
 
-    pub fn ragdollify(mut query: Query<(&Player, &mut Collider)>) {
-        for (p, mut col) in &mut query {
-            *col = match p.dead {
-                true => Collider::cylinder(0.005, 0.15),
-                false => Collider::cylinder(0.5, 0.15),
+    pub fn ragdollify(mut query: Query<(&mut Player, &mut Collider)>) {
+        for (mut p, mut col) in &mut query {
+            p.half_height = match p.dead {
+                true => 0.005,
+                false => 0.5,
             };
+            *col = Collider::cylinder(p.half_height, 0.15);
         }
     }
 
