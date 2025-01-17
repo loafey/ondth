@@ -6,7 +6,9 @@ use super::{
 };
 use crate::{
     entities::ProjectileEntity,
-    net::{ClientChannel, ClientMessage, NetState},
+    net::{ClientChannel, ClientMessage, NetState, ServerMessage, server::NW_PTR},
+    queries::NetWorld,
+    set_nw,
 };
 use bevy::{
     audio::Volume,
@@ -25,7 +27,7 @@ use bevy_renet::renet::{RenetClient, RenetServer};
 use bevy_scene_hook::reload::{Hook, State as HookState};
 use faststr::FastStr;
 use macros::{error_continue, option_continue, option_return};
-use qwak_helper_types::{Attack, SoundEffect};
+use qwak_helper_types::{Attack, PlayerKilled, SoundEffect};
 use resources::{
     CurrentStage, Paused, Projectiles,
     entropy::{EGame, EMisc, Entropy},
@@ -66,6 +68,7 @@ impl Player {
 
     #[allow(clippy::type_complexity)]
     fn pause_screen_buttons(
+        nw: NetWorld,
         interactions: Query<
             (&Interaction, &GameButtonEvents),
             (Changed<Interaction>, With<Button>),
@@ -75,6 +78,7 @@ impl Player {
         mut client: Option<ResMut<RenetClient>>,
         mut current_stage: ResMut<NextState<CurrentStage>>,
         mut net_state: ResMut<NextState<NetState>>,
+        server_events: EventWriter<ServerMessage>,
     ) {
         for (interaction, event) in &interactions {
             if matches!(interaction, Interaction::Pressed) {
@@ -96,7 +100,11 @@ impl Player {
                     }
                     GameButtonEvents::Respawn => {
                         if let Some(server) = &mut server {
-                            info!("respawn: server");
+                            set_nw!(&nw, &server, &server_events);
+                            error_continue!(nw.plugins.default.map_player_respawn(PlayerKilled {
+                                player_id: nw.current_id.0,
+                                by_id: None
+                            }));
                         }
                         if let Some(client) = &mut client {
                             client.send_message(

@@ -422,6 +422,13 @@ pub fn handle_client_message(
                 server.send_message(client_id, ServerChannel::ServerMessages as u8, bytes);
             }
         }
+        ClientMessage::RequestRespawn => {
+            set_nw!(nw, server, server_events);
+            error_return!(nw.plugins.default.map_player_respawn(PlayerKilled {
+                player_id: client_id,
+                by_id: None
+            }));
+        }
         message => {
             update_world(client_id, &message, nw);
             server.broadcast_message(
