@@ -160,4 +160,14 @@ impl QwakHostFunctions for Host {
         let (nw, _, _) = get_nw!();
         nw.current_id.0
     }
+
+    fn game_set_player_stats(id: u64, health: f32, armor: f32) {
+        let (_, server, sw) = get_nw!();
+        let msg = ServerMessage::SetPlayerHealth { id, armor, health };
+        sw.send(msg.clone());
+        server.broadcast_message(
+            ServerChannel::NetworkedEntities as u8,
+            error_return!(msg.bytes()),
+        );
+    }
 }

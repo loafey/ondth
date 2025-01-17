@@ -213,6 +213,7 @@ impl QwakPlugin for Plugin {
     }
     fn map_player_respawn(PlayerKilled { player_id, .. }: PlayerKilled) {
         let spawn = game::get_spawn_point();
+        game::set_player_stats(player_id, 100.0, 0.0);
         game::teleport_player(player_id, spawn.x, spawn.y, spawn.z);
     }
 

@@ -159,7 +159,7 @@ impl Player {
 
             let armour_hud = option_continue!(player.children.armour_hud);
             let (mut armour_hud, _) = error_continue!(text.get_mut(armour_hud));
-            armour_hud.0 = format!("{ARMOR_GLYPH}{}", player.armour.round());
+            armour_hud.0 = format!("{ARMOR_GLYPH}{}", player.armor.round());
 
             let lobby_hud = option_continue!(player.children.lobby_hud);
             let (mut text, mut vis) = error_continue!(text.get_mut(lobby_hud));

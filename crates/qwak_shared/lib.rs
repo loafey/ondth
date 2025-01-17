@@ -77,6 +77,10 @@ pub trait QwakHostFunctions {
     #[doc = "# Safety"]
     #[doc = "Will segfault if ran outside of the game."]
     fn game_heal_player(id: u64, damage: f32);
+    #[doc = "Set player health."]
+    #[doc = "# Safety"]
+    #[doc = "Will segfault if ran outside of the game."]
+    fn game_set_player_stats(id: u64, health: f32, armor: f32);
     #[doc = "Teleport player to the specified location."]
     #[doc = "# Safety"]
     #[doc = "Will segfault if ran outside of the game."]

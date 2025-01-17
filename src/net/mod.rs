@@ -203,6 +203,11 @@ pub enum ServerMessage {
     MarkPlayerAsDead {
         id: u64,
     },
+    SetPlayerHealth {
+        id: u64,
+        armor: f32,
+        health: f32,
+    },
     SetMap(PathBuf),
     LobbyInfo(FastStr),
     TranslateBrush {

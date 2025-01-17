@@ -102,7 +102,7 @@ pub struct Player {
 
     pub health: f32,
     pub max_health: f32,
-    pub armour: f32,
+    pub armor: f32,
     pub hurt_flash: f32,
 
     velocity: Vec3,
@@ -142,7 +142,7 @@ impl Default for Player {
             health: 100.0,
             max_health: 100.0,
             dead: false,
-            armour: 0.0,
+            armor: 0.0,
             hurt_flash: 0.0,
             velocity: Vec3::ZERO,
             hort_friction: 8.0,

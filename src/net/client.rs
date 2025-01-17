@@ -32,7 +32,7 @@ use bevy_renet::{
     renet::RenetClient,
     steam::SteamTransportError,
 };
-use macros::{error_continue, error_return, option_continue};
+use macros::{error_continue, error_return, option_continue, option_return};
 use renet_steam::SteamClientTransport;
 use resources::{CurrentMap, CurrentStage};
 use std::{net::UdpSocket, time::SystemTime};
@@ -109,7 +109,7 @@ pub fn handle_messages(
                 let player = option_continue!(nw.lobby.get(&nw.current_id.0)).entity;
                 let (_, mut player, _) = error_continue!(nw.players.get_mut(player));
                 player.health = 100.0;
-                player.armour = 0.0;
+                player.armor = 0.0;
                 player.last_hurter = 0;
             }
             ServerMessage::SpawnPickup {
@@ -244,6 +244,22 @@ pub fn handle_messages(
                 for (_, mut player, _) in &mut nw.players {
                     if player.id == nw.current_id.0 {
                         player.lobby_info = fast_str;
+                        break;
+                    }
+                }
+            }
+            ServerMessage::SetPlayerHealth { id, armor, health } => {
+                for (_, mut player, _) in &mut nw.players {
+                    if player.id == id {
+                        player.health = health;
+                        player.armor = armor;
+                        player.dead = false;
+                        let mut window = q_windows.single_mut();
+                        window.cursor_options.grab_mode = CursorGrabMode::Locked;
+                        window.cursor_options.visible = false;
+                        let ent = option_return!(player.children.death_splash);
+                        let mut vis = error_return!(visiblities.get_mut(ent));
+                        *vis = Visibility::Hidden;
                         break;
                     }
                 }
