@@ -1,9 +1,10 @@
-use std::collections::HashMap;
-
 use proc_macro::TokenStream as TS;
-use proc_macro2::Span;
+use proc_macro2::{Span, TokenStream};
 use quote::quote;
-use syn::{FnArg, Ident, ItemTrait, Pat, TraitItem, Type, punctuated::Punctuated, token::Comma};
+use std::collections::BTreeMap;
+use syn::{
+    FnArg, Ident, ItemTrait, Pat, Signature, TraitItem, Type, punctuated::Punctuated, token::Comma,
+};
 
 fn stringify(ty: &Type) -> String {
     match ty {
@@ -110,27 +111,76 @@ pub fn get_export_functions(item: TS) -> TS {
     .into()
 }
 
-pub fn get_host_calls(item: TS) -> TS {
-    let tree = syn::parse::<ItemTrait>(item).unwrap();
-    let mut exports = quote! {};
-    let mut modules: HashMap<String, Vec<_>> = HashMap::new();
-    for func in tree.items {
-        let TraitItem::Fn(func) = func else {
-            panic!("only functions are supported")
-        };
-        let mut attrs = quote! {};
-        for attr in func.attrs {
-            attrs = quote! {
-                #attrs
-                #attr
-            };
+#[derive(Default)]
+struct Namespace {
+    nest: BTreeMap<String, Namespace>,
+    functions: Vec<(String, String, Signature, TokenStream)>,
+}
+impl Namespace {
+    fn pretty(&self, depth: usize) -> String {
+        const S: &str = "    ";
+        let mut s = String::new();
+        s += "{\n";
+        for (new_name, og_name, _, _) in &self.functions {
+            s += &format!("{}{new_name} -> {og_name}\n", S.repeat(depth + 1));
         }
-        let mut sig = func.sig;
-        let og_sig = sig.clone();
-        let func_name = sig.ident.clone();
-        let f = func_name.to_string();
-        let (module, name) = f.split_once("__").unwrap();
-        sig.ident = Ident::new(name, Span::call_site());
+        for (module, nest) in &self.nest {
+            s += &format!(
+                "{}{module} :: {}",
+                S.repeat(depth + 1),
+                nest.pretty(depth + 1)
+            );
+        }
+        s += &format!("{}}}\n", S.repeat(depth));
+        s
+    }
+}
+impl std::fmt::Debug for Namespace {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.pretty(0))
+    }
+}
+fn get_tree(
+    names: &[&str],
+    og_name: &str,
+    signature: &Signature,
+    attrs: &TokenStream,
+    ns: &mut Namespace,
+) {
+    if names.len() == 1 {
+        ns.functions.push((
+            names[0].to_string(),
+            og_name.to_string(),
+            signature.clone(),
+            attrs.clone(),
+        ));
+    } else {
+        let entry = ns.nest.entry(names[0].to_string()).or_default();
+        get_tree(&names[1..], og_name, signature, attrs, entry);
+    }
+}
+fn build_structure(ns: &Namespace, res: &mut TokenStream, depth: usize) {
+    let mut inner = quote! {};
+
+    for (name, og_name, sig, attrs) in &ns.functions {
+        let og_name = Ident::new(og_name, Span::call_site());
+        let function = Ident::new(name, Span::call_site());
+        let mut new_sig = sig.clone();
+        new_sig.ident = function;
+
+        let mut namespace_prefix = quote! {};
+        for _ in 0..depth {
+            namespace_prefix = quote! {#namespace_prefix super::};
+        }
+        let panic_handler = match name != "log__debug" {
+            true => {
+                quote! {
+                    #namespace_prefix inner::log__debug(format!("plugin crashed calling host function: {e}")).unwrap();
+                }
+            }
+            false => quote! {},
+        };
+
         let args = sig
             .inputs
             .iter()
@@ -144,23 +194,13 @@ pub fn get_host_calls(item: TS) -> TS {
                 id.ident.clone()
             })
             .collect::<Punctuated<_, Comma>>();
-        exports = quote! {
-            #exports
-            #[allow(missing_docs)]
-            pub unsafe #og_sig;
-        };
-        let panic_handler = if func_name != "log__debug" {
-            quote! {
-                super::inner::log__debug(format!("plugin crashed calling host function: {e}")).unwrap();
-            }
-        } else {
-            quote! {}
-        };
-        modules.entry(module.to_string()).or_default().push(quote! {
+
+        inner = quote! {
+            #inner
             #attrs
-            pub #sig {
+            pub #new_sig {
                 unsafe {
-                    match super::inner::#func_name(#args) {
+                    match #namespace_prefix inner::#og_name(#args) {
                         Ok(o) => o,
                         Err(e) => {
                             #panic_handler
@@ -169,24 +209,66 @@ pub fn get_host_calls(item: TS) -> TS {
                     }
                 }
             }
-        });
-    }
-
-    let mut pubs = quote! {};
-    for (module, qoutes) in modules {
-        let mut inner = quote! {};
-        for qoute in qoutes {
-            inner = quote! {
-                #inner
-                #qoute
-            };
-        }
-        let module = Ident::new(&module, Span::call_site());
-        pubs = quote! {
-            #pubs
-            pub mod #module { #inner }
         };
     }
+
+    for (name, nest) in &ns.nest {
+        let name = Ident::new(name, Span::call_site());
+        let mut temp = quote! {};
+        build_structure(nest, &mut temp, depth + 1);
+        inner = quote! {
+            #inner
+            pub mod #name { #temp }
+        };
+    }
+
+    *res = quote! {
+        #res
+        #inner
+    }
+}
+pub fn get_host_calls(item: TS) -> TS {
+    let tree = syn::parse::<ItemTrait>(item).unwrap();
+    let mut exports = quote! {};
+
+    // Build up the module tree
+    let mut top = Namespace::default();
+    for func in &tree.items {
+        let TraitItem::Fn(func) = func else {
+            panic!("only functions are supported")
+        };
+        let func_name = func.sig.ident.clone();
+        let f = func_name.to_string();
+        let mut attrs = quote! {};
+        for attr in &func.attrs {
+            attrs = quote! {
+                #attrs
+                #attr
+            };
+        }
+        get_tree(
+            &f.split("__").collect::<Vec<_>>(),
+            &f,
+            &func.sig,
+            &attrs,
+            &mut top,
+        );
+    }
+    let mut test = quote! {};
+    build_structure(&top, &mut test, 0);
+
+    for func in tree.items {
+        let TraitItem::Fn(func) = func else {
+            panic!("only functions are supported")
+        };
+        let og_sig = &func.sig;
+
+        exports = quote! {
+            #exports
+            pub unsafe #og_sig;
+        };
+    }
+
     // let d = format!("{:?}", format!("{tree:#?}"));
     quote! {
         /// Generates the boilerplate for calling host functions.
@@ -194,13 +276,14 @@ pub fn get_host_calls(item: TS) -> TS {
         macro_rules! host_calls {
             () => {
                 mod host {
+                    #test
+                    #[allow(missing_docs, non_snake_case)]
                     mod inner {
                         #[extism_pdk::host_fn]
                         unsafe extern "ExtismHost" {
                             #exports
                         }
                     }
-                    #pubs
                 }
             }
         }
