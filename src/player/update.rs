@@ -53,6 +53,7 @@ impl Player {
     pub fn systems() -> SystemConfigs {
         (
             Player::update_input,
+            Player::ragdollify,
             Player::ground_detection,
             Player::weaponry_switch,
             Player::weaponry_switch_wheel,
@@ -64,6 +65,15 @@ impl Player {
             Player::pause_screen_buttons,
         )
             .into_configs()
+    }
+
+    pub fn ragdollify(mut query: Query<(&Player, &mut Collider)>) {
+        for (p, mut col) in &mut query {
+            *col = match p.dead {
+                true => Collider::cylinder(0.005, 0.15),
+                false => Collider::cylinder(0.5, 0.15),
+            };
+        }
     }
 
     #[allow(clippy::type_complexity, clippy::too_many_arguments)]
