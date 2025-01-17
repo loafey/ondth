@@ -15,7 +15,7 @@ use qwak_shared::QwakHostFunctions;
 qwak_shared::host_gen!(Host);
 struct Host;
 impl QwakHostFunctions for Host {
-    fn game_get_player_name(id: u64) -> String {
+    fn game__player__get_name(id: u64) -> String {
         let (nw, _, _) = get_nw!();
         let name = nw
             .lobby
@@ -25,21 +25,21 @@ impl QwakHostFunctions for Host {
         name
     }
 
-    fn log_error(message: String) {
+    fn log__error(message: String) {
         bevy::log::error!(target: "plugin", "{message}");
     }
 
     #[allow(clippy::print_stderr)]
-    fn log_debug(value: String) {
+    fn log__debug(value: String) {
         bevy::log::debug!(target: "plugin", "{value}");
     }
 
-    fn game_broadcast_message(value: String) {
+    fn game__broadcast_message(value: String) {
         let (nw, server, _) = get_nw!();
         transmit_message(server, nw, value);
     }
 
-    fn game_brush_translate(target_name: String, x: f32, y: f32, z: f32, delay: u32) {
+    fn game__brush__translate(target_name: String, x: f32, y: f32, z: f32, delay: u32) {
         let (_, server, sw) = get_nw!();
         let target_name = target_name.into();
 
@@ -53,7 +53,7 @@ impl QwakHostFunctions for Host {
         server.broadcast_message(ServerChannel::NetworkedEntities as u8, bytes);
     }
 
-    fn game_brush_rotate(target_name: String, x: f32, y: f32, z: f32, delay: u32) {
+    fn game__brush__rotate(target_name: String, x: f32, y: f32, z: f32, delay: u32) {
         let (_, server, sw) = get_nw!();
         let target_name = target_name.into();
 
@@ -67,7 +67,7 @@ impl QwakHostFunctions for Host {
         server.broadcast_message(ServerChannel::NetworkedEntities as u8, bytes);
     }
 
-    fn game_play_sound(path: String, volume: f32) {
+    fn game__audio__global__play(path: String, volume: f32) {
         let (_, server, sw) = get_nw!();
         let translate = ServerMessage::PlaySoundGlobally {
             sound: path.into(),
@@ -78,7 +78,7 @@ impl QwakHostFunctions for Host {
         server.broadcast_message(ServerChannel::NetworkedEntities as u8, bytes);
     }
 
-    fn game_hurt_player(id: u64, damage: f32) {
+    fn game__player__hurt(id: u64, damage: f32) {
         let (nw, server, sw) = get_nw!();
         for (_, mut hit_player, _) in &mut nw.players {
             if hit_player.id == id {
@@ -98,7 +98,7 @@ impl QwakHostFunctions for Host {
         }
     }
 
-    fn game_heal_player(id: u64, heal: f32) {
+    fn game__player__heal(id: u64, heal: f32) {
         let (nw, server, sw) = get_nw!();
         for (_, mut hit_player, _) in &mut nw.players {
             if hit_player.id == id {
@@ -119,7 +119,7 @@ impl QwakHostFunctions for Host {
         }
     }
 
-    fn game_timeout(map_interaction: MapInteraction, delay: u32) {
+    fn game__map__timeout(map_interaction: MapInteraction, delay: u32) {
         let (_, server, sw) = get_nw!();
         let translate = ServerMessage::CreateTimer {
             delay,
@@ -130,7 +130,7 @@ impl QwakHostFunctions for Host {
         server.broadcast_message(ServerChannel::NetworkedEntities as u8, bytes);
     }
 
-    fn game_teleport_player(id: u64, x: f32, y: f32, z: f32) {
+    fn game__player__teleport(id: u64, x: f32, y: f32, z: f32) {
         let (nw, server, sw) = get_nw!();
         let msg = ServerMessage::TeleportPlayer {
             location: Vec3::new(x, y, z),
@@ -146,7 +146,7 @@ impl QwakHostFunctions for Host {
         }
     }
 
-    fn game_get_spawn_point() -> MsgVec3 {
+    fn game__map__spawn_point() -> MsgVec3 {
         let (nw, _, _) = get_nw!();
         let v = nw.player_spawn.0;
         MsgVec3 {
@@ -156,12 +156,12 @@ impl QwakHostFunctions for Host {
         }
     }
 
-    fn game_host_id() -> u64 {
+    fn game__host_id() -> u64 {
         let (nw, _, _) = get_nw!();
         nw.current_id.0
     }
 
-    fn game_set_player_stats(id: u64, health: f32, armor: f32) {
+    fn game__player__set_stats(id: u64, health: f32, armor: f32) {
         let (_, server, sw) = get_nw!();
         let msg = ServerMessage::SetPlayerHealth { id, armor, health };
         sw.send(msg.clone());

@@ -88,7 +88,7 @@ impl QwakPlugin for Plugin {
     ) {
         match &*script {
             "debug_log" => {
-                let name = game::get_player_name(player_id);
+                let name = game::player__get_name(player_id);
                 game::broadcast_message(format!("{name}: script: {script:?}, target: {target:?}"))
             }
             "translate_brush" => {
@@ -105,7 +105,7 @@ impl QwakPlugin for Plugin {
                 } else {
                     ([0.0, 0.1, 0.0], 100)
                 };
-                game::brush_rotate(target, x, y, z, delay);
+                game::brush__rotate(target, x, y, z, delay);
                 // host::brush_translate(target, x, y, z, delay);
             }
             "open_big_doors" => {
@@ -114,13 +114,13 @@ impl QwakPlugin for Plugin {
                 if storage_get::<BoolDoor>().unwrap_or_default().0 {
                     return;
                 }
-                game::brush_rotate("bigDoor1".to_string(), 0.0, 50.0, 0.0, 100000);
-                game::brush_translate("bigDoor1".to_string(), 0.5, 0.0, -0.5, 100000);
-                game::brush_rotate("bigDoor2".to_string(), 0.0, -50.0, 0.0, 100000);
-                game::brush_translate("bigDoor2".to_string(), 0.5, 0.0, 0.5, 100000);
+                game::brush__rotate("bigDoor1".to_string(), 0.0, 50.0, 0.0, 100000);
+                game::brush__translate("bigDoor1".to_string(), 0.5, 0.0, -0.5, 100000);
+                game::brush__rotate("bigDoor2".to_string(), 0.0, -50.0, 0.0, 100000);
+                game::brush__translate("bigDoor2".to_string(), 0.5, 0.0, 0.5, 100000);
                 storage_set(BoolDoor(true));
                 for i in 0..4 {
-                    game::timeout(
+                    game::map__timeout(
                         MapInteraction {
                             script: "play_sound".to_string(),
                             target: None,
@@ -130,7 +130,7 @@ impl QwakPlugin for Plugin {
                         i * 750,
                     );
                 }
-                game::timeout(
+                game::map__timeout(
                     MapInteraction {
                         script: "play_sound".to_string(),
                         target: None,
@@ -143,7 +143,7 @@ impl QwakPlugin for Plugin {
             "play_sound" => {
                 let (sound, volume): (String, f32) =
                     serde_json::from_str(&argument.unwrap()).unwrap();
-                game::play_sound(sound, volume);
+                game::audio__global__play(sound, volume);
             }
             "elevator" => {
                 #[derive(Default, Deserialize, Serialize)]
@@ -151,21 +151,21 @@ impl QwakPlugin for Plugin {
                 let k = storage_get::<FlipFlop>().unwrap_or_default().0;
                 let target = "elevator".to_string();
                 if k {
-                    game::brush_translate(target, 0.0, -2.0, 0.0, 60000);
+                    game::brush__translate(target, 0.0, -2.0, 0.0, 60000);
                     game::broadcast_message("going down".to_string());
                 } else {
-                    game::brush_translate(target, 0.0, 2.0, 0.0, 60000);
+                    game::brush__translate(target, 0.0, 2.0, 0.0, 60000);
                     game::broadcast_message("going up".to_string());
                 }
                 storage_set(FlipFlop(!k));
             }
             "hurt_me" => {
                 game::broadcast_message("OUCH!".to_string());
-                game::hurt_player(player_id, 10.0);
+                game::player__hurt(player_id, 10.0);
             }
             "heal_me" => {
                 game::broadcast_message("DE-OUCH!".to_string());
-                game::heal_player(player_id, 10.0);
+                game::player__heal(player_id, 10.0);
             }
             _ => panic!("unknown interaction: {script}"),
         }
@@ -177,7 +177,7 @@ impl QwakPlugin for Plugin {
         for (p, v) in player_info.iter() {
             s += &format!(
                 "\n{}: d: {}, k: {}",
-                game::get_player_name(*p).to_lowercase(),
+                game::player__get_name(*p).to_lowercase(),
                 v.deaths,
                 v.kills
             );
@@ -195,8 +195,8 @@ impl QwakPlugin for Plugin {
     }
 
     fn map_player_killed(PlayerKilled { player_id, by_id }: PlayerKilled) {
-        let killed = game::get_player_name(player_id);
-        let killer = game::get_player_name(by_id.unwrap_or_default());
+        let killed = game::player__get_name(player_id);
+        let killer = game::player__get_name(by_id.unwrap_or_default());
         game::broadcast_message(format!(
             "{} GOT FRAGGED BY {}!",
             killed.to_lowercase(),
@@ -212,15 +212,15 @@ impl QwakPlugin for Plugin {
         storage_set(player_info);
     }
     fn map_player_respawn(PlayerKilled { player_id, .. }: PlayerKilled) {
-        let spawn = game::get_spawn_point();
-        game::set_player_stats(player_id, 100.0, 0.0);
-        game::teleport_player(player_id, spawn.x, spawn.y, spawn.z);
+        let spawn = game::map__spawn_point();
+        game::player__set_stats(player_id, 100.0, 0.0);
+        game::player__teleport(player_id, spawn.x, spawn.y, spawn.z);
     }
 
     fn map_player_join(id: u64) {
         game::broadcast_message(format!(
             "{} JOINED",
-            game::get_player_name(id).to_lowercase()
+            game::player__get_name(id).to_lowercase()
         ));
 
         let mut player_info = storage_get::<HashMap<u64, PlayerStats>>().unwrap_or_default();
@@ -231,7 +231,7 @@ impl QwakPlugin for Plugin {
     fn map_player_leave(PlayerLeave { id, reason }: PlayerLeave) {
         game::broadcast_message(format!(
             "{} LEFT ({reason})",
-            game::get_player_name(id).to_lowercase()
+            game::player__get_name(id).to_lowercase()
         ));
 
         let mut player_info = storage_get::<HashMap<u64, PlayerStats>>().unwrap_or_default();

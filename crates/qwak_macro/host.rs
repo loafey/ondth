@@ -129,7 +129,7 @@ pub fn get_host_calls(item: TS) -> TS {
         let og_sig = sig.clone();
         let func_name = sig.ident.clone();
         let f = func_name.to_string();
-        let (module, name) = f.split_once('_').unwrap();
+        let (module, name) = f.split_once("__").unwrap();
         sig.ident = Ident::new(name, Span::call_site());
         let args = sig
             .inputs
@@ -149,9 +149,9 @@ pub fn get_host_calls(item: TS) -> TS {
             #[allow(missing_docs)]
             pub unsafe #og_sig;
         };
-        let panic_handler = if func_name != "debug_log" {
+        let panic_handler = if func_name != "log__debug" {
             quote! {
-                super::inner::log_debug(format!("plugin crashed calling host function: {e}")).unwrap();
+                super::inner::log__debug(format!("plugin crashed calling host function: {e}")).unwrap();
             }
         } else {
             quote! {}

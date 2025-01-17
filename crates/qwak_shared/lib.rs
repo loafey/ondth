@@ -38,59 +38,59 @@ pub trait QwakPlugin {
     -> std::collections::HashMap<faststr::FastStr, qwak_helper_types::WeaponData>;
 }
 
-#[allow(clippy::unnecessary_safety_doc)]
+#[allow(clippy::unnecessary_safety_doc, non_snake_case)]
 #[qwak_macro::host]
 /// The functions a the game defines for plugin -> game interaction.
 pub trait QwakHostFunctions {
     #[doc = "Log an error."]
-    fn log_error(message: String);
+    fn log__error(message: String);
     #[doc = "Prints to `stdout`."]
-    fn log_debug(val: String);
+    fn log__debug(val: String);
 
     #[doc = "Sends a message to all players."]
     #[doc = "# Safety"]
     #[doc = "Will segfault if ran outside of the game."]
-    fn game_broadcast_message(val: String);
+    fn game__broadcast_message(val: String);
     #[doc = "Returns the player name of a specified id."]
     #[doc = "# Safety"]
     #[doc = "Will segfault if ran outside of the game."]
-    fn game_get_player_name(id: u64) -> String;
+    fn game__player__get_name(id: u64) -> String;
     #[doc = "Move a brush by the vector provided."]
     #[doc = "# Safety"]
     #[doc = "Will segfault if ran outside of the game."]
-    fn game_brush_translate(target: String, x: f32, y: f32, z: f32, duration: u32);
+    fn game__brush__translate(target: String, x: f32, y: f32, z: f32, duration: u32);
     #[doc = "Rotate a brush by the vector provided."]
     #[doc = "# Safety"]
     #[doc = "Will segfault if ran outside of the game."]
-    fn game_brush_rotate(target: String, x: f32, y: f32, z: f32, duration: u32);
+    fn game__brush__rotate(target: String, x: f32, y: f32, z: f32, duration: u32);
     #[doc = "Plays a sound effect globaly."]
     #[doc = "# Safety"]
     #[doc = "Will segfault if ran outside of the game."]
-    fn game_play_sound(path: String, volume: f32);
+    fn game__audio__global__play(path: String, volume: f32);
     #[doc = "Run a MapInteract after a set amount of time."]
-    fn game_timeout(map_int: qwak_helper_types::MapInteraction, delay: u32);
+    fn game__map__timeout(map_int: qwak_helper_types::MapInteraction, delay: u32);
     #[doc = "Hurt a specific player."]
     #[doc = "# Safety"]
     #[doc = "Will segfault if ran outside of the game."]
-    fn game_hurt_player(id: u64, damage: f32);
+    fn game__player__hurt(id: u64, damage: f32);
     #[doc = "Heal a specific player."]
     #[doc = "# Safety"]
     #[doc = "Will segfault if ran outside of the game."]
-    fn game_heal_player(id: u64, damage: f32);
+    fn game__player__heal(id: u64, damage: f32);
     #[doc = "Set player health."]
     #[doc = "# Safety"]
     #[doc = "Will segfault if ran outside of the game."]
-    fn game_set_player_stats(id: u64, health: f32, armor: f32);
+    fn game__player__set_stats(id: u64, health: f32, armor: f32);
     #[doc = "Teleport player to the specified location."]
     #[doc = "# Safety"]
     #[doc = "Will segfault if ran outside of the game."]
-    fn game_teleport_player(id: u64, x: f32, y: f32, z: f32);
+    fn game__player__teleport(id: u64, x: f32, y: f32, z: f32);
     #[doc = "Teleport player to the specified location."]
     #[doc = "# Safety"]
     #[doc = "Will segfault if ran outside of the game."]
-    fn game_get_spawn_point() -> qwak_helper_types::MsgVec3;
+    fn game__map__spawn_point() -> qwak_helper_types::MsgVec3;
     #[doc = "Call this to get the id of the host."]
     #[doc = "# Safety"]
     #[doc = "Will segfault if ran outside of the game."]
-    fn game_host_id() -> u64;
+    fn game__host_id() -> u64;
 }
