@@ -6,3 +6,4 @@ deps.svg
 deps.dot
 *.wasm
 /assets/
+/assets
