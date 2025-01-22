@@ -1,4 +1,5 @@
 //! Side game void
+#![allow(missing_docs)]
 
 use std::collections::HashMap;
 
@@ -9,6 +10,7 @@ use qwak_helper_types::{
 use qwak_shared::QwakPlugin;
 qwak_shared::plugin_gen!(Plugin);
 qwak_shared::host_calls!();
+#[allow(unused_imports)]
 use host::*;
 
 struct Plugin;
@@ -25,19 +27,19 @@ impl QwakPlugin for Plugin {
 
     fn map_init() {}
 
-    fn map_interact(args: MapInteraction) {}
+    fn map_interact(_args: MapInteraction) {}
 
-    fn map_player_killed(args: PlayerKilled) {}
+    fn map_player_killed(_args: PlayerKilled) {}
 
-    fn map_player_respawn(args: PlayerKilled) {}
+    fn map_player_respawn(_args: PlayerKilled) {}
 
     fn map_get_lobby_info() -> String {
         "Empty".to_string()
     }
 
-    fn map_player_join(id: u64) {}
+    fn map_player_join(_id: u64) {}
 
-    fn map_player_leave(args: PlayerLeave) {}
+    fn map_player_leave(_args: PlayerLeave) {}
 
     fn plugin_get_projectiles() -> HashMap<FastStr, Projectile> {
         HashMap::new()
