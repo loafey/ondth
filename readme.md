@@ -8,7 +8,7 @@
 Run with `./run.sh`.
 Right now your shell has to be located in the same folder as the assets folder or else assets will not load.
 
-The game runs on Rust nightly (1.85 to be exact), so you need to use this version of the compiler
+The game runs on Rust nightly (1.85 or later to be exact), so you need to use this version of the compiler
 along with installing the compilation target for `wasm32-unknown-unknown`. 
 If you are using [Nix](https://nixos.org/) this is automatically set up
 when you use `nix develop`.
