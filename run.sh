@@ -21,7 +21,8 @@ fi
 rm -f assets
 ln -s "qwaks/$proj/assets/" assets
 echo -e "    ${bold}${orange}Compiled${normal} \"$proj\" QWAK file to: \"target/wasm32-unknown-unknown/release/$proj.wasm\"" 
-cp "target/wasm32-unknown-unknown/release/$proj.wasm" "assets/qwaks/$proj.wasm"
+mkdir -p assets/qwaks/
+cp "target/wasm32-unknown-unknown/release/$proj.wasm" "assets/qwaks/default.wasm"
 echo -e "      ${bold}${orange}Copied${normal} \"$proj\" QWAK file to asset directory" 
 
 # mkdir -p assets/qwaks
