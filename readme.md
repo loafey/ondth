@@ -1,3 +1,9 @@
+> [!NOTE] 
+> Windows users be aware:
+> as this game is being developed on a *nix based OS, I use symlinks to avoid duplicating asset data between game qwaks!
+> Before cloning this repo, you should make sure your copy of Windows has been properly configured to handle those,
+> as symlink support is disabled by default for some stupid reason or another.  
+
 # To run
 Run with `./run.sh`.
 Right now your shell has to be located in the same folder as the assets folder or else assets will not load.
