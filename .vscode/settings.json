@@ -29,5 +29,13 @@
         "Xcursor",
         "xorg",
         "Xrandr"
-    ]
+    ],
+    "files.exclude": {
+        ".direnv": true,
+        ".envrc": true,
+        ".vscode": true,
+        "**/*.lock": true,
+        "assets/": true,
+        "target/": true
+    }
 }
