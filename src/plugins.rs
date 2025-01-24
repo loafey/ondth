@@ -1,13 +1,12 @@
-use std::collections::HashMap;
-use std::path::PathBuf;
-
-use crate::entities::message::Message;
-use crate::entities::{ProjectileEntity, pickup::PickupEntity};
-use crate::map_gen::{clean_up_map, load_map, texture_systems::*, world_entites};
-use crate::net::{self, NetState};
-use crate::player::Player;
-use crate::qwak_host_functions::qwak_functions;
-use crate::{mainmenu, startup};
+use crate::{
+    entities::{ProjectileEntity, message::Message, pickup::PickupEntity},
+    mainmenu,
+    map_gen::{clean_up_map, load_map, texture_systems::*, world_entites},
+    net::{self, NetState},
+    player::Player,
+    qwak_host_functions::qwak_functions,
+    startup,
+};
 use bevy::prelude::*;
 use qwak::*;
 use resources::{
@@ -15,6 +14,7 @@ use resources::{
     inputs::PlayerInput,
     *,
 };
+use std::{collections::HashMap, path::PathBuf};
 
 #[derive(Debug, Resource)]
 pub struct Qwaks {
