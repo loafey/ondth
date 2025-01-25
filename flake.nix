@@ -80,6 +80,12 @@
                 pkgs.alsa-lib
                 pkgs.vulkan-loader
                 pkgs.libxkbcommon
+                pkgs.libGL
+                pkgs.wayland
+                pkgs.xorg.libX11
+                pkgs.xorg.libXcursor
+                pkgs.xorg.libXi
+                pkgs.xorg.libXrandr
               ]
             }"'';
         };

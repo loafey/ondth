@@ -169,7 +169,7 @@ impl Player {
                                 ..default()
                             },
                             RenderLayers::layer(0),
-                            // Msaa::Off,
+                            Msaa::Off,
                         ));
 
                         shoot_sound_holder = Some(c.spawn(Transform::IDENTITY).id());

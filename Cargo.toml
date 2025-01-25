@@ -67,7 +67,7 @@ extism                 = { version = "1.9.*", default-features = false, features
 extism-pdk             = { version = "1.3.*", default-features = false, features = ["msgpack", "extism-manifest"] }
 
 # Bevy dependencies
-bevy                   = { version = "0.15.*", features = ["bevy_gltf", "dynamic_linking"] }
+bevy                   = { version = "0.15.*", features = ["bevy_gltf", "dynamic_linking", "wayland"] }
 bevy_rapier3d          = { version = "0.28.*", features = ["parallel","debug-render-3d","simd-stable"] }
 bevy_obj               = { version = "0.15.*" }
 bevy-inspector-egui    = { version = "0.28.*" }
