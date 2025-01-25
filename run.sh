@@ -9,13 +9,19 @@ red="\e[91m"
 
 proj=$1
 if [ -z "$1" ]; then
-    proj="default"
+    echo -e "    ${bold}${red}Error:${normal} please select a project!" 
+    exit 1
+fi
+
+optFlag=$2
+if [ -z "$2" ]; then
+    optFlag=""
 fi
 
 if cargo build -p $proj --target wasm32-unknown-unknown --release ; then
     done="yo"
 else
-    echo -e "    ${bold}${red}Compiling${normal} \"$proj\" failed!" 
+    echo -e "    ${bold}${red}Error:${normal} compiling \"$proj\" failed!" 
     exit 1
 fi
 rm -f assets
@@ -33,4 +39,4 @@ echo -e "      ${bold}${orange}Copied${normal} \"$proj\" QWAK file to asset dire
 #     echo -e "      ${bold}${orange}Copied${normal} \"$proj\" QWAK file to asset directory" 
 # done
 
-cargo run --release
+cargo run $optFlag
