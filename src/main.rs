@@ -60,6 +60,8 @@ fn main() {
             .set(LogPlugin {
                 filter: "cranelift_codegen=warn,bevy_ecs=error,wgpu=error,naga=warn,present_frames=warn,cosmic_text=warn,bevy_render=warn,offset_allocator=warn,extism_plugin=warn,extism=warn,winit=warn,bevy_winit=warn,bevy_hanabi=warn,bevy_app=warn,wasmtime=warn,bevy_asset=warn,gilrs=warn,bevy_hierarchy=warn"
                     .into(),
+                // filter: "offset_allocator=warn,extism_plugin=warn,extism=warn,winit=warn,bevy_winit=warn,bevy_hanabi=warn,bevy_app=warn,wasmtime=warn,bevy_asset=warn,gilrs=warn,bevy_hierarchy=warn"
+                    // .into(),
                 level: bevy::log::Level::DEBUG,
                 ..default()
             }), // .set(WindowPlugin {

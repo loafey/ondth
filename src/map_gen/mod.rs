@@ -84,9 +84,7 @@ pub fn load_map(
     texture_map: Res<TextureMap>,
     mut done_loading: ResMut<MapDoneLoading>,
     mut player_spawn: ResMut<PlayerSpawnpoint>,
-    mut ambient_light: ResMut<AmbientLight>,
 ) {
-    ambient_light.brightness = 400.0;
     let map = error_return!(std::fs::read_to_string(&current_map.0));
     let map = error_return!(map_parser::parse(&map));
 
@@ -105,6 +103,7 @@ pub fn load_map(
                         Transform::default(),
                         RigidBody::KinematicPositionBased,
                         GameObject,
+                        InheritedVisibility::VISIBLE,
                     ))
                     .id(),
             );
@@ -138,7 +137,7 @@ pub fn load_map(
 
             let mut spawner = match predefined {
                 Some(ent) => commands.get_entity(ent).unwrap(),
-                None => commands.spawn(BrushEntity),
+                None => commands.spawn((BrushEntity, InheritedVisibility::VISIBLE)),
             };
             spawner.insert(GameObject);
             let mut brush_poly = Vec::new();

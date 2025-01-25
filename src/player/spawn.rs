@@ -103,6 +103,7 @@ impl Player {
             .insert(LockedAxes::ROTATION_LOCKED)
             .insert(GlobalTransform::default())
             .insert(Ccd::enabled())
+            .insert(InheritedVisibility::VISIBLE)
             .with_children(|c| {
                 let new_camera_id = c
                     .spawn((
@@ -168,6 +169,7 @@ impl Player {
                                 ..default()
                             },
                             RenderLayers::layer(0),
+                            // Msaa::Off,
                         ));
 
                         shoot_sound_holder = Some(c.spawn(Transform::IDENTITY).id());
