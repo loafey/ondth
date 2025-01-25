@@ -171,8 +171,3 @@
 "classname" "info_player_start"
 "origin" "0 0 60"
 }
-// entity 2
-{
-"classname" "light"
-"origin" "-8 1144 56"
-}
