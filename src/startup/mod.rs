@@ -17,6 +17,7 @@ pub fn startup_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                 clear_color: ClearColorConfig::Custom(Color::BLACK),
                 ..default()
             },
+            Msaa::Off,
         ))
         .insert(StartupEnt);
     commands

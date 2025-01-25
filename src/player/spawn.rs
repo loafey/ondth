@@ -119,9 +119,9 @@ impl Player {
                             ..default()
                         },
                         RenderLayers::layer(1),
+                        Msaa::Off,
                     ))
                     // .insert(ScreenSpaceAmbientOcclusion::default())
-                    // .insert(Msaa::Off)
                     // .insert((DepthPrepass, MotionVectorPrepass, TemporalJitter::default()))
                     // .insert(TemporalAntiAliasing::default())
                     .insert(Name::new("player camera"))
@@ -184,6 +184,7 @@ impl Player {
                         is_active: is_own,
                         ..default()
                     }))
+                    .insert(Msaa::Off)
                     .insert(IsDefaultUiCamera);
 
                     c.spawn(Sprite {

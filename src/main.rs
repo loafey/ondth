@@ -7,7 +7,7 @@ use crate::net::{
 };
 use bevy::{
     core_pipeline::experimental::taa::TemporalAntiAliasPlugin, image::ImageAddressMode,
-    log::LogPlugin, prelude::*,
+    log::LogPlugin, pbr::PointLightShadowMap, prelude::*,
 };
 use bevy_hanabi::HanabiPlugin;
 use bevy_obj::ObjPlugin;
@@ -98,6 +98,8 @@ fn main() {
     app.add_systems(Startup, particles::register_particles);
     app.add_systems(Update, particles::ParticleLifetime::update);
     app.add_systems(Update, ui::ui_systems());
+
+    app.insert_resource(PointLightShadowMap { size: 2048 });
 
     if let Some((steam, single_client)) = try_steam() {
         app.insert_non_send_resource(single_client);

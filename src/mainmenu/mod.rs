@@ -203,7 +203,7 @@ pub fn setup(
         .unwrap_or_default();
 
     commands
-        .spawn(Camera2d)
+        .spawn((Camera2d, Msaa::Off))
         .insert(Camera {
             order: 2,
             clear_color: ClearColorConfig::None,
@@ -248,6 +248,7 @@ pub fn setup(
         },
         Transform::from_xyz(0.0, 0.0, -9.0).looking_at(Vec3::ZERO, Vec3::Y),
         MainMenuEnt,
+        Msaa::Off,
     ));
 
     let mut main = None;
