@@ -12,9 +12,16 @@ use crate::{
     ui::menu_button::MenuButton,
 };
 use bevy::{
-    pbr::NotShadowCaster,
+    core_pipeline::{
+        experimental::taa::TemporalAntiAliasing,
+        prepass::{DepthPrepass, MotionVectorPrepass, NormalPrepass},
+    },
+    pbr::{NotShadowCaster, ScreenSpaceAmbientOcclusion, ScreenSpaceAmbientOcclusionQualityLevel},
     prelude::*,
-    render::view::{NoFrustumCulling, RenderLayers},
+    render::{
+        camera::TemporalJitter,
+        view::{NoFrustumCulling, RenderLayers},
+    },
     window::{CursorGrabMode, PrimaryWindow},
 };
 use bevy_rapier3d::prelude::*;
@@ -121,9 +128,17 @@ impl Player {
                         RenderLayers::layer(0),
                         Msaa::Off,
                     ))
-                    // .insert(ScreenSpaceAmbientOcclusion::default())
-                    // .insert((DepthPrepass, MotionVectorPrepass, TemporalJitter::default()))
-                    // .insert(TemporalAntiAliasing::default())
+                    .insert(ScreenSpaceAmbientOcclusion {
+                        quality_level: ScreenSpaceAmbientOcclusionQualityLevel::Ultra,
+                        constant_object_thickness: 4.0,
+                    })
+                    .insert((
+                        DepthPrepass,
+                        MotionVectorPrepass,
+                        TemporalJitter::default(),
+                        NormalPrepass,
+                    ))
+                    .insert(TemporalAntiAliasing::default())
                     .insert(Name::new("player camera"))
                     .with_children(|c| {
                         let new_fps_model = c

@@ -83,7 +83,6 @@ fn main() {
     app.add_plugins(Resources);
     app.add_plugins(RapierPhysicsPlugin::<NoUserData>::default());
     app.add_plugins(RapierDebugRenderPlugin::default().disabled());
-    app.add_plugins(TemporalAntiAliasPlugin);
     app.add_plugins(ObjPlugin);
     app.add_plugins(HookPlugin);
     app.add_plugins((StartupStage, MainMenuStage, GameStage));
@@ -99,6 +98,7 @@ fn main() {
     app.add_systems(Update, particles::ParticleLifetime::update);
     app.add_systems(Update, ui::ui_systems());
 
+    app.add_plugins(TemporalAntiAliasPlugin);
     app.insert_resource(PointLightShadowMap { size: 2048 });
 
     if let Some((steam, single_client)) = try_steam() {
