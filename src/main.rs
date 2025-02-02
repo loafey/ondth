@@ -9,6 +9,7 @@ use bevy::{
     core_pipeline::experimental::taa::TemporalAntiAliasPlugin, image::ImageAddressMode,
     log::LogPlugin, pbr::PointLightShadowMap, prelude::*,
 };
+use bevy_atmosphere::plugin::AtmospherePlugin;
 use bevy_hanabi::HanabiPlugin;
 use bevy_obj::ObjPlugin;
 use bevy_rapier3d::{
@@ -93,6 +94,7 @@ fn main() {
     app.add_plugins(RenetServerPlugin);
     app.add_plugins(ServerPlugin);
     app.add_plugins(ClientPlugin);
+    app.add_plugins(AtmospherePlugin);
 
     app.add_systems(Startup, particles::register_particles);
     app.add_systems(Update, particles::ParticleLifetime::update);

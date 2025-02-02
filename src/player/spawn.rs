@@ -24,6 +24,7 @@ use bevy::{
     },
     window::{CursorGrabMode, PrimaryWindow},
 };
+use bevy_atmosphere::plugin::AtmosphereCamera;
 use bevy_rapier3d::prelude::*;
 use bevy_scene_hook::reload::{Hook, SceneBundle as HookedSceneBundle};
 use faststr::FastStr;
@@ -127,6 +128,7 @@ impl Player {
                         },
                         RenderLayers::layer(0),
                         Msaa::Off,
+                        AtmosphereCamera::default(),
                     ))
                     .insert(ScreenSpaceAmbientOcclusion {
                         quality_level: ScreenSpaceAmbientOcclusionQualityLevel::Ultra,

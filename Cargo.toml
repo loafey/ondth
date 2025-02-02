@@ -29,6 +29,7 @@ qwak_helper_types      = { workspace = true }
 qwak_shared            = { workspace = true }
 qwak                   = { workspace = true }
 i-cant-believe-its-not-bsn = { workspace = true }
+bevy_atmosphere.workspace = true
 # bevy-inspector-egui    = { workspace = true }
 
 [lints]
@@ -77,6 +78,7 @@ bevy_hanabi            = { version = "0.14.*", default-features = false, feature
 bevy_renet             = { version = "1.0.*", features = ["steam"] }
 renet_steam            = { version = "1.0.*", features = ["bevy"] }
 i-cant-believe-its-not-bsn = { git = "https://github.com/Leafwing-Studios/i-cant-believe-its-not-bsn.git" }
+bevy_atmosphere = "0.12.2"
 
 # Custom crates
 map_parser             = { path = "crates/map_parser" }
