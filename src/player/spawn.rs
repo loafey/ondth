@@ -118,7 +118,7 @@ impl Player {
                             order: 1,
                             ..default()
                         },
-                        RenderLayers::layer(1),
+                        RenderLayers::layer(0),
                         Msaa::Off,
                     ))
                     // .insert(ScreenSpaceAmbientOcclusion::default())
@@ -136,7 +136,7 @@ impl Player {
                                             .insert(NoFrustumCulling)
                                             .insert(NotShadowCaster);
                                         if is_own {
-                                            cc.insert(RenderLayers::layer(1));
+                                            cc.insert(RenderLayers::layer(0)); // This should be 1!
                                         }
                                     }
                                     if entity.get::<MeshMaterial3d<StandardMaterial>>().is_some() {
@@ -155,22 +155,22 @@ impl Player {
 
                         if is_own {
                             c.spawn((Transform::IDENTITY, SpatialListener::new(2.0)));
+                            // c.spawn((
+                            //     Camera3d::default(),
+                            //     Projection::Perspective(PerspectiveProjection {
+                            //         fov: 80.0f32.to_radians(),
+                            //         ..default()
+                            //     }),
+                            //     Transform::default(),
+                            //     Camera {
+                            //         clear_color: ClearColorConfig::None,
+                            //         ..default()
+                            //     },
+                            //     RenderLayers::layer(1),
+                            //     Msaa::Off,
+                            //     Name::new("weapon camera"),
+                            // ));
                         }
-
-                        c.spawn((
-                            Camera3d::default(),
-                            Projection::Perspective(PerspectiveProjection {
-                                fov: 80.0f32.to_radians(),
-                                ..default()
-                            }),
-                            Transform::default(),
-                            Camera {
-                                is_active: is_own,
-                                ..default()
-                            },
-                            RenderLayers::layer(0),
-                            Msaa::Off,
-                        ));
 
                         shoot_sound_holder = Some(c.spawn(Transform::IDENTITY).id());
                     })
@@ -178,12 +178,15 @@ impl Player {
 
                 camera = Some(new_camera_id);
                 if is_own {
-                    c.spawn((Camera2d, Camera {
-                        order: 2,
-                        clear_color: ClearColorConfig::None,
-                        is_active: is_own,
-                        ..default()
-                    }))
+                    c.spawn((
+                        Camera2d,
+                        Camera {
+                            order: 2,
+                            clear_color: ClearColorConfig::None,
+                            is_active: is_own,
+                            ..default()
+                        },
+                    ))
                     .insert(Msaa::Off)
                     .insert(IsDefaultUiCamera);
 
@@ -383,10 +386,14 @@ impl Player {
                     })
                     .with_children(|c| {
                         debug_hud = Some(
-                            c.spawn((Visibility::Hidden, Text::new("debug"), TextFont {
-                                font_size: 16.0,
-                                ..default()
-                            }))
+                            c.spawn((
+                                Visibility::Hidden,
+                                Text::new("debug"),
+                                TextFont {
+                                    font_size: 16.0,
+                                    ..default()
+                                },
+                            ))
                             .id(),
                         );
                     });

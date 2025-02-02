@@ -11,6 +11,7 @@ use bevy::{
         mesh::{Indices, VertexAttributeValues},
         render_asset::RenderAssetUsages,
         render_resource::{PrimitiveTopology, encase::rts_array::Length},
+        view::RenderLayers,
     },
 };
 use bevy_rapier3d::{geometry::Collider, prelude::RigidBody};
@@ -225,6 +226,7 @@ pub fn load_map(
                             Mesh3d(meshes.add(new_mesh)),
                             MeshMaterial3d(materials.add(mat)),
                             Transform::default(),
+                            RenderLayers::from_layers(&[0]),
                         ));
                     });
                 }
