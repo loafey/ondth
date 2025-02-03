@@ -32,6 +32,7 @@ case $optFlag in
         ;;
     dev)
         wasmOpt="release"
+        wasmOut="release"
         ;;
     production)
         wasmOpt="production"
