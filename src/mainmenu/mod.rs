@@ -258,6 +258,29 @@ pub fn setup(
     const FONT_SIZE: Option<f32> = Some(32.0);
     const PADDING: Option<f32> = Some(5.0);
     const BORDER: Option<f32> = Some(10.0);
+
+    #[cfg(not(feature = "production"))]
+    commands
+        .spawn(Node {
+            position_type: PositionType::Absolute,
+            right: Val::Px(-250.0),
+            top: Val::Px(-270.0),
+            padding: UiRect {
+                left: Val::Px(100.0),
+                right: Val::Px(100.0),
+                top: Val::Px(400.0),
+                bottom: Val::Px(10.0),
+            },
+            ..default()
+        })
+        .with_child((Text::new("DEVELOPMENT BUILD"), TextColor(Color::WHITE)))
+        .insert(Transform::from_rotation(Quat::from_axis_angle(
+            Vec3::Z,
+            45f32.to_radians(),
+        )))
+        .insert(BackgroundColor(Color::srgb_u8(255, 0, 0)))
+        .insert(MainMenuEnt);
+
     commands
         .spawn(Node {
             width: Val::Percent(100.0),
@@ -347,10 +370,13 @@ pub fn setup(
                         padding: UiRect::all(Val::Px(PADDING.unwrap() * 2.0)),
                         ..default()
                     })
-                    .with_child((Text::new("Maps:".to_string()), TextFont {
-                        font_size: FONT_SIZE.unwrap(),
-                        ..default()
-                    }));
+                    .with_child((
+                        Text::new("Maps:".to_string()),
+                        TextFont {
+                            font_size: FONT_SIZE.unwrap(),
+                            ..default()
+                        },
+                    ));
 
                     for map in map_files {
                         let s = format!("{map:?}");
@@ -409,10 +435,13 @@ pub fn setup(
                             ));
                         }
                     } else {
-                        c.spawn((Text::new("Enter IP:".to_string()), TextFont {
-                            font_size: 32.0,
-                            ..default()
-                        }));
+                        c.spawn((
+                            Text::new("Enter IP:".to_string()),
+                            TextFont {
+                                font_size: 32.0,
+                                ..default()
+                            },
+                        ));
 
                         c.spawn(Node::default()).insert((
                             TextInput,
