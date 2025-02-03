@@ -1,0 +1,4 @@
+[alias]
+bug        = "run --profile dev        --features bevy/dynamic_linking"
+dev        = "run --profile release    --features bevy/dynamic_linking"
+production = "run --profile production --features production"

@@ -36,6 +36,7 @@
         ".vscode": true,
         "**/*.lock": true,
         "assets/": true,
-        "target/": true
+        "target/": true,
+        ".cargo/": true
     }
 }

@@ -16,9 +16,10 @@ use bevy_rapier3d::{
     plugin::{NoUserData, RapierPhysicsPlugin},
     render::RapierDebugRenderPlugin,
 };
+#[cfg(not(feature = "production"))]
+use bevy_renet::netcode::{NetcodeClientPlugin, NetcodeServerPlugin};
 use bevy_renet::{
     RenetClientPlugin, RenetServerPlugin,
-    netcode::{NetcodeClientPlugin, NetcodeServerPlugin},
     steam::{SteamClientPlugin, SteamServerPlugin},
 };
 use bevy_scene_hook::reload::Plugin as HookPlugin;
@@ -110,6 +111,9 @@ fn main() {
         app.add_systems(PreUpdate, steam_callbacks);
         app.add_systems(Startup, net::steam::grab_avatar);
     } else {
+        #[cfg(feature = "production")]
+        panic!("Steam must be running!");
+        #[cfg(not(feature = "production"))]
         app.add_plugins((NetcodeServerPlugin, NetcodeClientPlugin));
     }
 
