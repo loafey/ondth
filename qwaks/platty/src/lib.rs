@@ -18,18 +18,18 @@ struct Plugin;
 impl QwakPlugin for Plugin {
     fn plugin_init() {}
 
-    fn player_info() -> PlayerInfo {
-        PlayerInfo {
-            controller_type: ControllerType::D3D,
-        }
-    }
-
     fn plugin_name() -> String {
-        "Void".to_string()
+        "platty".to_string()
     }
 
     fn plugin_version() -> [i32; 3] {
         [0, 0, 1]
+    }
+
+    fn player_info() -> PlayerInfo {
+        PlayerInfo {
+            controller_type: ControllerType::D2D,
+        }
     }
 
     fn map_init() {}

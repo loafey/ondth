@@ -5,6 +5,23 @@ use extism_pdk::{FromBytes, Msgpack, ToBytes};
 use faststr::FastStr;
 use serde::{Deserialize, Serialize};
 
+#[derive(Debug, Clone, FromBytes, ToBytes, Deserialize, Serialize)]
+#[allow(missing_docs)]
+#[encoding(Msgpack)]
+/// Indicates whetever a player should be controlled in 2D or 3D
+pub enum ControllerType {
+    D3D,
+    D2D,
+}
+
+/// Info about the game
+#[derive(Debug, Clone, FromBytes, ToBytes, Deserialize, Serialize)]
+#[encoding(Msgpack)]
+pub struct PlayerInfo {
+    /// Indicates whetever a player should be controlled in 2D or 3D
+    pub controller_type: ControllerType,
+}
+
 /// The argument to [`map_interact`](../qwak_shared/trait.QwakPlugin.html#tymethod.map_interact).
 #[derive(Debug, Clone, FromBytes, ToBytes, Deserialize, Serialize)]
 #[encoding(Msgpack)]

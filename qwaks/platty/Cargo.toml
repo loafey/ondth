@@ -1,0 +1,18 @@
+[package]
+name = "platty"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+qwak_shared       = { workspace = true }
+qwak_helper_types = { workspace = true }
+extism-pdk        = { workspace = true }
+serde_json        = { workspace = true }
+faststr           = { workspace = true }
+serde             = { workspace = true }
+
+[lib]
+crate-type = ["cdylib"]
+
+[lints]
+workspace = true

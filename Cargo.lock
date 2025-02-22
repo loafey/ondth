@@ -4477,6 +4477,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "953ec861398dccce10c670dfeaf3ec4911ca479e9c02154b3a215178c5f566f2"
 
 [[package]]
+name = "platty"
+version = "0.1.0"
+dependencies = [
+ "extism-pdk",
+ "faststr",
+ "qwak_helper_types",
+ "qwak_shared",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "png"
 version = "0.17.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
