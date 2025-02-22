@@ -13,7 +13,6 @@ use qwak_helper_types::Projectile;
 
 pub mod message;
 pub mod pickup;
-pub mod projectiles;
 
 #[derive(Component)]
 pub struct ProjectileEntity {
