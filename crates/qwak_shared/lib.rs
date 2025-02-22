@@ -14,7 +14,7 @@ pub trait QwakPlugin {
     fn plugin_version() -> [i32; 3];
 
     #[doc = "Returns information about how players should be set up."]
-    fn player_info() -> qwak_helper_types::PlayerInfo;
+    fn player_info() -> qwak_helper_types::PlayerSpawnInfo;
 
     #[doc = "Function called by the game when a map is loaded."]
     fn map_init() -> ();

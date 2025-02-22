@@ -56,6 +56,6 @@ echo -e "    ${bold}${orange}Compiled${normal} \"$proj\" QWAK file to: \"target/
 mkdir -p assets/qwaks/
 cp "target/wasm32-unknown-unknown/${wasmOut}/$proj.wasm" "assets/qwaks/default.wasm"
 echo -e "      ${bold}${orange}Copied${normal} \"$proj\" QWAK file to asset directory" 
-echo -e "   ${bold}${orange}Compiling${normal} \"$proj\" with flags: $featureFlags" 
+echo -e "   ${bold}${orange}Compiling${normal} \"$proj\" with flags: $features" 
 
 cargo $optFlag --no-default-features $features --

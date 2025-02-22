@@ -5,19 +5,20 @@ use extism_pdk::{FromBytes, Msgpack, ToBytes};
 use faststr::FastStr;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, FromBytes, ToBytes, Deserialize, Serialize)]
+#[derive(Debug, Clone, FromBytes, ToBytes, Deserialize, Serialize, Default)]
 #[allow(missing_docs)]
 #[encoding(Msgpack)]
 /// Indicates whetever a player should be controlled in 2D or 3D
 pub enum ControllerType {
     D3D,
+    #[default]
     D2D,
 }
 
 /// Info about the game
-#[derive(Debug, Clone, FromBytes, ToBytes, Deserialize, Serialize)]
+#[derive(Debug, Clone, FromBytes, ToBytes, Deserialize, Serialize, Default)]
 #[encoding(Msgpack)]
-pub struct PlayerInfo {
+pub struct PlayerSpawnInfo {
     /// Indicates whetever a player should be controlled in 2D or 3D
     pub controller_type: ControllerType,
 }

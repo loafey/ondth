@@ -3,8 +3,8 @@
 use extism_pdk::Msgpack;
 use faststr::FastStr;
 use qwak_helper_types::{
-    ControllerType, MapInteraction, PickupData, PlayerInfo, PlayerKilled, PlayerLeave, Projectile,
-    WeaponData,
+    ControllerType, MapInteraction, PickupData, PlayerKilled, PlayerLeave, PlayerSpawnInfo,
+    Projectile, WeaponData,
 };
 use qwak_shared::QwakPlugin;
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
@@ -58,8 +58,8 @@ struct Plugin;
 impl QwakPlugin for Plugin {
     fn plugin_init() {}
 
-    fn player_info() -> PlayerInfo {
-        PlayerInfo {
+    fn player_info() -> PlayerSpawnInfo {
+        PlayerSpawnInfo {
             controller_type: ControllerType::D3D,
         }
     }

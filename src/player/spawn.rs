@@ -28,6 +28,7 @@ use bevy_atmosphere::plugin::AtmosphereCamera;
 use bevy_rapier3d::prelude::*;
 use bevy_scene_hook::reload::{Hook, SceneBundle as HookedSceneBundle};
 use faststr::FastStr;
+use qwak_helper_types::PlayerSpawnInfo;
 use resources::{Paused, PlayerSpawned, PlayerSpawnpoint};
 
 impl Player {
@@ -94,6 +95,9 @@ impl Player {
         let mut entity = nw.commands.spawn(Collider::cylinder(0.5, 0.15));
         let mut pause_screen = None;
         let mut death_splash = None;
+
+        let info = nw.plugins.default.player_info().unwrap_or_default();
+        println!("{info:?}");
 
         let player_commands = entity
             .insert(ActiveEvents::COLLISION_EVENTS)

@@ -5,7 +5,7 @@ use std::collections::HashMap;
 
 use faststr::FastStr;
 use qwak_helper_types::{
-    ControllerType, MapInteraction, PickupData, PlayerInfo, PlayerKilled, PlayerLeave, Projectile,
+    ControllerType, MapInteraction, PickupData, PlayerSpawnInfo, PlayerKilled, PlayerLeave, Projectile,
     WeaponData,
 };
 use qwak_shared::QwakPlugin;
@@ -26,8 +26,8 @@ impl QwakPlugin for Plugin {
         [0, 0, 1]
     }
 
-    fn player_info() -> PlayerInfo {
-        PlayerInfo {
+    fn player_info() -> PlayerSpawnInfo {
+        PlayerSpawnInfo {
             controller_type: ControllerType::D2D,
         }
     }
