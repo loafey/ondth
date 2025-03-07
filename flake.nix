@@ -50,6 +50,7 @@
           vulkan-loader
           vulkan-validation-layers
           graphviz
+          ldtk
 
           trenchbroom-working
           libxkbcommon
