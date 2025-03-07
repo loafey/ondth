@@ -17,24 +17,24 @@
         pkgs = import nixpkgs {
           inherit system overlays;
           config = {
-            permittedInsecurePackages = [
-              "freeimage-unstable-2021-11-01"
-            ];
+            permittedInsecurePackages = [ "freeimage-unstable-2021-11-01" ];
           };
         };
 
-        trenchbroom-working = pkgs.runCommand "trenchbroom"
-          { buildInputs = [ pkgs.makeWrapper pkgs.tree pkgs.gnused ]; } ''
+        trenchbroom-working = pkgs.runCommand "trenchbroom" {
+          buildInputs = [ pkgs.makeWrapper pkgs.tree pkgs.gnused ];
+        } ''
           makeWrapper ${pkgs.trenchbroom}/bin/trenchbroom $out/bin/trenchbroom --set QT_QPA_PLATFORM xcb
         '';
-        toolchain = with fenix.packages.${system};  combine [
-          minimal.cargo
-          minimal.rustc
-          latest.clippy
-          latest.rust-src
-          latest.rustfmt
-          targets.wasm32-unknown-unknown.latest.rust-std
-        ];
+        toolchain = with fenix.packages.${system};
+          combine [
+            minimal.cargo
+            minimal.rustc
+            latest.clippy
+            latest.rust-src
+            latest.rustfmt
+            targets.wasm32-unknown-unknown.latest.rust-std
+          ];
         min-pkgs = with pkgs; [
           pkg-config
           openssl
@@ -55,8 +55,7 @@
           libxkbcommon
           wayland
         ];
-      in
-      {
+      in {
         defaultPackage = (naersk.lib.${system}.override {
           cargo = toolchain;
           rustc = toolchain;
